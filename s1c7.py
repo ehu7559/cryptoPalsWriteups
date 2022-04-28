@@ -65,9 +65,7 @@ def mix_columns(block):
     for i in range(16):
         row = i % 4
         col = i // 4
-        folder = bytearray(4)
-        for j in range(4):
-            folder[j] = multiply(mar[j * 4 + row], block[col * 4 + j])
+        folder = bytearray([(multiply(mar[j * 4 + row], block[col * 4 + j])) for j in range(4)])
         output[i] = folder[0] ^ folder[1] ^ folder[2] ^ folder[3]
 
     return bytes(output)
@@ -206,7 +204,6 @@ def decrypt_AES_ECB_128(data, aes_key):
     
     #Return
     return bytes(output)
-    
     
 def retrieve_data(filename):
     '''(string) -> bytes'''
