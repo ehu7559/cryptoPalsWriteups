@@ -93,7 +93,7 @@ def get_pad(length):
 def run_key_schedule(keybytes):
     #initialize key schedule column
     key_columns = [(keybytes[i * 4: (i + 1) * 4]) for i in range(4)]
-    
+
     #Generate rows for keys)
     for i in range(4, 4 * (ROUNDS[BLOCK_SIZE_BITS]) + 4):
         #Load the base value for the column
@@ -103,15 +103,13 @@ def run_key_schedule(keybytes):
         #Compute new column as per Lawrence book
         if i%4 == 0:
             #Compute T(W(i-1)) 
-            shifted_column = bytearray([prev_column[1], prev_column[2], prev_column[3], prev_column[0]])
-            subbed_column = bytearray([SB_TABLE[shifted_column[0]], SB_TABLE[shifted_column[1]], SB_TABLE[shifted_column[2]], SB_TABLE[shifted_column[3]]])
+            shifted_column = bytearray([prev_column[(i + 1) % 4] for i in range(4)])
+            subbed_column = bytearray([(SB_TABLE[shifted_column[i]]) for i in range(4)])
             t_column = bytearray([subbed_column[0] ^ ROUND_CONSTANTS[(i-4)//4], subbed_column[1], subbed_column[2], subbed_column[3]])
             prev_column = bytearray(t_column)
-        for j in range(4):
-            new_column[j] = new_column[j] ^ prev_column[j]
-        
+
         #Append 
-        key_columns.append(bytes(new_column))  
+        key_columns.append(bytes([(new_column[j] ^ prev_column[j]) for j in range(4)]))  
     return key_columns
 
 def get_round_keys(initial_key):
@@ -122,8 +120,6 @@ def get_round_keys(initial_key):
         arkey = bytearray()
         for j in range(4):
             arkey.extend(key_table[4*i + j])
-        if len(arkey) !=16: 
-            print("ERROR: Round Key of Length "+ str(len(arkey)) + " Detected!")
         round_key_list.append(bytes(arkey))
     return round_key_list
 
