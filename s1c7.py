@@ -27,40 +27,23 @@ INV_SB_TABLE = bytes([82, 9, 106, 213, 48, 54, 165, 56, 191, 64, 163, 158, 129, 
 SR_TABLE = bytes([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11])
 INV_SR_TABLE = bytes([0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3])
 ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])  #PRELOADED CONSTANTS FTW
-
-#FUZZING PURPOSES
-def fuzz_block():
-    #00112233445566778899aabbccddeeff
-    return bytes([0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255])
-    
+  
 #FUNCTIONS FOR AES
 #Sub bytes
 def sub_bytes(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = SB_TABLE[block[i]]
-    return bytes(output)
+    return bytes([(SB_TABLE[block[i]]) for i in range(16)])
 
 #Inverse sub bytes
 def inv_sub_bytes(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = INV_SB_TABLE[block[i]]
-    return bytes(output)
+    return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
 
 #Shift rows
 def shift_rows(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = block[SR_TABLE[i]]
-    return bytes(output)
+    return bytes([(block[SR_TABLE[i]]) for i in range(16)])
 
 #Inverse shift rows
 def inv_shift_rows(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = block[INV_SR_TABLE[i]]
-    return bytes(output)
+    return bytes([(block[INV_SR_TABLE[i]]) for i in range(16)])
     
 #HELPER METHOD TO MULTIPLY FOR MIX_COLUMNS
 def multiply(b,a):
@@ -96,11 +79,8 @@ def inv_mix_columns(block):
 
 #Add Round Key
 def add_round_key(block, round_key):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = block[i] ^ round_key[i]
-    return bytes(output)
-    
+    return bytes([(block[i] ^ round_key[i]) for i in range(16)])
+
 #Invert add round key
 def inv_add_round_key(block, round_key):
     return add_round_key(block, inv_mix_columns(round_key))
@@ -108,19 +88,14 @@ def inv_add_round_key(block, round_key):
 #PKCS7 Padding as per RFC5652. For ciphertexts with perfect block length,
 #simply call this on an empty bytearray.
 def get_pad(length):
-    pad_length = (-length) % 16
-    if pad_length == 0:
-        return bytearray([16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16])
-    output = bytearray(pad_length)
-    for i in range(len(output)):
-        output[i] = pad_length
-    return output
+    pad_length = (-length) % 16 + (16 if pad_length == 0 else 0)
+    return bytes([(pad_length) for i in range(pad_length)])
 
 #Round Key Extension Function
 def run_key_schedule(keybytes):
     #initialize key schedule column
-    key_columns = [keybytes[0:4], keybytes[4:8], keybytes[8:12], keybytes[12:16]]
-
+    key_columns = [(keybytes[i * 4: (i + 1) * 4]) for i in range(4)]
+    
     #Generate rows for keys)
     for i in range(4, 4 * (ROUNDS[BLOCK_SIZE_BITS]) + 4):
         #Load the base value for the column
