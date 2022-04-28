@@ -1,6 +1,5 @@
 #AES-ECB Implementation
-'''
-My thanks to Drs. Nathan Manning and Jonathan Katz 
+'''My thanks to Drs. Nathan Manning and Jonathan Katz 
 
 This was done by hand for educational reasons. This is by no means an efficient
 implementation (although efforts have been made to make this as streamlined as
@@ -29,12 +28,24 @@ SR_TABLE = bytes([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11])
 INV_SR_TABLE = bytes([0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3])
 ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])  #PRELOADED CONSTANTS FTW
 
+#FUZZING PURPOSES
+def fuzz_block():
+    #00112233445566778899aabbccddeeff
+    return bytes([0, 17, 34, 51, 68, 85, 102, 119, 136, 153, 170, 187, 204, 221, 238, 255])
+    
 #FUNCTIONS FOR AES
 #Sub bytes
 def sub_bytes(block):
     output = bytearray(16)
     for i in range(16):
         output[i] = SB_TABLE[block[i]]
+    return bytes(output)
+
+#Inverse sub bytes
+def inv_sub_bytes(block):
+    output = bytearray(16)
+    for i in range(16):
+        output[i] = INV_SB_TABLE[block[i]]
     return bytes(output)
 
 #Shift rows
@@ -44,6 +55,13 @@ def shift_rows(block):
         output[i] = block[SR_TABLE[i]]
     return bytes(output)
 
+#Inverse shift rows
+def inv_shift_rows(block):
+    output = bytearray(16)
+    for i in range(16):
+        output[i] = block[INV_SR_TABLE[i]]
+    return bytes(output)
+    
 #HELPER METHOD TO MULTIPLY FOR MIX_COLUMNS
 def multiply(b,a):
     if b == 1:
@@ -71,51 +89,32 @@ def mix_columns(block):
 
     return bytes(output)
 
+#Inverse mix columns
+def inv_mix_columns(block):
+    '''Inverse of MixColumns, takes advantage of math'''
+    return mix_columns(mix_columns(mix_columns(block)))
+
 #Add Round Key
 def add_round_key(block, round_key):
     output = bytearray(16)
     for i in range(16):
         output[i] = block[i] ^ round_key[i]
     return bytes(output)
-
-#Inverse sub bytes
-def inv_sub_bytes(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = block[INV_SB_TABLE[i]]
-    return bytes(output)
-
-#Inverse shift rows
-def inv_shift_rows(block):
-    output = bytearray(16)
-    for i in range(16):
-        output[i] = block[INV_SR_TABLE[i]]
-    return bytes(output)
-
-#Inverse mix columns
-def inv_mix_columns(block):
-    '''Inverse of MixColumns, takes advantage of math'''
-    return mix_columns(mix_columns(mix_columns(block)))
- 
+    
 #Invert add round key
 def inv_add_round_key(block, round_key):
-    return add_round_key(block, round_key)
+    return add_round_key(block, inv_mix_columns(round_key))
 
 #PKCS7 Padding as per RFC5652. For ciphertexts with perfect block length,
 #simply call this on an empty bytearray.
-def pad_block(data):
-    '''Pad the last block.'''
-    output = bytearray(data)
-    gap = 16 - len(data)
-    for i in range(gap):
-        output.append(gap) #Add padding bytes.
-    return output
-
-def trim_padding(data):
-    output = bytearray(16 - data[-1]) #Works with PKCS7 padding of any type
+def get_pad(length):
+    pad_length = (-length) % 16
+    if pad_length == 0:
+        return bytearray([16,16,16,16,16,16,16,16,16,16,16,16,16,16,16,16])
+    output = bytearray(pad_length)
     for i in range(len(output)):
-        output[i] = data[i] #Copies data over
-    return bytes(output) #Casts and returns the value
+        output[i] = pad_length
+    return output
 
 #Round Key Extension Function
 def run_key_schedule(keybytes):
@@ -150,120 +149,109 @@ def get_round_keys(initial_key):
         arkey = bytearray()
         for j in range(4):
             arkey.extend(key_table[4*i + j])
+        if len(arkey) !=16: 
+            print("ERROR: Round Key of Length "+ str(len(arkey)) + " Detected!")
         round_key_list.append(bytes(arkey))
     return round_key_list
 
+#Rounds functions. Saves some code.
+def encrypt_round(block, round_key):
+    return add_round_key(mix_columns(shift_rows(sub_bytes(block))),round_key)
+
+def decrypt_round(block, round_key):
+    return inv_add_round_key(inv_mix_columns(inv_shift_rows(inv_sub_bytes(block))),round_key)
+
+def encrypt_final_round(block, round_key):
+    return add_round_key(shift_rows(sub_bytes(block)),round_key)
+
+def decrypt_final_round(block, round_key):
+    return add_round_key(inv_shift_rows(inv_sub_bytes(block)),round_key)
+
 #Block Encryption Function (Can be used for any mode such as ECB, CBC, or CTR)
 def encrypt_block_128(block, aes_key):
-    output = bytearray(block)
-    
     #Get the round keys
     round_keys = get_round_keys(aes_key)
     
     #Do process as specified by Lawrence
-    output = add_round_key(output, round_keys[0])
+    output = add_round_key(block, round_keys[0])
     
     #Rounds of Rijndael
     for i in range(1,10):
-        output = sub_bytes(output)
-        output = shift_rows(output)
-        output = mix_columns(output)
-        output = add_round_key(output,round_keys[i])
+        output = encrypt_round(output,round_keys[i])
     
     #Final round (with canonical missing mix_columns operation.
-    output = sub_bytes(output)
-    output = shift_rows(output)
-    output = add_round_key(output, round_keys[10])
-    
-    return bytes(output)
+    return encrypt_final_round(output, round_keys[10])
 
-#Main Encryption Function for ECB128
-def encrypt_AES_ECB_128(data, aes_key):
+def decrypt_block_128(block, aes_key):
 
-    #chunkify the data
-    blocks = []
-    working = bytearray()
-    for i in data:
-        working.append(i)
-        if len(working) == 16:
-            blocks.append(bytes(working))
-            working = bytearray()
-    blocks.append(pad_block(working))
-    
-    #encrypt one by one
-    for i in range(len(blocks)):
-        blocks[i] = encrypt_block_128(blocks[i], aes_key)
-    
-    #RETURN DATA
-    output = bytearray()
-    for ab in blocks:
-        output.extends(ab)
-    
-    return bytes(output)
-    
-#Main Decryption Functions
-def decrypt_block_128(data, aes_key):
-    
-    output = bytearray(block)
-    
     #Get the round keys
     round_keys = get_round_keys(aes_key)
-    
+    #print(round_keys)
     #Do process as specified by Lawrence
-    output = add_round_key(output, round_keys[10])
+    output = add_round_key(block, round_keys[10])
     
     #Rounds of Rijndael
-    for i in range(9, 0, -1): #Produces 9 rounds of AES with reversed key order.
-        output = inv_sub_bytes(output)
-        output = inv_shift_rows(output)
-        output = inv_mix_columns(output)
-        output = inv_add_round_key(output,round_keys[i])
+    for i in range(9,0,-1): #Produces 9 rounds of AES with reversed key order.
+        output = decrypt_round(output, round_keys[i])
     
-    #Final round (with canonical missing mix_columns operation.
-    output = inv_sub_bytes(output)
-    output = inv_shift_rows(output)
-    output = inv_add_round_key(output, round_keys[0])
+    #Final round (with canonical missing inv_mix_columns operation)
+    return decrypt_final_round(output,round_keys[0])
     
+#Main Encryption Function for ECB128
+def encrypt_AES_ECB_128(data, aes_key):
+    output = bytearray(data)
+    pad = get_pad(len(data))
+    working = bytearray()
+    for b in data:
+        working.append(b)
+        if len(working) == 16:
+            output.extend(encrypt_block_128(bytes(working), aes_key))
+            working = bytearray()
+    working.extend(pad) #Pad for final block
+    output.extend(encrypt_block_128(bytes(working), aes_key))
+
     return bytes(output)
-    
+
+#Main Decryption Functions
 def decrypt_AES_ECB_128(data, aes_key):
 
     #BLOCKS: Much more efficient thanks to known block parity
     num_blocks = len(data)//16
-    blocks = []
-    for i in range(num_blocks):
-        blocks.append(bytes(data[16 * i: 16 * (i + 1)]))
-    
-    #Decrypt blocks individually
-    for i in range(len(blocks)):
-        blocks[i] = encrypt_block_128(blocks[i], aes_key)
-        
-    #Trim the padding (yaaaay)
-    #blocks[-1] = trim_padding(blocks[-1])
-        
-    #RETURN DATA
     output = bytearray()
-    for ab in blocks:
-        output.extend(ab)
-    
-    return bytes(output)
 
+    #Decrypt
+    for i in range(num_blocks):
+        output.extend(decrypt_block_128(data[16 * i: 16 * (i + 1)], aes_key))
+        
+    #Trim
+    to_trim = output[-1]
+    for i in range(to_trim):
+        if output.pop() not in [to_trim, 0]: #Check that value of pad is still valid
+            print("ERROR: PADDING IS NOT COMPLIANT WITH PKCS#7")
+    
+    #Return
+    return bytes(output)
+    
+    
 def retrieve_data(filename):
     '''(string) -> bytes'''
     f = open(filename, "r")
     ls = f.readlines()
     f.close()
-    sixtyfour = ""
-    for l in ls:
-        sixtyfour += l.strip()
-    return bytes(base64.b64decode(sixtyfour))
+    
+    output = bytearray()
+    
+    for line in ls:
+        #print(line.strip())
+        output.extend(base64.b64decode(line.strip()))
+    return bytes(output)
 
 #Main Function:
 def challenge():
     ciphertext = retrieve_data("7.txt")
-    KEY = bytes("YELLOW SUBMARINE","ascii")
+    KEY = bytes("YELLOW SUBMARINE","utf-8")
     plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
-    print(plain_bytes)
+    print(plain_bytes.decode("ascii"))
 
 DOING_CHALLENGE = True
 
