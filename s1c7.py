@@ -86,7 +86,7 @@ def inv_add_round_key(block, round_key):
 #PKCS7 Padding as per RFC5652. For ciphertexts with perfect block length,
 #simply call this on an empty bytearray.
 def get_pad(length):
-    pad_length = (-length) % 16 + (16 if pad_length == 0 else 0)
+    pad_length = 16 - (length % 16)
     return bytes([(pad_length) for i in range(pad_length)])
 
 #Round Key Extension Function
@@ -168,7 +168,7 @@ def decrypt_block_128(block, aes_key):
     
 #Main Encryption Function for ECB128
 def encrypt_AES_ECB_128(data, aes_key):
-    output = bytearray(data)
+    output = bytearray()
     pad = get_pad(len(data))
     working = bytearray()
     for b in data:
