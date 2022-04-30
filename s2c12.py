@@ -27,8 +27,13 @@ def get_oracle_block_size(target):
     '''
     return 16
 
-def attack_enum(header, target_oracle):
-    pass    
+def enum_oracle(header, target_oracle, desired_block):
+    for i in range(256):
+        ith_plain = merge_bytes(header, [i])
+        ith_block = extract_block(target_oracle(ith_plain), 0, len(header) + 1)
+        if ith_block == desired_block:
+            return i
+    return 0
 
 def extract_block(data, index, size):
     return bytes(data[index * size: (index + 1) * size])
@@ -52,21 +57,40 @@ def attack_ECB_oracle(target):
     target_block_size = get_oracle_block_size(target)
     num_blocks= len(target(bytes())) // target_block_size
     
-    #COMPUTE ALL THE POSSIBLE PADDING LENGTHS:
+    #COMPUTE ALL THE POSSIBLE PADDING ATTACKS:
+    #the ith padded_cipher is attack with i bytes of padding. Just short of a block.
     padded_ciphers = []
     for i in range(target_block_size):
         padded_ciphers.append(target(bytearray(i)))
-    #the ith padded_cipher is attack with i bytes of padding. Just short of a block.
-    
-    output = bytearray()
+    print("SECRET LENGTH: " + str(len(padded_ciphers[0])))
     window = bytearray(target_block_size - 1)
     #For every block
     for i in range(num_blocks):
+        #print("BLOCKS DECRYPTED: " + str(i))
         for j in range(target_block_size):
-            look_at_cipher_index = target_block_size - 1 - j
+            #print("\tBYTE: " + str(j))
+            #block index is i
+            #padding size should be (target_block_size - (j + 1))
+            pad_size = (target_block_size - (j + 1))
             
-                
-    pass
+            #Find the target for the enumerator.
+            desired_block = extract_block(padded_ciphers[pad_size], i, target_block_size)
+
+            #GET THE OUTPUT BYTE: 
+            new_byte = enum_oracle(window, target, desired_block)
+
+            #Push the byte to the end of the window
+            window.pop(0)
+            window.append(new_byte)
+            
+            #Append the byte to the output
+            output.append(new_byte)
+    
+    #Trim
+    pkcspadsize = output[-1]
+    for i in range(pkcspadsize):
+        output.pop()
+    return bytes(output)
     
 if __name__ == "__main__":
     challenge_oracle = generate_oracle(b64decode("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"))
