@@ -1,5 +1,4 @@
 #Cryptopals Challenge 13
-
 from s1c7 import encrypt_AES_ECB_128, decrypt_AES_ECB_128
 
 CHALLENGE_STATUS = "INCOMPLETE"
@@ -22,16 +21,15 @@ def encrypt_oracle(aes_key):
 def decrypt_oracle(aes_key):
     return lambda x : decrypt_AES_ECB_128(x, aes_key)
 
-#profile_for function
-def profile_for(email, oracle):
-    pass
-
 #Gain admin block
+
 
 #Attack function
 
+
 #TEST FUNCTIONS:
 def test_parse_cookie():
+    print("TESTING PARSE_COOKIE FUNCTION")
     print(parse_cookie("email=heath@cookinramenwithheath.com&role=ramencook&uid=2"))
 
 #Main
@@ -39,13 +37,11 @@ if __name__ == "__main__":
     #Test
     test_parse_cookie()
 
-    #create an oracle for encryption
-
-    #Create an oracle to decrypt answer to check.
+    #Create Oracle
 
     #Attack the oracle
 
     #Decrypt using the oracle and check
     
+    #Print status of challenge
     print("--- CHALLENGE STATUS: " + CHALLENGE_STATUS + " ---")
-    pass

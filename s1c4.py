@@ -28,6 +28,8 @@ def retrieve_data():
     f.close()
     return ls
 
-for l in retrieve_data():
-    crack_byte(l)
+if __name__ == "__main__"
+    for l in retrieve_data():
+        crack_byte(l)
+    print("--- CHALLENGE STATUS: COMPLETE ---")
     
