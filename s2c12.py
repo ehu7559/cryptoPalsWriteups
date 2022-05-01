@@ -86,10 +86,6 @@ def attack_ECB_oracle(target):
             #Append the byte to the output
             output.append(new_byte)
     
-    #Trim
-    pkcspadsize = output[-1]
-    for i in range(pkcspadsize):
-        output.pop()
     return bytes(output)
     
 if __name__ == "__main__":
