@@ -15,27 +15,12 @@ Encrypt a bunch of stuff using your repeating-key XOR function. Encrypt your mai
 '''
 
 #Main function
-def xor_vigenere(filename, key):
-    
-    #Prepare key
-    kb = bytes(key, "ascii")
-    kn = len(kb)
-    ki = 0
-    #Open in/out files
-    f_in = open(filename, "rb")
-    f_out = open(filename + ".xorcrypt", "wb")
+def encrypt(data, key):
+    return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
+def decrypt(data, key):
+    return encrypt(data, key) #Decryption is equal to encryption. Thus, using alias here.
 
-    #stream encryption
-    f_bytes = f_in.read()
-    for f_byte in f_bytes:
-        if f_byte == 13: #Escapes CRLF from Windows
-            continue
-        out_bytes = (bytes([f_byte ^ kb[ki]]))
-        print(out_bytes.hex(), end="")
-        ki = (ki + 1) % kn
-        
-    #Close both files
-    f_in.close()
-    f_out.close()
-
-xor_vigenere(input("Enter Filename: "), input("Enter Key: "))
+if __name__ == "__main__":
+    plain_text = bytes("Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal","ascii")
+    ice_key = bytes("ICE", "ascii")
+    print(bytes.hex(encrypt(plain_text, ice_key)))

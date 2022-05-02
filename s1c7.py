@@ -83,8 +83,7 @@ def add_round_key(block, round_key):
 def inv_add_round_key(block, round_key):
     return add_round_key(block, inv_mix_columns(round_key))
 
-#PKCS7 Padding as per RFC5652. For ciphertexts with perfect block length,
-#simply call this on an empty bytearray.
+#PKCS7 Padding as per RFC 5652, given length of data to encrypt.
 def get_pad(length):
     pad_length = 16 - (length % 16)
     return bytes([(pad_length) for i in range(pad_length)])
