@@ -75,3 +75,4 @@ DOING_CHALLENGE = True
 if __name__ == "__main__":
     if DOING_CHALLENGE:
         challenge()
+        

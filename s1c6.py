@@ -117,8 +117,7 @@ Lightweight decryption feature
 Can be used for single-character purposes as well.
 '''
 def decrypt(data, key):
-    plain = bytearray([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])    
-    return bytes(plain)
+    return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
 
 def crack(data):
     print("Guessing Key Length...")

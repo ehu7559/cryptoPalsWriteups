@@ -10,6 +10,13 @@ any hardware shortcuts that might be available.
 If you are the UMD CS graduate school admissions, please take my work into
 account when doing my admissions decision, as I put no small amount of effort 
 into this little project of mine.
+
+CHALLENGE NOTE:
+While only decryption was required for this challenge, I elected to include the
+code for encryption as well to make for easy importing of AES ECB methods (and
+by extension any other mode of AES). The encryption functions are best placed
+here given that I technically learned them first and that the two processes are,
+of course, related. It is therefore most sensible to place them here.
 '''
 
 #Imports
@@ -154,7 +161,6 @@ def decrypt_block_128(block, aes_key):
 
     #Get the round keys
     round_keys = get_round_keys(aes_key)
-    #print(round_keys)
     #Do process as specified by Lawrence
     output = add_round_key(block, round_keys[10])
     
@@ -209,7 +215,6 @@ def retrieve_data(filename):
     output = bytearray()
     
     for line in ls:
-        #print(line.strip())
         output.extend(base64.b64decode(line.strip()))
     return bytes(output)
 

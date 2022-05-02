@@ -7,12 +7,9 @@ def pad_block(data):
     '''Pad the last block.'''
     output = bytearray(data)
     gap = 16 - len(data)
-    for i in range(gap):
-        output.append(gap) #Add padding bytes.
+    output.extend(bytes([gap for i in range(gap)]))
     return output
 
-def trim_padding(data):
-    output = bytearray(16 - data[-1]) #Works with PKCS7 padding of any type
-    for i in range(len(output)):
-        output[i] = data[i] #Copies data over
-    return bytes(output) #Casts and returns the value
+def trim_padding(block):
+    datalen = (16 - block[-1]) #Works with PKCS7 padding of any type
+    return bytes([block[i] for i in range(datalen)])
