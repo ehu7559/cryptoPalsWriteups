@@ -4,10 +4,8 @@ from s1c7 import encrypt_AES_ECB_128
 from s1c8 import probablyECB
 
 def merge_bytes(a,b):
-    output = bytearray(a)
-    output.extend(b)
-    return bytes(output)
-    
+    return b''.join([bytes(a),bytes(b)])
+
 def generate_oracle(secret_txt):
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
@@ -29,26 +27,17 @@ def get_oracle_block_size(target):
 
 def enum_oracle(header, target_oracle, desired_block):
     for i in range(256):
-        ith_plain = merge_bytes(header, [i])
+        ith_plain = merge_bytes(header, bytes([i]))
         ith_block = extract_block(target_oracle(ith_plain), 0, len(header) + 1)
         if ith_block == desired_block:
             return i
     return 0
 
-def extract_block(data, index, size):
+def extract_block(data, index, size=16):
     return bytes(data[index * size: (index + 1) * size])
     
 def attack_ECB_oracle(target):
     '''Obtains secret of a target oracle'''
-    
-    #Checks that oracle is a function (Unnecessary but i was checking uwu)
-    if str(type(target)) != "<class 'function'>":
-        print("ERROR: ORACLE IS NOT A Function")
-        return bytes()
-    #Check that the oracle is ECB
-    if not is_oracle_ECB(target):
-        print("ERROR: ORACLE IS NOT ECB")
-        return bytes()
     
     #Declare output as bytearray (to append to)
     output = bytearray()
@@ -86,9 +75,15 @@ def attack_ECB_oracle(target):
             #Append the byte to the output
             output.append(new_byte)
     
+    #Trim it down
+    end_pad_size = output[-1]
+    for i in range(end_pad_size):
+        output.pop()
+    
     return bytes(output)
     
 if __name__ == "__main__":
     challenge_oracle = generate_oracle(b64decode("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"))
     plain_guess = attack_ECB_oracle(challenge_oracle)
     print(plain_guess.decode("ascii"))
+    print("--- CHALLENGE STATUS: COMPLETE ---")

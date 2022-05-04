@@ -140,5 +140,6 @@ def retrieve_data(filename):
     return bytes(base64.b64decode(sixtyfour))
     
 #Retrieve data from the challenge file.
-ciphertext = retrieve_data("6.txt")
-print(crack(ciphertext))
+if __name__ == "__main__":    
+    ciphertext = retrieve_data("6.txt")
+    print(crack(ciphertext))
