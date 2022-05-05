@@ -3,13 +3,13 @@
 
 #PKCS7 Padding as per RFC5652. For ciphertexts with perfect block length,
 #simply call this on an empty bytearray.
-def pad_block(data):
+def pad(data):
     '''Pad the last block.'''
     output = bytearray(data)
-    gap = 16 - len(data)
+    gap = 16 - (len(data)%16)
     output.extend(bytes([gap for i in range(gap)]))
     return output
 
 def trim_padding(block):
-    datalen = (16 - block[-1]) #Works with PKCS7 padding of any type
+    datalen = (len(block) - block[-1]) #Works with PKCS7 padding of any type
     return bytes([block[i] for i in range(datalen)])

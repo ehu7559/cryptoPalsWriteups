@@ -3,80 +3,70 @@
 #Import modules
 from random import randint
 from base64 import b64decode
-from s1c7 import encrypt_AES_ECB_128
-
+from s1c7 import encrypt_AES_ECB_128 
+from s2c12 import extract_block, merge_bytes, attack_ECB_oracle #Bytes-object merger
+from s2c9 import trim_padding
 #Generate Class 14 ECB Oracle
 def gen_oracle_14(secret_text):
     #Generate Oracle Constants
     secret_key = bytes([randint(0,255) for i in range(16)])
-    prefix_len = random.randint(0,255)
+    secret_data = bytes(secret_text)
+    prefix_len = randint(0,255)
+    prefix_data = bytes([randint(0,255) for i in range(prefix_len)])
+    #Generate oracle
+    return (lambda atk : encrypt_AES_ECB_128((merge_bytes(merge_bytes(prefix_data, atk),secret_data)),secret_key))
     
-    #
+def cipher_blocks(ciphertext):
+    #Splits an ECB ciphertext into 16-byte blocks
+    return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]
+
+def join_cipher(blocks):
+    output = bytearray()
+    for bl in blocks:
+        output.extend(bl)
+    return bytes(output)
 
 #Oracle prefix length determination
 def get_oracle_prefix_len(oracle):
-    pass
+    no_text = oracle(bytes())
+    just_one = oracle(bytes(1))
+    #Find block where it starts
+    diff_ptr = 0
+    while no_text[diff_ptr] == just_one[diff_ptr]:
+        diff_ptr += 1
+    num_full_blocks = diff_ptr // 16 #Number of full blocks in pad.
     
+    #Determine how long the pad needs to be to get a block.
+    two_blocks = bytes([255 for i in range(32)])
+    trailing_mod = 0
+    while True:
+        enum_blocks = cipher_blocks(oracle(merge_bytes(bytes(16 - trailing_mod), two_blocks)))
+        if enum_blocks[num_full_blocks + 1] == enum_blocks[num_full_blocks + 2]:
+            break
+        trailing_mod += 1
+    return num_full_blocks * 16 + trailing_mod
+
 #Pseudo-oracle
 def pseudo_oracle(oracle):
     #Get length of prefix through get_oracle_prefix_len
-    
-    #Generate new lambda function by padding and splicing.
-    
-    pass
-#Attacker
-def attack_oracle(oracle):
-    '''Obtains secret of a target oracle'''
-    target = pseudo_oracle(oracle)
-    
-    #Declare output as bytearray (to append to)
-    output = bytearray()
-    
-    #Get the block size and number of blocks. We pad with nulls uwu
-    target_block_size = 16
-    num_blocks= len(target(bytes())) // target_block_size
-    
-    #COMPUTE ALL THE POSSIBLE PADDING ATTACKS:
-    #the ith padded_cipher is attack with i bytes of padding. Just short of a block.
-    padded_ciphers = []
-    for i in range(target_block_size):
-        padded_ciphers.append(target(bytearray(i)))
-    print("SECRET LENGTH: " + str(len(padded_ciphers[0])))
-    window = bytearray(target_block_size - 1)
-    #For every block
-    for i in range(num_blocks):
-        #print("BLOCKS DECRYPTED: " + str(i))
-        for j in range(target_block_size):
-            #print("\tBYTE: " + str(j))
-            #block index is i
-            #padding size should be (target_block_size - (j + 1))
-            pad_size = (target_block_size - (j + 1))
-            
-            #Find the target for the enumerator.
-            desired_block = extract_block(padded_ciphers[pad_size], i, target_block_size)
+    oracle_prefix_len = get_oracle_prefix_len(oracle)
+    #print("ORACLE PREFIX LENGTH PREDICTED TO BE " + str(oracle_prefix_len))
+    #Generate new lambda function by adding more padding and splicing.
+    mask_pad = bytes([0 for i in range(16 - (oracle_prefix_len % 16))])
 
-            #GET THE OUTPUT BYTE: 
-            new_byte = enum_oracle(window, target, desired_block)
-
-            #Push the byte to the end of the window
-            window.pop(0)
-            window.append(new_byte)
-            
-            #Append the byte to the output
-            output.append(new_byte)
+    #Generate middle oracle.
+    return (lambda x : (oracle(merge_bytes(mask_pad, x)))[oracle_prefix_len + len(mask_pad):])
     
-    #Trim it down
-    end_pad_size = output[-1]
-    for i in range(end_pad_size):
-        output.pop()
-    
-    return bytes(output)
-    #Return
 #Challenge code
 if __name__ == "__main__":
     #Generate Oracle
+    challenge_oracle = gen_oracle_14(b64decode("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"))
     
-    #Attack the Oracle
+    #Write a proxied oracle.
+    fake = pseudo_oracle(challenge_oracle)
     
-    #End
-    print("--- CHALLENGE INCOMPLETE ---")
+    #Attack the new, prefix-less Oracle
+    plain_guess = attack_ECB_oracle(fake)
+    print(plain_guess.decode("ascii"))
+    #Print challenge status
+    print("--- CHALLENGE COMPLETE ---")

@@ -51,7 +51,8 @@ def attack_ECB_oracle(target):
     padded_ciphers = []
     for i in range(target_block_size):
         padded_ciphers.append(target(bytearray(i)))
-    print("SECRET LENGTH: " + str(len(padded_ciphers[0])))
+    
+    #Sliding window of last 15 bytes
     window = bytearray(target_block_size - 1)
     #For every block
     for i in range(num_blocks):
