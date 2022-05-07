@@ -69,4 +69,4 @@ if __name__ == "__main__":
     plain_guess = attack_ECB_oracle(fake)
     print(plain_guess.decode("ascii"))
     #Print challenge status
-    print("--- CHALLENGE COMPLETE ---")
+    print("--- CHALLENGE STATUS: COMPLETE ---")
