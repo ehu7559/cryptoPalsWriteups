@@ -143,3 +143,4 @@ def retrieve_data(filename):
 if __name__ == "__main__":    
     ciphertext = retrieve_data("6.txt")
     print(crack(ciphertext))
+    print('--- CHALLENGE STATUS: COMPLETE ---')
