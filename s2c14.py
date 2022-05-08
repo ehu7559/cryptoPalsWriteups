@@ -17,7 +17,6 @@ def gen_oracle_14(secret_text):
     return (lambda atk : encrypt_AES_ECB_128((merge_bytes(merge_bytes(prefix_data, atk),secret_data)),secret_key))
     
 def cipher_blocks(ciphertext):
-    #Splits an ECB ciphertext into 16-byte blocks
     return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]
 
 def join_cipher(blocks):
