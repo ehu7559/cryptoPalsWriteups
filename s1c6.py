@@ -34,7 +34,7 @@ characters, which was patently incorrect given that the actual key length was 29
 characters, leading to an entirely illegible ciphertext that took multiple days
 to resolve (as 5 and 29 are coprime). This problem led to much filtering on
 printable characters. What a pain this problem was, all thanks to this goddamn
-functions!
+function!
 '''
 def score_key_length(data, length):
     avg_hamming_score = 0
@@ -51,7 +51,7 @@ I used for Kasiski analysis during CMSC414 at the University of Maryland.
 Thanks to Dr. Marsh and Dr. Manning for teaching me this.
 '''
 def score_key_length_wrap(data,length):
-    pass
+    pass #Turns out I decided it wasn't worth the time.
 
 #Looping mechanism for guessing key length
 def guess_key_length(data):
@@ -80,17 +80,6 @@ def stripe(data, num_blocks):
     for i in range(len(data)):
         output[i%num_blocks].append(data[i])
     
-    return output
-
-def destripe(stripe_arr):
-    output = bytearray()
-    #compute length
-    total_bytes = 0
-    for s in stripe_arr:
-        total_bytes += len(s)
-    #de-stripe the list
-    for i in range(total_bytes):
-        output.append((stripe_arr[i%len(stripe_arr)])[i//len(stripe_arr)])
     return output
 
 #Guesses a single byte out 

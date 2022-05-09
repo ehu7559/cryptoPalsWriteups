@@ -24,3 +24,4 @@ if __name__ == "__main__":
     plain_text = bytes("Burning 'em, if you ain't quick and nimble\nI go crazy when I hear a cymbal","ascii")
     ice_key = bytes("ICE", "ascii")
     print(bytes.hex(encrypt(plain_text, ice_key)))
+    print("--- CHALLENGE STATUS: COMPLETE ---")

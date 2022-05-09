@@ -10,10 +10,7 @@ def score_text(data):
     return points
 
 def single_decrypt(data, key):
-    plain = bytearray()    
-    for i in range(len(data)):
-        plain.append(int(data[i] ^ key))
-    return bytes(plain)
+    return bytes([i ^ key for i in data])
 
 def crack_byte(data):
     for i in range(128):
@@ -22,11 +19,10 @@ def crack_byte(data):
         if sc > MIN_SCORE:
             print(ptxt.decode('ascii').strip())
 
+#Challenge Data
 def retrieve_data():
-    f = open('4.txt',"r")
-    ls = f.readlines()
-    f.close()
-    return ls
+    with open('4.txt',"r") as f:
+        return f.readlines()
 
 if __name__ == "__main__":
     for l in retrieve_data():

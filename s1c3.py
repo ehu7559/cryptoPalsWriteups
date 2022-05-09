@@ -59,10 +59,7 @@ def ranked_plaintexts(raws):
     return output
 
 def decrypt(cipherbytes, keybyte):
-    output = bytearray()
-    for b in cipherbytes:
-        output.append(b ^ keybyte)
-    return bytes(output)
+    return bytes([(bite ^ keybyte) for bite in cipherbytes])
 
 #This is left here just for completeness' sake. it's just an alias.
 def encrypt(plainbytes, keybyte):

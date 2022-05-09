@@ -23,7 +23,6 @@ def gen_block(aes_key, nonce, ctr):
     block = bytearray(nonce_bytes)
     block.extend(counter_bytes)
     return encrypt_AES_ECB_128(bytes(block), aes_key)
-    
 
 #Keystream oracle function
 def aes_ctr_keystream(aes_key, nonce):

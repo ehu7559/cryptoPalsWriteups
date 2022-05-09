@@ -1,0 +1,125 @@
+Write-up Accompaniment to CryptoPals Challenges
+--------------------------------------------------------------------------------
+Challenge 1: Convert hex to base64
+
+This challenge is rather simple. We are simply converting hex to base64 encoding
+for this challenge. It's not that hard. Uses the base64 library because it's an
+absolutely essential function.
+
+--------------------------------------------------------------------------------
+Challenge 2: Fixed XOR
+
+Wrote the function hex_xor() which takes two hex-strings and decodes them before
+performing a bitwise xor of the two buffers with a list comprehension. This is
+still basic programming.
+
+--------------------------------------------------------------------------------
+Challenge 3: Single-byte XOR cipher
+
+The third challenge is the first attack on a cryptosystem, albeit an entirely
+easy one. The approach here brute-forces the 256 keys for each ciphertext and
+then determines the highest-scoring plaintext to determine the most likely key.
+
+Language classification is a rather complex thing to implement, so a simple
+frequency-based analysis is used to score the texts. Based off a well-known
+alphabetic frequency distribution, we can assign each alphabetic character a
+point value. The scoring function returns the sum of the point values of the
+characters within the string. This has the natural effect of preferring texts
+which contain more common characters. One could theoretically change the 
+function to normalize the score by dividing by length, but given the nature of
+the challenge, scores are compared only between texts of the same length.
+
+The crackbyte() function actually attempts the challenge.
+
+--------------------------------------------------------------------------------
+Challenge 4: Detect single-character XOR
+
+The fourth challenge is conceptually a little bit harder than the third, but is
+also substantially easier to code.
+
+What we are looking for is one of the ciphertexts which is encrypted with single
+character XOR. To make it more explicit, what we want is a ciphertext which, for
+some single-character decryption (0-255), highly resembles English.
+
+Leveraging much of the code from the previous challenge, it should be relatively
+simple to iterate through the ciphertexts, brute-forcing each one and find the
+ciphertext and key which yield the highest English resemblance. Depending on the
+accuracy of the scoring function, certain false positivees may outrank the
+answer. Thus, I decided to print any ciphertexts which were above a certain 
+score according to my own method. Once the threshold is raised high enough to
+reduce as much noise as possible, the answer should be easy to recognize.
+
+--------------------------------------------------------------------------------
+Challenge 5: Implement repeating-key XOR
+
+This challenge should immediately jump out to anyone who has encountered the
+Vigenere cipher. The only real difference is the keyspace and the operation used
+between two characters (XOR instead of addition mod 26).
+
+The function body itself is a literal one-liner. Due to the nature of the XOR
+operator, the decryption function is equivalent to the encryption function.
+
+(a xor b xor b) = a
+Proof
+ciphertext byte = (a xor b)
+plaintext byte = (a xor b) xor b = a xor (b xor b)
+
+There's not much to say about this challenge. The description is essentially
+self-explanatory, along with the code.
+
+--------------------------------------------------------------------------------
+Challenge 6: Break repeating-key XOR
+
+The Hamming distance function I wrote is clunky but gets the point across. As
+with much of this repository, it was written in my downtime at an internship. My
+manager was kind enough to let me code so that the endless calls did not break
+me. The Hamming Distance between two bytes can be represented by the number of
+1s in the binary representation of the bitwise XOR of the two bytes.
+
+The procedure is as follows.
+1. Determine Key Length
+2. Stripe the ciphertext to reduce to multiple single-character XOR problems
+3. Conduct frequency analysis as with single-character XOR to get the key bytes.
+4. Decrypt and return.
+
+The key length is determined through an application of Kasiski analysis. 
+Kasiski analysis essentially relies on the fact that repetitions of bit/byte
+patterns will occur more commonly at regular intervals which are multiples of
+the key length.
+
+The simple method suggested by the challenge does not guarantee sufficient
+accuracy on guessing the key length. It is, as noted in the very angry comments
+above the function in the code, biased as fuck. (I was quite miffed)
+
+Instead, I expanded upon the suggestion and computed the average normalized
+Hamming distance for any two blocks in the ciphertext. This is, of course, a
+very over-engineered process, but given how far off the key length I was, I feel
+that this solution was entirely justifiable. Of course, one must be patient.
+
+The striping and de-striping functions are basic data manipulation in Python and
+should need no real explanation aside from the fact that they group together the
+bytes that were encrypted with the same index of the key.
+
+The frequency analysis is essentially that of challenge 3, applied to each
+subset of the ciphertext from the striping functions. If you are still confused,
+read challenge 3's writeup again.
+
+After the key-bytes have each been individually computed, the en/de-cryption
+function can be called with this key to decrypt.
+
+--------------------------------------------------------------------------------
+Challenge 7: AES in ECB mode
+
+This was probably my first "I'm very proud of myself" achievement, as I actually
+implemented AES by hand. My sole import in challenge 7 was base64 to read the
+challenge data from the file. My actual AES functions used only vanilla Python.
+
+Those reading the code will note my praise and admiration of my professors. I
+owe to them a great debt. Without them, I doubt I would have taken an interest
+in cryptology at all.
+
+AES is built of four main steps.
+
+--------------------------------------------------------------------------------
+Challenge 8: Detect AES in ECB mode
+--------------------------------------------------------------------------------
