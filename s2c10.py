@@ -41,14 +41,6 @@ def decrypt_AES_CBC_128(data, aes_key, initialization_vector):
 
         #append to output
         output.extend(plain)
-    #Trim
-    
-    '''
-    to_trim = output[-1]
-    for i in range(to_trim):
-        if output.pop() not in [to_trim, 0]: #Check that value of pad is still valid
-            print("ERROR: PADDING IS NOT COMPLIANT WITH PKCS#7")
-    '''
     #Return
     return bytes(output)
     
