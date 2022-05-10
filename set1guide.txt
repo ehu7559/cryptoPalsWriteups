@@ -156,6 +156,14 @@ mess. The inverse is also just XORing the round key, but the INV_ARK operation
 actually performs an inverse_mix_columns on the round key before xoring it. It
 will be amusingly beautiful once you realize how symmetric AES really is.
 
+The full specs of AES can be found on Wikipedia. I'm just a little too tired to
+write a full explanation. My code is also rather neatly formatted for this one
+in particular, so I recommend giving it a read. I won't bore you to death with a
+boring explanation of it.
+
+As noted in the code, writing code to encrypt AES ECB was not yet necessary, but
+was very handy in future challenges.
+
 --------------------------------------------------------------------------------
 Challenge 8: Detect AES in ECB mode
 
