@@ -1,7 +1,12 @@
 # cryptoPalsWriteups
 A set of writeups for the CryptoPals challenges. Obviously, it contains spoilers.
 
-I have endeavoured to make my code at least generally understandable to those who are semi-fluent in Python and reading/doing the challenges along with me. However, since I have almost certainly failed to achieve that, each set gets its own writeup file with a writeup for each fo the eight challenges. 
+I have endeavoured to make my code at least generally understandable to those who are semi-fluent in Python and reading/doing the challenges along with me. However, since I have almost certainly failed to achieve that, each set gets its own writeup file with a writeup for each fo the eight challenges."
+
+Python files are challenge code
+s(a)c(b).py is the code for challenge b, part of set a.
+
+TXT files are challenge ciphertexts.
 
 Interesting Things:
 Challenges 7, 10, and 18 include by-hand implementations of AES128 in ECB, CBC, and CTR modes respectively.
