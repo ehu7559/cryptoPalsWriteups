@@ -2,7 +2,7 @@
 
 #Imports
 from base64 import b64decode
-from s1c7 import challenge, encrypt_AES_ECB_128
+from s1c7 import encrypt_AES_ECB_128
 
 #Block Encryption Function
 def gen_block(aes_key, nonce, ctr):
@@ -39,7 +39,10 @@ def aes_ctr_keystream(aes_key, nonce):
 #CTR Mode Implementation
 def encrypt_AES_CTR(data, key, nonce):
     stream = aes_ctr_keystream(key, nonce)
-    return bytes(i ^ next(stream) for i in data )
+    return bytes([i ^ next(stream) for i in data])
+
+def decrypt_AES_CTR(data, key, nonce):
+    return encrypt_AES_CTR(data, key, nonce)
 
 #Challenge Code
 if __name__ == "__main__":
