@@ -2,7 +2,6 @@
 
 #Imports
 import base64
-from tokenize import PlainToken
 from s2c9 import trim_padding
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
 from s2c14 import cipher_blocks

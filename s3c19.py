@@ -1,6 +1,6 @@
 
 #IMPORTS
-from s1c6 import score_text, guess_byte, decrypt
+from s1c6 import score_text, decrypt
 from s3c18 import encrypt_AES_CTR
 from random import randint
 from base64 import b64decode
@@ -28,6 +28,7 @@ def can_be_ascii(buffer):
             return False
     return True
 
+#Based on an assumption that output is in ASCII
 def safe_byte_crack(ciphertext):
     best_i = 0
     max_score = 0
@@ -42,7 +43,7 @@ def safe_byte_crack(ciphertext):
         
         new_score = score_text(maybe_plain)
         
-        if new_score >= max_score:
+        if new_score > max_score:
             best_i = i
             max_score = new_score
 
@@ -56,8 +57,7 @@ def guess_key(ciphertexts):
 #Data retrieval function
 def retrieve_lines(filename):
     with open(filename, "r") as f:
-        return f.readlines()
-
+        return [b64decode(l) for l in f.readlines()]
 
 #Challenge Code
 if __name__ == "__main__":
@@ -66,14 +66,14 @@ if __name__ == "__main__":
     cryptoracle = get_crypt_oracle()
 
     #Retrieve data and process it
-    challenge_lines = retrieve_lines("19.txt")
-    cipher_texts = [cryptoracle(b64decode(cl)) for cl in challenge_lines]
+    cipher_texts = retrieve_lines("19.txt")
 
     #Attack
-    chall_key_guess = guess_key(cipher_texts)
+    chall_key_guess = bytearray(guess_key(cipher_texts))
 
     #Decode and encrypt each text
     for c in cipher_texts:
         #print(cryptoracle(c).decode("ascii"))
         safe_print(decrypt(c,chall_key_guess))
+
     print("--- CHALLENGE STATUS: COMPLETE ---")

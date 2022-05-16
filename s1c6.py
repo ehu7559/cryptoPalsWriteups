@@ -82,23 +82,38 @@ def stripe(data, num_blocks):
     
     return output
 
-#Guesses a single byte out 
-def guess_byte(data_stripe):
-    gb = 0
-    gsc = 0 #Saving this value saves computational time from being used to calculate scores over and over
-    for i in range(128): #Since ASCII is used, only 0->128 need be used. Minor speedup, but still good.
-        isc = score_text(decrypt(data_stripe, [i]))
-        if  isc > gsc:
-            gb = i
-            gsc = isc
-    return gb
+def can_be_ascii(buffer):
+    for a in buffer:
+        if a not in range(127):
+            return False
+    return True
+
+def safe_byte_crack(ciphertext):
+    best_i = 0
+    max_score = 0
+    for i in range(256):
+
+        #Generate the resulting plaintext
+        maybe_plain = bytes([a ^ i for a in ciphertext])
+        
+        #Filter out the unprintables as null-candidates
+        if not can_be_ascii(maybe_plain):
+            continue
+        
+        new_score = score_text(maybe_plain)
+        
+        if new_score >= max_score:
+            best_i = i
+            max_score = new_score
+
+    return best_i
 
 #Key-guessing function
 def guess_key(data, length):
     blocks = stripe(data, length)
     kb = bytearray()
     for bl in blocks:
-        kb.append(guess_byte(bl))
+        kb.append(safe_byte_crack(bl))
     return bytes(kb)
 
 '''

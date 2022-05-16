@@ -1,7 +1,5 @@
 #Cryptopals Challenge 16
-from s1c3 import decrypt
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
-from s2c12 import merge_bytes
 from random import randint
 
 def join_bufs(bufs):
