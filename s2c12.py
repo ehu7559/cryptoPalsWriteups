@@ -1,4 +1,4 @@
-import random
+from random import randint
 from base64 import b64decode
 from s1c7 import encrypt_AES_ECB_128
 from s1c8 import probablyECB
@@ -10,7 +10,7 @@ def generate_oracle(secret_txt):
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
     #Generate constant key and secret-text
-    secret_key = bytes([(random.randint(0,255)) for i in range(16)])
+    secret_key = bytes([(randint(0,255)) for i in range(16)])
     secret_txt = bytes(secret_txt)
     return (lambda atk : encrypt_AES_ECB_128(merge_bytes(atk,secret_txt),secret_key))
 
@@ -58,7 +58,6 @@ def attack_ECB_oracle(target):
     for i in range(num_blocks):
         #print("BLOCKS DECRYPTED: " + str(i))
         for j in range(target_block_size):
-            #print("\tBYTE: " + str(j))
             #block index is i
             #padding size should be (target_block_size - (j + 1))
             pad_size = (target_block_size - (j + 1))

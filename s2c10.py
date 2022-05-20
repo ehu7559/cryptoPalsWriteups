@@ -2,7 +2,7 @@
 
 #Imports
 import base64
-from s1c7 import get_pad,encrypt_block_128,decrypt_block_128
+from s1c7 import get_pad, encrypt_block_128, decrypt_block_128
 
 #Main Encryption Function for CBC mode
 def encrypt_AES_CBC_128(data, aes_key, initialization_vector):

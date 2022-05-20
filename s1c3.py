@@ -1,17 +1,5 @@
-'''
-The hex encoded string:
-
-1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736
-... has been XOR'd against a single character. Find the key, decrypt the message.
-
-You can do this by hand. But don't: write code to do it for you.
-
-How? Devise some method for "scoring" a piece of English plaintext. Character frequency is a good metric. Evaluate each output and choose the one with the best score.
-'''
-
 #helper-method to ensure alphabetical characters only
 forbiddenchars = ""
-
 
 #Scoring Dictionary, inserted manually for legibility
 scores = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 64, 'r': 62, 'd': 44, 'l': 40, 'u': 34, 'c': 30, 'm': 30, 'f': 25, 'w': 20, 'y': 20, 'g': 17, 'p': 17, 'b': 16, 'v': 12, 'k': 8, 'q': 5, 'j': 4, 'x': 4, 'z': 2}

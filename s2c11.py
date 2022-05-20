@@ -1,8 +1,8 @@
 #CHALLENGE 11: ECB/CBC DETECTION ORACLE
 
 #CHALLENGE CODE
-import s1c7 as ecb
-import s2c10 as cbc
+from s1c7 import encrypt_AES_ECB_128
+from s2c10 import encrypt_AES_CBC_128
 from s1c8 import probablyECB
 import random
 
@@ -16,8 +16,8 @@ def oracle_crypt(plain_text, aes_key, init_vec, AES_mode):
     modified_plaintext.extend(rand_pad)
     
     if AES_mode == "CBC":
-        return cbc.encrypt_AES_CBC_128(modified_plaintext, aes_key, init_vec)
-    return ecb.encrypt_AES_ECB_128(modified_plaintext, aes_key)
+        return encrypt_AES_CBC_128(modified_plaintext, aes_key, init_vec)
+    return encrypt_AES_ECB_128(modified_plaintext, aes_key)
 
 def run_test():
     #Generate random 16-bit key and initialization vector.

@@ -116,10 +116,6 @@ def guess_key(data, length):
         kb.append(safe_byte_crack(bl))
     return bytes(kb)
 
-'''
-Lightweight decryption feature
-Can be used for single-character purposes as well.
-'''
 def decrypt(data, key):
     return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
 

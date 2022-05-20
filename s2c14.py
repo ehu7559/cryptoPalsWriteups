@@ -49,7 +49,7 @@ def get_oracle_prefix_len(oracle):
 def pseudo_oracle(oracle):
     #Get length of prefix through get_oracle_prefix_len
     oracle_prefix_len = get_oracle_prefix_len(oracle)
-    #print("ORACLE PREFIX LENGTH PREDICTED TO BE " + str(oracle_prefix_len))
+    
     #Generate new lambda function by adding more padding and splicing.
     mask_pad = bytes([0 for i in range(16 - (oracle_prefix_len % 16))])
 
@@ -67,5 +67,6 @@ if __name__ == "__main__":
     #Attack the new, prefix-less Oracle
     plain_guess = attack_ECB_oracle(fake)
     print(plain_guess.decode("ascii"))
+    
     #Print challenge status
     print("--- CHALLENGE STATUS: COMPLETE ---")
