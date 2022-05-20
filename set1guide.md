@@ -29,7 +29,7 @@ which contain more common characters. One could theoretically change the
 function to normalize the score by dividing by length, but given the nature of
 the challenge, scores are compared only between texts of the same length.
 
-The crackbyte() function actually attempts the challenge.
+The `crackbyte()` function actually attempts the challenge.
 
 --------------------------------------------------------------------------------
 ## Challenge 4: Detect single-character XOR
@@ -59,11 +59,13 @@ between two characters (XOR instead of addition mod 26).
 The function body itself is a literal one-liner. Due to the nature of the XOR
 operator, the decryption function is equivalent to the encryption function.
 
-(a xor b xor b) = a
+`(a xor b xor b) = a`
+
 Proof
+```
 ciphertext byte = (a xor b)
 plaintext byte = (a xor b) xor b = a xor (b xor b)
-
+```
 There's not much to say about this challenge. The description is essentially
 self-explanatory, along with the code.
 
@@ -128,7 +130,7 @@ ADD ROUND KEY: Blocks are XOR'd against a pre-computed quantity based on the key
 ### SUB BYTES:
 Implemented with a lookup table for convenience sake, but is, in
 actuality, also expressible as a matrix multiplication. TO invert it, simply use
-a lookup table that goes the other way. (SB_TABLE[i] = j, INV_SB_TABLE[j] = i)
+a lookup table that goes the other way. (`SB_TABLE[i] = j`, `INV_SB_TABLE[j] = i`)
 
 ### SHIFT ROWS:
 Implemented with a mapping for compactness, but can be expressed
@@ -153,10 +155,10 @@ as a manipulation of a matrix. For the inverse, use the reverse mapping.
 ```
 
 ### MIX COLUMNS:
-Multiplies the block by a very special matrix. (see "mar"). Multiply
+Multiplies the block by a very special matrix. Multiply
 as a normal matrix in GF(2^8). Interestingly, the matrix is such that the the
-inverse is simply the same matrix cubed, making inv_mix_columns() just three
-successive applications of mix_columns()
+inverse is simply the same matrix cubed, making `inv_mix_columns()` just three
+successive applications of `mix_columns()`
 
 ### ADD ROUND KEY:
 Adds a round key derived using the Rijndael key schedule algorithm
@@ -165,21 +167,23 @@ the key is known, but I am just a tad lazy and don't feel like optimizing it, so
 my implementation computes it every time. I hope it will be forgiven in light of
 my otherwise rather elegant and clean code. Also the key schedule is a bit of a
 mess. The inverse is also just XORing the round key, but the INV_ARK operation
-actually performs an inverse_mix_columns on the round key before xoring it. It
+actually performs an `inverse_mix_columns()` on the round key before xor-ing it. It
 will be amusingly beautiful once you realize how symmetric AES really is.
 
-FOR 128
-ENCRYPTION
+### ENCRYPTION
+```
 ADD ROUND_KEY_0
 For i in 0 -> 10:
     sub bytes, shift rows, mix_columns, and add round_key_i
 sub bytes, shift rows, and add round_key 10
-
-Decryption:
+```
+### DECRYPTION:
+```
 Add round_key_10
 for i in 9 -> 0
     inv sub bytes, inv shift rows, inv mix columns, inv add round_key_i
 inv sub bytes, inv shift rows, and add round_key_0
+```
 
 The full specs of AES can be found on Wikipedia. I'm just a little too tired to
 write a full explanation. My code is also rather neatly formatted for this one
