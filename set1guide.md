@@ -1,19 +1,17 @@
-# Write-up Accompaniment to CryptoPals Challenges
---------------------------------------------------------------------------------
+# Write-up Accompaniment to CryptoPals Challenges: Set 1
+
 ## Challenge 1: Convert hex to base64
 
 This challenge is rather simple. We are simply converting hex to base64 encoding
 for this challenge. It's not that hard. Uses the base64 library because it's an
 absolutely essential function.
 
---------------------------------------------------------------------------------
 ## Challenge 2: Fixed XOR
 
 Wrote the function `hex_xor()`, which takes two hex-strings and decodes them
 before performing a bitwise xor of the two buffers with a list comprehension. 
 This is still basic programming.
 
---------------------------------------------------------------------------------
 ## Challenge 3: Single-byte XOR cipher
 
 The third challenge is the first attack on a cryptosystem, albeit an entirely
@@ -31,7 +29,6 @@ the challenge, scores are compared only between texts of the same length.
 
 The `crackbyte()` function actually attempts the challenge.
 
---------------------------------------------------------------------------------
 ## Challenge 4: Detect single-character XOR
 
 The fourth challenge is conceptually a little bit harder than the third, but is
@@ -49,7 +46,6 @@ answer. Thus, I decided to print any ciphertexts which were above a certain
 score according to my own method. Once the threshold is raised high enough to
 reduce as much noise as possible, the answer should be easy to recognize.
 
---------------------------------------------------------------------------------
 ## Challenge 5: Implement repeating-key XOR
 
 This challenge should immediately jump out to anyone who has encountered the
@@ -69,7 +65,6 @@ plaintext byte = (a xor b) xor b = a xor (b xor b)
 There's not much to say about this challenge. The description is essentially
 self-explanatory, along with the code.
 
---------------------------------------------------------------------------------
 ## Challenge 6: Break repeating-key XOR
 
 The Hamming distance function I wrote is clunky but gets the point across. As
@@ -109,7 +104,6 @@ read challenge 3's writeup again.
 After the key-bytes have each been individually computed, the en/de-cryption
 function can be called with this key to decrypt.
 
---------------------------------------------------------------------------------
 ## Challenge 7: AES in ECB mode
 
 This was probably my first "I'm very proud of myself" achievement, as I actually
@@ -193,7 +187,6 @@ boring explanation of it.
 As noted in the code, writing code to encrypt AES ECB was not yet necessary, but
 was very handy in future challenges.
 
---------------------------------------------------------------------------------
 ## Challenge 8: Detect AES in ECB mode
 
 Much, much easier than challenge 7. Look for a ciphertext with a repeated block.
@@ -203,7 +196,6 @@ source of its name: Electronic Code Book. For a given key, ECB is essentially a
 glorified lookup table. Thus, any identical plaintext blocks will then yield
 identical ciphertext blocks, with the same displacement from each other. 
 
---------------------------------------------------------------------------------
 ## Closing Remarks:
 Set 1 is an interesting introduction to practical cryptography. It began with
 extremely basic code but also built upon our ability to do low-level data
