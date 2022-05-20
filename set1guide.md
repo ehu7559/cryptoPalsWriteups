@@ -1,20 +1,20 @@
-Write-up Accompaniment to CryptoPals Challenges
+#Write-up Accompaniment to CryptoPals Challenges
 --------------------------------------------------------------------------------
-Challenge 1: Convert hex to base64
+##Challenge 1: Convert hex to base64
 
 This challenge is rather simple. We are simply converting hex to base64 encoding
 for this challenge. It's not that hard. Uses the base64 library because it's an
 absolutely essential function.
 
 --------------------------------------------------------------------------------
-Challenge 2: Fixed XOR
+##Challenge 2: Fixed XOR
 
-Wrote the function hex_xor() which takes two hex-strings and decodes them before
-performing a bitwise xor of the two buffers with a list comprehension. This is
-still basic programming.
+Wrote the function `hex_xor()`, which takes two hex-strings and decodes them
+before performing a bitwise xor of the two buffers with a list comprehension. 
+This is still basic programming.
 
 --------------------------------------------------------------------------------
-Challenge 3: Single-byte XOR cipher
+##Challenge 3: Single-byte XOR cipher
 
 The third challenge is the first attack on a cryptosystem, albeit an entirely
 easy one. The approach here brute-forces the 256 keys for each ciphertext and
@@ -32,7 +32,7 @@ the challenge, scores are compared only between texts of the same length.
 The crackbyte() function actually attempts the challenge.
 
 --------------------------------------------------------------------------------
-Challenge 4: Detect single-character XOR
+##Challenge 4: Detect single-character XOR
 
 The fourth challenge is conceptually a little bit harder than the third, but is
 also substantially easier to code.
@@ -50,7 +50,7 @@ score according to my own method. Once the threshold is raised high enough to
 reduce as much noise as possible, the answer should be easy to recognize.
 
 --------------------------------------------------------------------------------
-Challenge 5: Implement repeating-key XOR
+##Challenge 5: Implement repeating-key XOR
 
 This challenge should immediately jump out to anyone who has encountered the
 Vigenere cipher. The only real difference is the keyspace and the operation used
@@ -68,7 +68,7 @@ There's not much to say about this challenge. The description is essentially
 self-explanatory, along with the code.
 
 --------------------------------------------------------------------------------
-Challenge 6: Break repeating-key XOR
+##Challenge 6: Break repeating-key XOR
 
 The Hamming distance function I wrote is clunky but gets the point across. As
 with much of this repository, it was written in my downtime at an internship. My
@@ -108,7 +108,7 @@ After the key-bytes have each been individually computed, the en/de-cryption
 function can be called with this key to decrypt.
 
 --------------------------------------------------------------------------------
-Challenge 7: AES in ECB mode
+##Challenge 7: AES in ECB mode
 
 This was probably my first "I'm very proud of myself" achievement, as I actually
 implemented AES by hand. My sole import in challenge 7 was base64 to read the
@@ -125,35 +125,35 @@ MIX COLUMNS: Blocks are multiplied by a matrix in GF(2^8) for diffusion
 ADD ROUND KEY: Blocks are XOR'd against a pre-computed quantity based on the key
 
 
-SUB BYTES was implemented with a lookup table for convenience sake, but is, in
+###SUB BYTES was implemented with a lookup table for convenience sake, but is, in
 actuality, also expressible as a matrix multiplication. TO invert it, simply use
 a lookup table that goes the other way. (SB_TABLE[i] = j, INV_SB_TABLE[j] = i)
 
-SHIFT ROWS was implemented with a mapping for compactness, but can be expressed
+###SHIFT ROWS was implemented with a mapping for compactness, but can be expressed
 as a manipulation of a matrix. For the inverse, use the reverse mapping.
 
-SHIFT ROWS:
+####SHIFT ROWS:
 ```
 0 4 8 c         0 4 8 c
-1 5 9 d  __\    5 9 d 1
-2 6 a e  --/    a e 2 6
+1 5 9 d  -->    5 9 d 1
+2 6 a e         a e 2 6
 3 7 b f         f 3 7 b
 ```
 
-INVERSE SHIFT ROWS:
+####INVERSE SHIFT ROWS:
 ```
 0 4 8 c         0 4 8 c
-1 5 9 d  __\    d 1 5 9
-2 6 a e  --/    a e 2 6
+1 5 9 d  -->    d 1 5 9
+2 6 a e         a e 2 6
 3 7 b f         7 b f 3
 ```
 
-MIX COLUMNS multiplies the block by a very special matrix. (see "mar"). Multiply
+###MIX COLUMNS multiplies the block by a very special matrix. (see "mar"). Multiply
 as a normal matrix in GF(2^8). Interestingly, the matrix is such that the the
 inverse is simply the same matrix cubed, making inv_mix_columns() just three
 successive applications of mix_columns()
 
-ADD ROUND KEY adds a round key derived using the Rijndael key schedule algorithm
+###ADD ROUND KEY adds a round key derived using the Rijndael key schedule algorithm
 to the block mod 2, (yep, it's an XOR). The round-keys can be pre-computed once
 the key is known, but I am just a tad lazy and don't feel like optimizing it, so
 my implementation computes it every time. I hope it will be forgiven in light of
