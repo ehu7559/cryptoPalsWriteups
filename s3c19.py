@@ -57,7 +57,7 @@ def guess_key(ciphertexts):
 #Data retrieval function
 def retrieve_lines(filename):
     with open(filename, "r") as f:
-        return [b64decode(l) for l in f.readlines()]
+        return [bytes(b64decode(l)) for l in f.readlines()]
 
 #Challenge Code
 if __name__ == "__main__":
