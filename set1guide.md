@@ -115,10 +115,10 @@ owe to them a great debt. Without them, I doubt I would have taken an interest
 in cryptology at all.
 
 AES is built of four main steps.
-SUB BYTES: Bytes are swapped out using a lookup table or matrix math
-SHIFT ROWS: Bytes are shifted within a block to avoid reductions to 4-byte block
-MIX COLUMNS: Blocks are multiplied by a matrix in GF(2^8) for diffusion
-ADD ROUND KEY: Blocks are XOR'd against a pre-computed quantity based on the key
+1. SUB BYTES: Bytes are swapped out using a lookup table or matrix math
+2. SHIFT ROWS: Bytes are shifted within a block to avoid reductions to 4-byte block
+3. MIX COLUMNS: Blocks are multiplied by a matrix in GF(2^8) for diffusion
+4. ADD ROUND KEY: Blocks are XOR'd against a pre-computed quantity based on the key
 
 
 ### SUB BYTES:
