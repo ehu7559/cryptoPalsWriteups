@@ -204,3 +204,11 @@ glorified lookup table. Thus, any identical plaintext blocks will then yield
 identical ciphertext blocks, with the same displacement from each other. 
 
 --------------------------------------------------------------------------------
+## Closing Remarks:
+Set 1 is an interesting introduction to practical cryptography. It began with
+extremely basic code but also built upon our ability to do low-level data
+manipulation. In challenge 7, we implemented AES-128 ECB mode in its entirety,
+with no imports except when the challenge's format required us to use `base64`.
+
+I hope this has been interesting so far. At the time of writing, I am currently
+actually working on Set 3, so please read on for more!
