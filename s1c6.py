@@ -1,5 +1,5 @@
 #CONSTANTS AND IMPORTS
-import base64
+from base64 import b64decode
 KEY_SIZE_LIMIT = 100
 FREQS = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 64, 'r': 62, 'd': 44, 'l': 40, 'u': 34, 'c': 30, 'm': 30, 'f': 25, 'w': 20, 'y': 20, 'g': 17, 'p': 17, 'b': 16, 'v': 12, 'k': 8, 'q': 5, 'j': 4, 'x': 4, 'z': 2}
 
@@ -50,7 +50,7 @@ I used for Kasiski analysis during CMSC414 at the University of Maryland.
 
 Thanks to Dr. Marsh and Dr. Manning for teaching me this.
 '''
-def score_key_length_wrap(data,length):
+def score_key_length_wrap(data, length):
     pass #Turns out I decided it wasn't worth the time.
 
 #Looping mechanism for guessing key length
@@ -137,7 +137,7 @@ def retrieve_data(filename):
     sixtyfour = ""
     for l in ls:
         sixtyfour += l.strip()
-    return bytes(base64.b64decode(sixtyfour))
+    return bytes(b64decode(sixtyfour))
     
 #Retrieve data from the challenge file.
 if __name__ == "__main__":    

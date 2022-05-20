@@ -23,10 +23,12 @@ if __name__ == "__main__":
     cryptoracle = get_crypt_oracle()
     plain_texts = retrieve_lines("19.txt")
     cipher_texts = [cryptoracle(p) for p in plain_texts]
+    
     #Attack
     chall_key_guess = challenge_20_attack(cipher_texts)
 
     #Decode and encrypt each text
     for c in cipher_texts:
         safe_print(decrypt(c,chall_key_guess))
+    
     print("--- CHALLENGE STATUS: COMPLETE ---")

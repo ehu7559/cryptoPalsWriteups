@@ -131,16 +131,22 @@ a lookup table that goes the other way. (SB_TABLE[i] = j, INV_SB_TABLE[j] = i)
 
 SHIFT ROWS was implemented with a mapping for compactness, but can be expressed
 as a manipulation of a matrix. For the inverse, use the reverse mapping.
+
 SHIFT ROWS:
+```
 0 4 8 c         0 4 8 c
 1 5 9 d  __\    5 9 d 1
 2 6 a e  --/    a e 2 6
 3 7 b f         f 3 7 b
+```
+
 INVERSE SHIFT ROWS:
+```
 0 4 8 c         0 4 8 c
 1 5 9 d  __\    d 1 5 9
 2 6 a e  --/    a e 2 6
 3 7 b f         7 b f 3
+```
 
 MIX COLUMNS multiplies the block by a very special matrix. (see "mar"). Multiply
 as a normal matrix in GF(2^8). Interestingly, the matrix is such that the the
