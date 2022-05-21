@@ -117,7 +117,7 @@ efficiently brute-force each byte of the ciphertext.
 
 ### Running the Attack
 The challenge code creates an oracle, feeds it to the attack function, and 
-decodes the resulting plaintext guess before printing it as a sign of victory!
+decodes the resulting plaintext guess before printing it as a sign of success.
 
 ### Side note on application:
 For those who would consider this attack a little contrived, I'm not sure I can
@@ -125,9 +125,32 @@ satisfy you, but I would assume that this would likely pop up in certain
 situations involving encrypted cookies containing some user-provided data.
 
 ## Challenge 13: ECB cut-and-paste
+Again taking advantage of ECB's "stateless-ness", we can use encryption oracles
+to craft messages without the key. Due to the block-cipher nature of AES, we
+also need to make sure patch together our desired message from whole blocks.
 
+Our desired plaintext is something like this
+```
+ {
+    email=...
+    uid=1
+    role=admin
+}
+```
+
+With this target plaintext in mind, we can go about crafting messages. First,
+consider what blocks we need:
+
+1. Some blocks with an email, uid, and ending in `"role="`.
+2. A terminating block beginning with `admin` and ending with `}` plus padding.
+
+We can obtain the second one by feeding a specially crafted email address.
+```
+"abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
+```python
 
 ## Challenge 14: Byte-at-a-time ECB decryption (Harder)
+This challenge can be quickly reduced to Challenge 12   
 
 ## Challenge 15: PKCS#7 padding validation
 

@@ -2,17 +2,25 @@
 
 ## Challenge 1: Convert hex to base64
 
+The challenge asks us to convert hex strings to base64.
+
 This challenge is rather simple. We are simply converting hex to base64 encoding
 for this challenge. It's not that hard. Uses the base64 library because it's an
 absolutely essential function.
 
 ## Challenge 2: Fixed XOR
 
+The challenge wants us to implement a function capable of taking two hexadecimal
+strings and returning the result of a bit-wise XORing operation.
+
 Wrote the function `hex_xor()`, which takes two hex-strings and decodes them
 before performing a bitwise xor of the two buffers with a list comprehension. 
 This is still basic programming.
 
 ## Challenge 3: Single-byte XOR cipher
+
+The challenge asks us to decrypt the given plaintext, which has been encrypted
+by XOR-ing each byte of the plaintext with a single, constant byte value.
 
 The third challenge is the first attack on a cryptosystem, albeit an entirely
 easy one. The approach here brute-forces the 256 keys for each ciphertext and
@@ -62,10 +70,13 @@ Proof
 ciphertext byte = (a xor b)
 plaintext byte = (a xor b) xor b = a xor (b xor b)
 ```
+
 There's not much to say about this challenge. The description is essentially
 self-explanatory, along with the code.
 
 ## Challenge 6: Break repeating-key XOR
+
+We are now asked to break this Vigenere-like cipher.
 
 The Hamming distance function I wrote is clunky but gets the point across. As
 with much of this repository, it was written in my downtime at an internship. My
@@ -82,7 +93,9 @@ The procedure is as follows.
 The key length is determined through an application of Kasiski analysis. 
 Kasiski analysis essentially relies on the fact that repetitions of bit/byte
 patterns will occur more commonly at regular intervals which are multiples of
-the key length.
+the key length. Thus, if we compare blocks of ciphertext with other blocks with
+an offset that is an integer multiple of the key length away, then there should
+be a noticably lower Hamming distance between the two blocks.
 
 The simple method suggested by the challenge does not guarantee sufficient
 accuracy on guessing the key length. It is, as noted in the very angry comments

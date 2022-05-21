@@ -11,15 +11,20 @@ def score_text(data):
             points += FREQS[chr(i)]
     return points
 
+def ham_dist_byte(a, b):
+    n1 = a
+    n2 = b
+    output = 0
+    for i in [128, 64, 32, 16, 8, 4, 2, 1]:
+        output += 0 if (n1 >= i) == (n2 >= i) else 1
+        n1 = n1 % i
+        n2 = n2 % i
+    return output
+
 def hamming_distance(buf_a, buf_b):
     output = 0
-    for j in range(min(len(buf_a), len(buf_b))):
-        n1 = int(buf_a[j])
-        n2 = int(buf_b[j])
-        for i in [128, 64, 32, 16, 8, 4, 2, 1]:
-            output += 0 if (n1 >= i) == (n2 >= i) else 1
-            n1 = n1 % i
-            n2 = n2 % i
+    for i in range(min(len(buf_a), len(buf_b))):
+        output += ham_dist_byte(buf_a[i], buf_b[i])
     output += 8 * abs(len(buf_a) - len(buf_b))
     return output
 
@@ -51,8 +56,8 @@ I used for Kasiski analysis during CMSC414 at the University of Maryland.
 Thanks to Dr. Marsh and Dr. Manning for teaching me this.
 '''
 def score_key_length_wrap(data, length):
-    pass #Turns out I decided it wasn't worth the time.
-
+    return sum([ham_dist_byte(data[i], data[(i + length) % len(data)]) for i in range(len(data))])/ (len(data) * 1.0)
+    
 #Looping mechanism for guessing key length
 def guess_key_length(data):
     '''(bytes) -> int'''
@@ -61,7 +66,7 @@ def guess_key_length(data):
     guess = 1
     guess_score = 8     #Literally every bit is different
     for i in range(1,(min(len(data)//2, KEY_SIZE_LIMIT))):
-        sc = score_key_length(data,i)
+        sc = score_key_length_wrap(data,i)
         if sc < guess_score: #Prefer shorter key size (I think it would make for more reliable frequency analysis)
             print("Length: "+str(i) + " \tScore: "+ str(sc))
             guess = i
