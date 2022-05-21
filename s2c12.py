@@ -21,7 +21,7 @@ def get_oracle_block_size(target):
     '''Computes size of a target oracle
     TODO: IMPLEMENT THIS FOR REAL
     Can be done by sending progressively longer pads until the start of the
-    ciphertext is exactly two cycles of a repeated block.
+    ciphertext is exactly two or three cycles of a repeated block.
     '''
     return 16
 
