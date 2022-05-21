@@ -69,7 +69,8 @@ byte, which we will represent here with `?`.
 If we have access to an encryption oracle, however, we can quickly figure out
 what value of `?` produces the ciphertext we are seeking. (This essentially
 cuts the complexity of cryptographic confusion and diffusion baked into each
-block of AES)
+block of AES). We essentially search for what value of `?` yields the ciphertext
+we get when we know `ABCDEFGHIJKLMNO?` is in the plaintext.
 
 As there are only 256 possible values for the byte, we have thus substantially
 reduced the brute-force complexity by many orders of magnitude by brute-forcing
@@ -77,9 +78,37 @@ a byte rather than a 16-byte block all at once.
 
 Now that we have a way to crack a single byte when we know the preceding 15, we
 turn our attention to the question of how one would produce such a situation.
-For this, we use the encryption oracle given in the challenge.
+For this, we use the encryption oracle given in the challenge. By varying the
+length of the data we provide, we can pull exactly 1 unknown byte of the text
+we are trying to crack into a block whose first 15 bytes we know (because we
+either provided them or previously cracked them). Abusing this feature, we can
+brute-force them one at a time. Each byte we crack will be used to crack the
+next byte.
 
-#### Side note:
+### Implementing the attack
+For this challenge, I have written a function `generate_oracle()`, which
+generates a random key and returns an oracle. The oracle takes a bytes argument
+and appends the secret text before encrypting it with a constant but unknown key
+determined by the function. This function will give us the target we attack.
+
+#### Determining whether or not it is ECB
+The challenge states that we must detect whether or not it is indeed using
+ECB encryption. Challenge 8 comes in handy again. We feed the oracle a heavy
+diet consisting of the letter `"A"`, which should reveal the repetition of ECB,
+if the oracle is indeed using it. 
+
+#### Determining block length
+We already know this, but my code has a note on how you could do it. I think it
+would be good to implement, but it honestly seems like more trouble than it is
+worth. I was, after all, excited to finish the challenge.
+
+#### Feeding it specific inputs
+See the `attack_ECB_oracle()` function. For the sake of simplicity, I chose to
+use all null bytes for my padding buffers.
+
+#### Brute-forcing/matching!
+
+### Side note on application:
 For those who would consider this attack a little contrived, I'm not sure I can
 satisfy you, but I would assume that this would likely pop up in certain 
 situations involving encrypted cookies containing some user-provided data.
