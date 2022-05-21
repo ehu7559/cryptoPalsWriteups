@@ -104,9 +104,20 @@ worth. I was, after all, excited to finish the challenge.
 
 #### Feeding it specific inputs
 See the `attack_ECB_oracle()` function. For the sake of simplicity, I chose to
-use all null bytes for my padding buffers.
+use all null bytes for my padding buffers. I pre-computed these ciphertexts for
+the sake of speed and efficiency.
 
 #### Brute-forcing/matching!
+We will then, for each byte within each block, select the appropriate padding
+length. After selecting the block of interest from the corresponding ciphertext,
+we can then use the `enum_oracle()` function to find the value of the byte we
+are brute-forcing. My solution involves a "sliding window" of sorts, keeping
+track of the last 15 known bytes (initially all `0x00`). This allows us to
+efficiently brute-force each byte of the ciphertext.
+
+### Running the Attack
+The challenge code creates an oracle, feeds it to the attack function, and 
+decodes the resulting plaintext guess before printing it as a sign of victory!
 
 ### Side note on application:
 For those who would consider this attack a little contrived, I'm not sure I can
