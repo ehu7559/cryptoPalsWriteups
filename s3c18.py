@@ -41,6 +41,7 @@ def encrypt_AES_CTR(data, key, nonce):
     stream = aes_ctr_keystream(key, nonce)
     return bytes([i ^ next(stream) for i in data])
 
+#Alias for compatibility
 def decrypt_AES_CTR(data, key, nonce):
     return encrypt_AES_CTR(data, key, nonce)
 

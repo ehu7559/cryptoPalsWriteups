@@ -1,7 +1,7 @@
 #CBC Padding Oracle Attack
 
 #Imports
-import base64
+from base64 import b64decode
 from s2c9 import trim_padding
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
 from s2c14 import cipher_blocks
@@ -62,7 +62,7 @@ def attack(oracle, ciphertext, init_vector):
 
 def choose_text():
     with open("17.txt", "r") as f:
-        return bytes(base64.b64decode(choice(f.readlines()).strip()))
+        return bytes(b64decode(choice(f.readlines()).strip()))
 
 def get_challenge():
     #Generate key

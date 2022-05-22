@@ -65,11 +65,12 @@ def attack(oracle):
 
 #Challenge code
 if __name__ == "__main__":
-    oracles = generate_oracles()
-    chall_a = oracles[0]
-    chall_b = oracles[1]
-    if chall_b(attack(chall_a)):
-        print("CORRECT")
-    else:
-        print("WRONG")
+
+    #Get the oracles
+    chall_a, chall_b = generate_oracles()
+
+    #Run challenge and print result
+    sliced_message = attack(chall_a)
+    print("CORRECT" if chall_b(sliced_message) else"WRONG" )
+
     print("--- CHALLENGE STATUS: COMPLETE ---")

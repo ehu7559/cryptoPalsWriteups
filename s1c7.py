@@ -1,5 +1,5 @@
 #AES-ECB Implementation
-'''My thanks to Drs. Nathan Manning and Jonathan Katz 
+'''My thanks to Drs. Nathan Manning and Jonathan Katz
 
 This was done by hand for educational reasons. This is by no means an efficient
 implementation (although efforts have been made to make this as streamlined as
@@ -20,7 +20,7 @@ of course, related. It is therefore most sensible to place them here.
 '''
 
 #Imports
-import base64
+from base64 import b64decode
 
 #Constants and lookup tables
 ROUNDS = {128 : 10, 192 : 12, 256 : 14}
@@ -174,6 +174,8 @@ def decrypt_block_128(block, aes_key):
 #Main Encryption Function for ECB128
 def encrypt_AES_ECB_128(data, aes_key):
     output = bytearray()
+    
+    #Pad the data if necessary
     pad = get_pad(len(data))
     working = bytearray()
     for b in data:
@@ -181,6 +183,7 @@ def encrypt_AES_ECB_128(data, aes_key):
         if len(working) == 16:
             output.extend(encrypt_block_128(bytes(working), aes_key))
             working = bytearray()
+    
     working.extend(pad) #Pad for final block
     output.extend(encrypt_block_128(bytes(working), aes_key))
 
@@ -197,15 +200,15 @@ def decrypt_AES_ECB_128(data, aes_key):
     for i in range(num_blocks):
         output.extend(decrypt_block_128(data[16 * i: 16 * (i + 1)], aes_key))
         
-    #Trim
+    #Trim the padding
     to_trim = output[-1]
     for i in range(to_trim):
         if output.pop() not in [to_trim, 0]: #Check that value of pad is still valid
             print("ERROR: PADDING IS NOT COMPLIANT WITH PKCS#7")
     
-    #Return
     return bytes(output)
     
+#Challenge Data Retrieval
 def retrieve_data(filename):
     '''(string) -> bytes'''
     f = open(filename, "r")
@@ -215,7 +218,7 @@ def retrieve_data(filename):
     output = bytearray()
     
     for line in ls:
-        output.extend(base64.b64decode(line.strip()))
+        output.extend(b64decode(line.strip()))
     return bytes(output)
 
 #Main Function:
@@ -225,8 +228,6 @@ def challenge():
     plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
     print(plain_bytes.decode("ascii"))
 
-DOING_CHALLENGE = True
 
 if __name__ == "__main__":
-    if DOING_CHALLENGE:
-        challenge()
+    challenge()

@@ -1,8 +1,10 @@
 #Challenge 2
 
+#Converts the two hexadecimal strings to bytes and XORs them
 def hex_xor(a_hex, b_hex):
     return buf_xor(bytes.fromhex(a_hex), bytes.fromhex(b_hex))
 
+#Bitwise XOR for two buffers
 def buf_xor(a, b):
     return bytes([(x ^ y) for x, y in zip(a,b)])
 

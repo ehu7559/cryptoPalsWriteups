@@ -53,6 +53,7 @@ def decrypt(cipherbytes, keybyte):
 def encrypt(plainbytes, keybyte):
     return decrypt(plainbytes, keybyte)
 
+#Function for actually cracking a given ciphertext
 def crackbyte(hex_string):
     
     cipher_raw = bytes.fromhex(hex_string)
@@ -68,6 +69,7 @@ def crackbyte(hex_string):
     for c in candidates:
         print(c + " \t" + str(sum_score(c)))
 
+#Challenge code
 if __name__ == "__main__":
     crackbyte("1b37373331363f78151b7f2b783431333d78397828372d363c78373e783a393b3736")
     print("--- CHALLENGE STATUS: COMPLETE ---")
