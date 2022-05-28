@@ -131,7 +131,7 @@ also need to make sure patch together our desired message from whole blocks.
 
 Our desired plaintext is something like this
 ```
- {
+{
     email=...
     uid=1
     role=admin
@@ -145,13 +145,83 @@ consider what blocks we need:
 2. A terminating block beginning with `admin` and ending with `}` plus padding.
 
 We can obtain the second one by feeding a specially crafted email address.
+
 ```
 "abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
-```python
+```
 
 ## Challenge 14: Byte-at-a-time ECB decryption (Harder)
-This challenge can be quickly reduced to Challenge 12   
+This challenge can be quickly reduced to Challenge 12 through a proxy of sorts
+after determining the length of the front-padding.
+
+### Step 1: Determining padding length:
+To determine how long the prepending pad is, we c
+
+### Step 2: Create a middle-man/proxy
+To reduce code duplication, we can create a challenge oracle that finds the
+prepend length and pads it to a whole block. Since ECB is, as stated before,
+stateless, we are then left with a known (or at least quickly computable) number
+of whole blocks followed by what is essentially the oracle from Challenge 12.
+
+We can then create our own lambda which takes the input, prepends the right
+number of garbage bytes to separate it from the prepend padding, and then
+trims the garbage blocks from the front before returning it.
+
+Those who did well in their college algorithms courses should see what's going
+on immediately. (Hooray for reductions!)
+
+### Step 3: Attack this new proxy
+We attack the new proxy in exactly the same way we did in Challenge 12. The
+attack methods are the same.
+
+### Closing Remark:
+This problem didn't so much introduce a new attack as it introduced a small
+confounding variable that could be reliably overcome by a programmer with a
+thorough understanding of ECB's properties.
 
 ## Challenge 15: PKCS#7 padding validation
+Honestly, I'm not entirely sure why this was its own challenge rather than a
+subproblem of Challenge 17 (which is probably the one thing it's actually used
+for. This one is a relatively easy one, especially if you happened to include
+padding validation in your implementation of AES in challenge 7.
 
 ## Challenge 16: CBC bitflipping attacks
+This one is another interesting (if somewhat odd) attack.
+
+The point of this attack is to alter the plaintext through manipulation of the
+ciphertext in the absence of the key.
+
+### What mechanism can we use?
+The problem actually answers this question for us (which, I suppose, is part of
+its educational purpose). We are able to edit the ciphertext through a
+bit-flipping attack.
+
+### Some theory/explanations for clarity
+The distinguishing feature of CBC mode is that each block of plaintext is XORed
+against the previous block of ciphertext before encrypting. During decryption,
+the decrypted output would then be XORed against that same ciphertext block to
+obtain the plaintext. 
+
+The point is, then, that one can control a bit of obtained plaintext by using
+the corresponding bit of the previous block. Flipping a bit in the previous
+ciphertext block will thus also flip the corresponding plaintext bit.
+
+This does, however, have the unfortunate side effect of entirely scrambling 
+the edited block.
+
+### How can we use it?
+Well, given that we can insert an arbitrarily long block into the oracle, and
+that we are given back the ciphertext, we can craft a block with any desired
+substring in it. Due to the limitations of this attack, our task mercifully
+asks us to create a relatively short message.
+
+By feeding it a relatively long but otherwise innocuous message, say,
+
+`"aaaaaaaaaaaaa...aaaa"`
+
+we can then manipulate the block before it (we know the length of the prefix) to
+flip the appropriate bits to change it to any desired message.
+
+## Set 2 Closing Remarks:
+This set was essentially a crash course of AES block cipher attacks. Honestly,
+this was probably the most fun I have had in some time. 
