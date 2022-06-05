@@ -49,9 +49,8 @@ def get_oracle_prefix_len(oracle):
 def pseudo_oracle(oracle):
     #Get length of prefix through get_oracle_prefix_len
     oracle_prefix_len = get_oracle_prefix_len(oracle)
-    
     #Generate new lambda function by adding more padding and splicing.
-    mask_pad = bytes([0 for i in range(16 - (oracle_prefix_len % 16))])
+    mask_pad = bytes(16 - (oracle_prefix_len % 16))
 
     #Generate middle oracle.
     return (lambda x : (oracle(merge_bytes(mask_pad, x)))[oracle_prefix_len + len(mask_pad):])

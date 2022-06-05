@@ -150,12 +150,25 @@ We can obtain the second one by feeding a specially crafted email address.
 "abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
 ```
 
+We also need to find an email of the correct length to get the first part.
+
+We can then cut these and paste them together to form our desired JSON.
+
 ## Challenge 14: Byte-at-a-time ECB decryption (Harder)
 This challenge can be quickly reduced to Challenge 12 through a proxy of sorts
 after determining the length of the front-padding.
 
 ### Step 1: Determining padding length:
-To determine how long the prepending pad is, we c
+To determine how long the prepending pad is, we first send the oracle an empty
+string, which gives us a baseline against which to compare other outputs.
+
+We can then feed the oracle an arbitrary non-empty string to encrypt. Comparing
+the two ciphertexts, we can find, to the nearest block (16 bytes), the length of
+the prepend pad. 
+
+By then progressively adding bytes to our prepend pad (my code uses null) and
+waiting for two blocks to appear identically (using ECB!), corresponding to the
+`two_blocks` 32-byte string to determine the exact length of the prepend pad.  
 
 ### Step 2: Create a middle-man/proxy
 To reduce code duplication, we can create a challenge oracle that finds the
@@ -171,7 +184,7 @@ Those who did well in their college algorithms courses should see what's going
 on immediately. (Hooray for reductions!)
 
 ### Step 3: Attack this new proxy
-We attack the new proxy in exactly the same way we did in Challenge 12. The
+We attack the new oracle in exactly the same way we did in Challenge 12. The
 attack methods are the same.
 
 ### Closing Remark:
