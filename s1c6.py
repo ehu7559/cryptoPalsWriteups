@@ -65,10 +65,10 @@ def guess_key_length(data):
         return len(data)    
     guess = 1
     guess_score = 8     #Literally every bit is different
-    for i in range(1,(min(len(data)//2, KEY_SIZE_LIMIT))):
+    for i in range(1,(min(len(data) // 2, KEY_SIZE_LIMIT))):
         sc = score_key_length_wrap(data,i)
         if sc < guess_score: #Prefer shorter key size (I think it would make for more reliable frequency analysis)
-            print("Length: "+str(i) + " \tScore: "+ str(sc))
+            print("Length: " + str(i) + " \tScore: "+ str(sc))
             guess = i
             guess_score = sc    
     return guess

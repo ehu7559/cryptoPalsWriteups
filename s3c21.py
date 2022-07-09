@@ -48,7 +48,7 @@ class Mersenne_Twister:
     #Initialization Function
     def initialize_state(self):
         #Use seed to initialize the state buffer
-
+        pass
 
 
     

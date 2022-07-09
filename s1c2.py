@@ -6,7 +6,7 @@ def hex_xor(a_hex, b_hex):
 
 #Bitwise XOR for two buffers
 def buf_xor(a, b):
-    return bytes([(x ^ y) for x, y in zip(a,b)])
+    return bytes([(x ^ y) for x, y in zip(a, b)])
 
 
 '''the kid don't play'''

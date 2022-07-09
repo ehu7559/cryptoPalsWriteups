@@ -14,6 +14,11 @@ def generate_oracle(secret_txt):
     secret_txt = bytes(secret_txt)
     return (lambda atk : encrypt_AES_ECB_128(merge_bytes(atk,secret_txt),secret_key))
 
+def compute_gcd(a, b):
+    '''Simple way of implementing block size detection'''
+    if b > a:
+        return compute_gcd(b,a)
+    return b if a % b == 0 else compute_gcd(b, a % b)
 def is_oracle_ECB(target):
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
@@ -23,7 +28,11 @@ def get_oracle_block_size(target):
     Can be done by sending progressively longer pads until the start of the
     ciphertext is exactly two or three cycles of a repeated block.
     '''
-    return 16
+    initial_length = len(target(bytes(0)))
+    extender = 0
+    while len(target(bytes(extender))) == initial_length:
+        extender += 1
+    return compute_gcd(initial_length, len(target(bytes(extender))))
 
 def enum_oracle(header, target_oracle, desired_block):
     for i in range(256):
@@ -74,6 +83,7 @@ def attack_ECB_oracle(target):
             
             #Append the byte to the output
             output.append(new_byte)
+            print(chr(new_byte))
     
     #Trim it down
     end_pad_size = output[-1]
