@@ -16,7 +16,7 @@ While only decryption was required for this challenge, I elected to include the
 code for encryption as well to make for easy importing of AES ECB methods (and
 by extension any other mode of AES). The encryption functions are best placed
 here given that I technically learned them first and that the two processes are,
-of course, related. It is therefore most sensible to place them here.
+of course, related. They will also be used in later challenges.
 '''
 
 #Imports
