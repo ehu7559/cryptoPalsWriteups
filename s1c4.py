@@ -4,14 +4,14 @@ FREQS = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 64
 MIN_SCORE = 1200
 
 #Simple summation method. should work for texts of the same length 
-def score_text(data):
+def score_text(data : str) -> int :
     points = 0
     for i in data:
         if i in range(128) and chr(i) in FREQS.keys():
             points += FREQS[chr(i)]
     return points
 
-def crack_byte(data):
+def crack_byte(data: str) -> None:
     for i in range(128):
         ptxt = decrypt(bytes.fromhex(data),i)
         sc = score_text(ptxt)
@@ -19,7 +19,7 @@ def crack_byte(data):
             print(ptxt.decode('ascii').strip())
 
 #Challenge Data retrieval
-def retrieve_data():
+def retrieve_data() -> list[str]:
     with open('4.txt',"r") as f:
         return f.readlines()
 

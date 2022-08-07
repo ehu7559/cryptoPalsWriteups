@@ -2,7 +2,6 @@
 
 #Imports
 from s2c10 import decrypt_AES_CBC_128
-from s2c16 import  oracle_16_a
 
 #Validation function
 def is_valid_ciphertext(data, key, iv):

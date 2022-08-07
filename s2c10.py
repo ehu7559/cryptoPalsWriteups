@@ -1,11 +1,11 @@
 #AES-CBC Implementation
 
 #Imports
-import base64
+from base64 import b64decode
 from s1c7 import get_pad, encrypt_block_128, decrypt_block_128
 
 #Main Encryption Function for CBC mode
-def encrypt_AES_CBC_128(data, aes_key, initialization_vector):
+def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes):
     output = bytearray()
     pad = get_pad(len(data))
     working = bytearray()
@@ -24,7 +24,7 @@ def encrypt_AES_CBC_128(data, aes_key, initialization_vector):
     return bytes(output)
 
 #Main Decryption Functions
-def decrypt_AES_CBC_128(data, aes_key, initialization_vector):
+def decrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes):
 
     #BLOCKS: Much more efficient thanks to known block parity
     num_blocks = len(data)//16
@@ -53,7 +53,7 @@ def retrieve_data(filename):
     output = bytearray()
     
     for line in ls:
-        output.extend(base64.b64decode(line.strip()))
+        output.extend(b64decode(line.strip()))
     return bytes(output)
 
 #Main Function:

@@ -1,17 +1,12 @@
 #CONSTANTS AND IMPORTS
 from base64 import b64decode
+from s1c4 import score_text
 KEY_SIZE_LIMIT = 100
 FREQS = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 64, 'r': 62, 'd': 44, 'l': 40, 'u': 34, 'c': 30, 'm': 30, 'f': 25, 'w': 20, 'y': 20, 'g': 17, 'p': 17, 'b': 16, 'v': 12, 'k': 8, 'q': 5, 'j': 4, 'x': 4, 'z': 2}
 
 #Simple summation method. should work for texts of the same length 
-def score_text(data):
-    points = 0
-    for i in data:
-        if i in range(128) and chr(i) in FREQS.keys():
-            points += FREQS[chr(i)]
-    return points
 
-def ham_dist_byte(a, b):
+def ham_dist_byte(a: int, b: int) -> int:
     n1 = a
     n2 = b
     output = 0
@@ -21,7 +16,7 @@ def ham_dist_byte(a, b):
         n2 = n2 % i
     return output
 
-def hamming_distance(buf_a, buf_b):
+def hamming_distance(buf_a: bytes, buf_b: bytes) -> int:
     output = 0
     for i in range(min(len(buf_a), len(buf_b))):
         output += ham_dist_byte(buf_a[i], buf_b[i])
@@ -30,7 +25,7 @@ def hamming_distance(buf_a, buf_b):
 
 '''
 This function is incredibly slow, but yields a far higher confidence in the
-resulting kasiski analysis. The suggested method of using a single block size to
+resulting Kasiski analysis. The suggested method of using a single block size to
 check this is broken as fuck, especially given shorter key sizes' susceptibility
 to the biases found in the beginning of the text.
 
@@ -41,7 +36,7 @@ to resolve (as 5 and 29 are coprime). This problem led to much filtering on
 printable characters. What a pain this problem was, all thanks to this goddamn
 function!
 '''
-def score_key_length(data, length):
+def score_key_length(data: bytes, length: int) -> int:
     avg_hamming_score = 0
     for i in range(len(data) // length):
         for j in range(i + 1, len(data) // length):
@@ -55,11 +50,11 @@ I used for Kasiski analysis during CMSC414 at the University of Maryland.
 
 Thanks to Dr. Marsh and Dr. Manning for teaching me this.
 '''
-def score_key_length_wrap(data, length):
+def score_key_length_wrap(data: bytes, length: int) -> int:
     return sum([ham_dist_byte(data[i], data[(i + length) % len(data)]) for i in range(len(data))])/ (len(data) * 1.0)
     
 #Looping mechanism for guessing key length
-def guess_key_length(data):
+def guess_key_length(data: bytes) -> int:
     '''(bytes) -> int'''
     if len(data) < 2:
         return len(data)    
@@ -74,7 +69,7 @@ def guess_key_length(data):
     return guess
 
 #Striping mechanism 
-def stripe(data, num_blocks):
+def stripe(data: bytes, num_blocks: int) -> list[bytes]:
     output = []
     
     #Initialize
@@ -87,13 +82,13 @@ def stripe(data, num_blocks):
     
     return output
 
-def can_be_ascii(buffer):
+def can_be_ascii(buffer: bytes) -> bool:
     for a in buffer:
         if a not in range(127):
             return False
     return True
 
-def safe_byte_crack(ciphertext):
+def safe_byte_crack(ciphertext: bytes) -> int:
     best_i = 0
     max_score = 0
     for i in range(256):
@@ -114,17 +109,17 @@ def safe_byte_crack(ciphertext):
     return best_i
 
 #Key-guessing function
-def guess_key(data, length):
+def guess_key(data: bytes, length: int) -> bytes:
     blocks = stripe(data, length)
     kb = bytearray()
     for bl in blocks:
         kb.append(safe_byte_crack(bl))
     return bytes(kb)
 
-def decrypt(data, key):
+def decrypt(data: bytes, key: bytes) -> bytes:
     return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
 
-def crack(data):
+def crack(data: bytes) -> str:
     print("Guessing Key Length...")
     key_length_guess = guess_key_length(data)
     print("Key Length: " + str(key_length_guess))

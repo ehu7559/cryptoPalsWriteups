@@ -4,10 +4,10 @@
 from s1c7 import encrypt_AES_ECB_128
 from s2c10 import encrypt_AES_CBC_128
 from s1c8 import probablyECB
-import random
+from random import randint, choice
 
 def oracle_crypt(plain_text, aes_key, init_vec, AES_mode):
-    random_padding_length = random.randint(5,10)
+    random_padding_length = randint(5,10)
     rand_pad = bytes([ord("x") for i in range(random_padding_length)])
     
     modified_plaintext = bytearray()
@@ -22,10 +22,10 @@ def oracle_crypt(plain_text, aes_key, init_vec, AES_mode):
 def run_test():
     #Generate random 16-bit key and initialization vector.
     chosen_plain_text = bytes("A" * 256, "ascii")
-    rand_key = bytes([(random.randint(0,255)) for i in range(16)])
-    init_vector = bytes([(random.randint(0,255)) for i in range(16)])
+    rand_key = bytes([(randint(0,255)) for i in range(16)])
+    init_vector = bytes([(randint(0,255)) for i in range(16)])
     #Select mode of operation randomly
-    operation_mode = random.choice(["ECB","CBC"])
+    operation_mode = choice(["ECB","CBC"])
     
     #Encrypt the given plaintext through the oracle
     oracle_out = oracle_crypt(chosen_plain_text,rand_key,init_vector,operation_mode)

@@ -37,19 +37,19 @@ ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])  #P
   
 #FUNCTIONS FOR AES
 #Sub bytes
-def sub_bytes(block):
+def sub_bytes(block: bytes) -> bytes:
     return bytes([(SB_TABLE[block[i]]) for i in range(16)])
 
 #Inverse sub bytes
-def inv_sub_bytes(block):
+def inv_sub_bytes(block: bytes) -> bytes:
     return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
 
 #Shift rows
-def shift_rows(block):
+def shift_rows(block: bytes) -> bytes:
     return bytes([(block[SR_TABLE[i]]) for i in range(16)])
 
 #Inverse shift rows
-def inv_shift_rows(block):
+def inv_shift_rows(block: bytes) -> bytes:
     return bytes([(block[INV_SR_TABLE[i]]) for i in range(16)])
     
 #HELPER METHOD TO MULTIPLY FOR MIX_COLUMNS
@@ -63,7 +63,7 @@ def multiply(b,a):
         return tmp^a if a < 128 else (tmp^0x1b)^a
 
 #Mix Columns
-def mix_columns(block):
+def mix_columns(block: bytes) -> bytes:
     #initialize constants
     output = bytearray(16)
     mar = [2, 1, 1, 3, 3, 2, 1, 1, 1, 3, 2, 1, 1, 1, 3, 2]
@@ -78,16 +78,16 @@ def mix_columns(block):
     return bytes(output)
 
 #Inverse mix columns
-def inv_mix_columns(block):
+def inv_mix_columns(block: bytes) -> bytes:
     '''Inverse of MixColumns, takes advantage of math'''
     return mix_columns(mix_columns(mix_columns(block)))
 
 #Add Round Key
-def add_round_key(block, round_key):
+def add_round_key(block: bytes, round_key: bytes) -> bytes:
     return bytes([(block[i] ^ round_key[i]) for i in range(16)])
 
 #Invert add round key
-def inv_add_round_key(block, round_key):
+def inv_add_round_key(block: bytes, round_key: bytes) -> bytes:
     return add_round_key(block, inv_mix_columns(round_key))
 
 #PKCS7 Padding as per RFC 5652, given length of data to encrypt.
@@ -96,7 +96,7 @@ def get_pad(length):
     return bytes([(pad_length) for i in range(pad_length)])
 
 #Round Key Extension Function
-def run_key_schedule(keybytes):
+def run_key_schedule(keybytes: bytes) -> list[bytes]:
     #initialize key schedule column
     key_columns = [(keybytes[i * 4: (i + 1) * 4]) for i in range(4)]
 
@@ -118,7 +118,7 @@ def run_key_schedule(keybytes):
         key_columns.append(bytes([(new_column[j] ^ prev_column[j]) for j in range(4)]))  
     return key_columns
 
-def get_round_keys(initial_key):
+def get_round_keys(initial_key: bytes) -> list[bytes]:
     #Generate the Rijndael Key Schedule and then chunkify it.
     key_table = run_key_schedule(initial_key)
     round_key_list = []
@@ -130,20 +130,20 @@ def get_round_keys(initial_key):
     return round_key_list
 
 #Rounds functions. Saves some code.
-def encrypt_round(block, round_key):
+def encrypt_round(block: bytes, round_key: bytes) -> bytes:
     return add_round_key(mix_columns(shift_rows(sub_bytes(block))),round_key)
 
-def decrypt_round(block, round_key):
+def decrypt_round(block: bytes, round_key: bytes) -> bytes:
     return inv_add_round_key(inv_mix_columns(inv_shift_rows(inv_sub_bytes(block))),round_key)
 
-def encrypt_final_round(block, round_key):
+def encrypt_final_round(block: bytes, round_key: bytes) -> bytes:
     return add_round_key(shift_rows(sub_bytes(block)),round_key)
 
-def decrypt_final_round(block, round_key):
+def decrypt_final_round(block: bytes, round_key: bytes) -> bytes:
     return add_round_key(inv_shift_rows(inv_sub_bytes(block)),round_key)
 
 #Block Encryption Function (Can be used for any mode such as ECB, CBC, or CTR)
-def encrypt_block_128(block, aes_key):
+def encrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
     #Get the round keys
     round_keys = get_round_keys(aes_key)
     
@@ -157,7 +157,7 @@ def encrypt_block_128(block, aes_key):
     #Final round (with canonical missing mix_columns operation.
     return encrypt_final_round(output, round_keys[10])
 
-def decrypt_block_128(block, aes_key):
+def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
 
     #Get the round keys
     round_keys = get_round_keys(aes_key)
@@ -172,7 +172,7 @@ def decrypt_block_128(block, aes_key):
     return decrypt_final_round(output,round_keys[0])
     
 #Main Encryption Function for ECB128
-def encrypt_AES_ECB_128(data, aes_key):
+def encrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
     output = bytearray()
     
     #Pad the data if necessary
@@ -185,12 +185,12 @@ def encrypt_AES_ECB_128(data, aes_key):
             working = bytearray()
     
     working.extend(pad) #Pad for final block
-    output.extend(encrypt_block_128(bytes(working), aes_key))
+    output.extend(encrypt_block_128(bytes(working), aes_key)) #Encrypt the last block
 
     return bytes(output)
 
 #Main Decryption Functions
-def decrypt_AES_ECB_128(data, aes_key):
+def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
 
     #BLOCKS: Much more efficient thanks to known block parity
     num_blocks = len(data)//16

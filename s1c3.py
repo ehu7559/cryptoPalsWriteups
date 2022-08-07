@@ -5,26 +5,26 @@ forbiddenchars = ""
 scores = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 64, 'r': 62, 'd': 44, 'l': 40, 'u': 34, 'c': 30, 'm': 30, 'f': 25, 'w': 20, 'y': 20, 'g': 17, 'p': 17, 'b': 16, 'v': 12, 'k': 8, 'q': 5, 'j': 4, 'x': 4, 'z': 2}
 
 #Simple summation method. should work for texts of the same length 
-def sanitize(txt):
+def sanitize(txt: str) -> str:
     output = ""
     for c in txt.lower():
         if c in scores.keys():
             output += c
     return output
 
-def sum_score(txt):
+def sum_score(txt: str) -> int:
     points = 0
     for i in sanitize(txt):
         points += scores[i]
     return points
 
-def printable(raw_text):
+def printable(raw_text: bytes) -> bool:
     for i in bytes(raw_text):
         if (i < 32 or i > 127) or chr(i) in forbiddenchars:
             return False
     return True
 
-def ranked_plaintexts(raws):
+def ranked_plaintexts(raws: list[bytes]) -> list[str]:
     #score printable outputs
     scorechart = {}
     for traw in raws:
@@ -46,15 +46,15 @@ def ranked_plaintexts(raws):
     
     return output
 
-def decrypt(cipherbytes, keybyte):
+def decrypt(cipherbytes: bytes, keybyte: int) -> bytes: 
     return bytes([(bite ^ keybyte) for bite in cipherbytes])
 
 #This is left here just for completeness' sake. it's just an alias.
-def encrypt(plainbytes, keybyte):
+def encrypt(plainbytes: bytes, keybyte: int)-> bytes:
     return decrypt(plainbytes, keybyte)
 
 #Function for actually cracking a given ciphertext
-def crackbyte(hex_string):
+def crackbyte(hex_string: str) -> None:
     
     cipher_raw = bytes.fromhex(hex_string)
 

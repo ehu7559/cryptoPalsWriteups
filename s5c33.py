@@ -3,7 +3,7 @@
 #Much faster, more compact, and very very efficient.
 def mod_exp(b, x, n):
     '''Computes residue class b ** x mod n, where all are non-negative integers'''
-    #I know you can just use pow, but this is MY implementation! 
+    #I know you can just use pow, but this is MY implementation! (and just as fast) 
     if x == 0:
         return 1 #Simple catch case
     acc = 1 #accumulator
@@ -14,3 +14,16 @@ def mod_exp(b, x, n):
         curr_pow = (curr_pow ** 2) % n
         x = x // 2
     return acc
+
+
+#Actual function
+def do_diffie_hellman():
+    #Select prime
+
+    #Select secrets
+
+    #Compute shared secret
+    pass
+
+if __name__ == "__main__":
+    pass

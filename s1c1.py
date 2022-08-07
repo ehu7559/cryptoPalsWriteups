@@ -1,7 +1,7 @@
 from base64 import b64encode #Imports the b64 encoding
 
 #Hexadecimal --> Base64 function
-def hex_to_base64(hex_string):
+def hex_to_base64(hex_string: str) -> bytes:
     '''str -> str\nConverts a hex string to base64 string.'''
     return b64encode(bytes.fromhex(hex_string))
 

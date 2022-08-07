@@ -163,7 +163,7 @@ as a manipulation of a matrix. For the inverse, use the reverse mapping.
 
 ### MIX COLUMNS:
 Multiplies the block by a very special matrix. Multiply
-as a normal matrix in GF(2^8). Interestingly, the matrix is such that the the
+as a normal matrix in GF(2^8). Interestingly, the matrix is such that the 
 inverse is simply the same matrix cubed, making `inv_mix_columns()` just three
 successive applications of `mix_columns()`
 

@@ -1,6 +1,6 @@
 #Get lines
 
-def probablyECB(data):
+def probablyECB(data: bytes) -> bool:
     blocks = []
     num_blocks = len(data) //16
 
