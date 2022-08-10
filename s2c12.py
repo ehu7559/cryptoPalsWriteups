@@ -3,22 +3,21 @@ from base64 import b64decode
 from s1c7 import encrypt_AES_ECB_128
 from s1c8 import probablyECB
 
-def merge_bytes(a,b):
-    return b''.join([bytes(a),bytes(b)])
 
-def generate_oracle(secret_txt):
+def generate_oracle(secret_txt: bytes) :
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
     #Generate constant key and secret-text
     secret_key = bytes([(randint(0,255)) for i in range(16)])
     secret_txt = bytes(secret_txt)
-    return (lambda atk : encrypt_AES_ECB_128(merge_bytes(atk,secret_txt),secret_key))
+    return (lambda atk : encrypt_AES_ECB_128(b''.join([atk,secret_txt]),secret_key))
 
-def compute_gcd(a, b):
-    '''Simple way of implementing block size detection'''
+def compute_gcd(a: int , b: int) -> int:
+    '''Simple way of implementing block size detection using Extended Euclidian Algorithm, grabbed from my coursework :)'''
     if b > a:
         return compute_gcd(b,a)
     return b if a % b == 0 else compute_gcd(b, a % b)
+
 def is_oracle_ECB(target):
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
@@ -36,7 +35,7 @@ def get_oracle_block_size(target):
 
 def enum_oracle(header, target_oracle, desired_block):
     for i in range(256):
-        ith_plain = merge_bytes(header, bytes([i]))
+        ith_plain = b''.join([header, bytes([i])])
         ith_block = extract_block(target_oracle(ith_plain), 0, len(header) + 1)
         if ith_block == desired_block:
             return i

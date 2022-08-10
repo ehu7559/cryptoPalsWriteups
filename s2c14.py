@@ -4,7 +4,7 @@
 from random import randint
 from base64 import b64decode
 from s1c7 import encrypt_AES_ECB_128 
-from s2c12 import merge_bytes, attack_ECB_oracle #Bytes-object merger
+from s2c12 import attack_ECB_oracle #Bytes-object merger
 
 #Generate Class 14 ECB Oracle
 def gen_oracle_14(secret_text):
@@ -14,7 +14,7 @@ def gen_oracle_14(secret_text):
     prefix_len = randint(0,255)
     prefix_data = bytes([randint(0,255) for i in range(prefix_len)])
     #Generate oracle
-    return (lambda atk : encrypt_AES_ECB_128((merge_bytes(merge_bytes(prefix_data, atk),secret_data)),secret_key))
+    return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk,secret_data])),secret_key))
     
 def cipher_blocks(ciphertext):
     return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]
@@ -39,7 +39,7 @@ def get_oracle_prefix_len(oracle):
     two_blocks = bytes([255 for i in range(32)])
     trailing_mod = 0
     while True:
-        enum_blocks = cipher_blocks(oracle(merge_bytes(bytes(16 - trailing_mod), two_blocks)))
+        enum_blocks = cipher_blocks(oracle(b''.join([bytes(16 - trailing_mod), two_blocks])))
         if enum_blocks[num_full_blocks + 1] == enum_blocks[num_full_blocks + 2]:
             break
         trailing_mod += 1
@@ -53,7 +53,7 @@ def pseudo_oracle(oracle):
     mask_pad = bytes(16 - (oracle_prefix_len % 16))
 
     #Generate middle oracle.
-    return (lambda x : (oracle(merge_bytes(mask_pad, x)))[oracle_prefix_len + len(mask_pad):])
+    return (lambda x : (oracle(b''.join([mask_pad, x]))[oracle_prefix_len + len(mask_pad)]))
     
 #Challenge code
 if __name__ == "__main__":

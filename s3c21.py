@@ -1,55 +1,59 @@
 #Implement the Mersenne Twister
 
-class MT_UTIL:
+def bytes_to_uint(buffer):
+    buf = bytearray(buffer)
+    acc = 0
+    curr = 1
+    while len(buf) > 0:
+        acc += buf.pop() * curr
+        curr *= 256
+    return acc
 
-    def xor_bit(a,b):
-        return str(int(a) ^ int(b))
+def hex_to_uint(hex):
+    return bytes_to_uint(bytes.fromhex(hex))
 
-    def bitstring_xor(a,b):
-        output = ""
-        for i in range(len(a)):
-            output += MT_UTIL.xor_bit(a[i],b[i])
-        return output
-
-class Mersenne_Twister:
-    '''
-    M19937 PARAMETERS:
-    (w, n, m, r) = (32, 624, 397, 31)
-    a = 0x9908B0DF
-    (u, d) = (11, 0xFFFFFFFF) <-- Wikipedia indicates that "32-bit implementations of the Mersenne Twister generally have d = FFFFFFFF_16. As a result, the d is occasionally omitted from the algorithm description, since the bitwise AND with d in that case has no effect. 
-    (s, b) = (7, 0x9D2C5680)
-    (t, c) = (15, 0xEFC60000)
-    l = 18
-    '''
-
-    MT19937_PARAMS = [(32, 624, 397, 31), bytes([])]
-
-    #Constructor
-    def __init__(self, seed, parameters=None):
-        
-        self.seed = seed
-        self.params = parameters
-
-        #default to MT19937
-        if self.params == None:
-            self.params = Mersenne_Twister.MT19937_PARAMS
-        
-        #Set actual constants/values
-        self.w, self.n, self.m, self.r = self.params[0]
-        self.a = self.params[1]
-        self.u, self.d = self.params[2]
-        self.s, self.b = self.params[3]
-        self.t, self.c = self.params[4]
-        self.l = self.params[5]
-
-        #Initialize state buffer
-        self.initialize_state()
-
-    #Initialization Function
-    def initialize_state(self):
-        #Use seed to initialize the state buffer
-        pass
-
-
+def MT19937_stream(seed: int = 5489) -> int:
     
-    #Outputting function
+    #Set quantities
+    w, n, m, r = (64, 312, 156, 31)
+    #TODO: Precompile constant expressions for speed.
+    a = hex_to_uint("B5026F5AA96619E9")
+    u, d = (11, hex_to_uint("FFFFFFFF"))
+    s, b = (7, hex_to_uint("9D2C5680"))
+    t, c = (15, hex_to_uint("EFC60000"))
+    l = 18
+    f = 1812433253    
+
+    #Declare State variables
+    index = n
+    state = [0 for num in range(n)]
+    lower_mask = (1 << r) - 1
+    upper_mask = (~lower_mask) % (2 ** w)
+    
+    #Initialize State with seed
+    state[0] = seed
+    for i in range(1, n):
+        #MT[i] := lowest w bits of (f * (MT[i-1] xor (MT[i-1] >> (w-2))) + i)
+        state[i] = (f * (state[i - 1] ^ (state[i-1] >> (w - 2)))) % (2 ** w)
+
+    #Yielding Loop
+    while True:
+        #If state is exhausted
+        if index == n:
+            #Generate next n bytes of state through twist!
+            for i in range(0, n-1):
+                x = (state[i] & upper_mask) + (state[(i + 1) % n] & lower_mask)
+                xA = x >> 1
+                if not x%2 == 0:
+                    xA = xA ^ a
+                state[i] = (state[(i + m) % n] ^ xA)
+            index = 0
+        #compute and yield ield value
+        y = state[index]
+        y = y ^ ((y >> u) & d)
+        y = y ^ ((y << s) & b)
+        y = y ^ ((y << t) & c)
+        y = y ^ (y >> 1)
+
+        yield y
+        index += 1

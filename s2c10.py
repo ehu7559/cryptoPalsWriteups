@@ -5,7 +5,7 @@ from base64 import b64decode
 from s1c7 import get_pad, encrypt_block_128, decrypt_block_128
 
 #Main Encryption Function for CBC mode
-def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes):
+def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes) -> bytes:
     output = bytearray()
     pad = get_pad(len(data))
     working = bytearray()
@@ -24,7 +24,7 @@ def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: byte
     return bytes(output)
 
 #Main Decryption Functions
-def decrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes):
+def decrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: bytes) -> bytes:
 
     #BLOCKS: Much more efficient thanks to known block parity
     num_blocks = len(data)//16

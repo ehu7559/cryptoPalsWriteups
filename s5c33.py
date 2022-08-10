@@ -1,4 +1,5 @@
 #Challenge 33: Implement Diffie-Hellman
+from random import randint
 
 #Much faster, more compact, and very very efficient.
 def mod_exp(b, x, n):
@@ -17,9 +18,9 @@ def mod_exp(b, x, n):
 
 
 #Actual function
-def do_diffie_hellman():
+def do_diffie_hellman(prime: int, generator: int) -> bytes:
     #Select prime
-
+    
     #Select secrets
 
     #Compute shared secret

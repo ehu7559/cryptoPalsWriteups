@@ -2,14 +2,14 @@
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
 from random import randint
 
-def join_bufs(bufs: list[bytes]):
+def join_bufs(bufs: list):
     output = bytearray()
     for i in bufs:
         output.extend(i)
     return bytes(output)
 
 #ORACLE FUNCTIONS
-def oracle_16_a(aes_key: bytes, init_vector: bytes) -> function(bytes):
+def oracle_16_a(aes_key: bytes, init_vector: bytes):
     oracle_pre = "comment1=cooking%20MCs;userdata=".encode("utf-8")
     oracle_suf = ";comment2=%%20like%%20a%20pound%%20of%%20bacon".encode("utf-8")
     return lambda x : encrypt_AES_CBC_128(join_bufs([oracle_pre, x, oracle_suf]), aes_key, init_vector)

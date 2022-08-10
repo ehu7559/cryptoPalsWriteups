@@ -6,7 +6,7 @@ from s2c10 import encrypt_AES_CBC_128
 from s1c8 import probablyECB
 from random import randint, choice
 
-def oracle_crypt(plain_text, aes_key, init_vec, AES_mode):
+def oracle_crypt(plain_text: bytes, aes_key: bytes, init_vec: bytes, AES_mode: str) -> bytes:
     random_padding_length = randint(5,10)
     rand_pad = bytes([ord("x") for i in range(random_padding_length)])
     

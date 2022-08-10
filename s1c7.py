@@ -152,7 +152,7 @@ def encrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
     
     #Rounds of Rijndael
     for i in range(1,10):
-        output = encrypt_round(output,round_keys[i])
+        output = encrypt_round(output, round_keys[i])
     
     #Final round (with canonical missing mix_columns operation.
     return encrypt_final_round(output, round_keys[10])
