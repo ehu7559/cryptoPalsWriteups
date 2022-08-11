@@ -4,6 +4,7 @@ from s1c6 import score_text, decrypt
 from s3c18 import encrypt_AES_CTR
 from random import randint
 from base64 import b64decode
+import time
 
 def safe_print(buffer, default_char=ord("*")):
     filtered_buffer = bytes([(a if a in range(32, 127) else default_char) for a in buffer])
@@ -52,7 +53,36 @@ def safe_byte_crack(ciphertext):
 #Main key-attack function
 def guess_key(ciphertexts):
     longest_length = len(max(ciphertexts,key=len))
-    return bytes([safe_byte_crack(multislice(cipher_texts, i)) for i in range(longest_length)])
+    return bytes([safe_byte_crack(multislice(ciphertexts, i)) for i in range(longest_length)])
+
+def guess_key_demo(ciphertexts):
+    longest_length = len(max(ciphertexts, key=len))
+    same_slices = [multislice(ciphertexts, i) for i in range(longest_length)]
+    key_guess = bytearray(longest_length)
+    for i in range(longest_length):
+        best_j = 0
+        max_score = 0
+        for j in range(256):
+            key_guess[i] = j
+            print(f"Cracking: {key_guess.hex()}", end="\r")
+            time.sleep(0.005)
+
+            #Generate the resulting plaintext
+            maybe_plain = bytes([a ^ j for a in same_slices[i]])
+
+            #Filter out the unprintables as null-candidates
+            if not can_be_ascii(maybe_plain):
+                continue
+            
+            new_score = score_text(maybe_plain)
+            
+            if new_score > max_score:
+                best_j = j
+                max_score = new_score
+        key_guess[i] = best_j
+    print("")
+    return bytes(key_guess)
+        
 
 #Data retrieval function
 def retrieve_lines(filename):
@@ -69,8 +99,8 @@ if __name__ == "__main__":
     cipher_texts = retrieve_lines("19.txt")
 
     #Attack
-    chall_key_guess = bytearray(guess_key(cipher_texts))
-
+    chall_key_guess = bytearray(guess_key_demo(cipher_texts))
+    print(chall_key_guess)
     #Decode and encrypt each text
     for c in cipher_texts:
         #print(cryptoracle(c).decode("ascii"))

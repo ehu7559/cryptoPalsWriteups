@@ -12,7 +12,7 @@ def generate_challenge():
     key = bytes([randint(0,255) for i in range(16)])
     challenge_text = encrypt_AES_CTR(decrypt_AES_ECB_128(retrieve_data("7.txt"), bytes("YELLOW SUBMARINE","ascii")), key, nonce)
 
-    return [challenge_text, (lambda x: encrypt_AES_CTR(x, key, nonce))]
+    return (challenge_text, (lambda x: encrypt_AES_CTR(x, key, nonce)))
 
 def edit_plain(base, edit, offset):
     return bytes([(edit[i-offset] if i in range(offset, offset + len(edit)) else base[i])for i in range(len(base))])

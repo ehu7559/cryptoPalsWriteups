@@ -1,6 +1,6 @@
 #Implement the Mersenne Twister
 
-def bytes_to_uint(buffer):
+def bytes_to_uint(buffer:bytes) -> int:
     buf = bytearray(buffer)
     acc = 0
     curr = 1
@@ -9,21 +9,21 @@ def bytes_to_uint(buffer):
         curr *= 256
     return acc
 
-def hex_to_uint(hex):
+def hex_to_uint(hex: str) -> int:
     return bytes_to_uint(bytes.fromhex(hex))
 
 def MT19937_stream(seed: int = 5489) -> int:
     
     #Set quantities
-    w, n, m, r = (64, 312, 156, 31)
+    w, n, m, r = (32, 624, 397, 31)
     #Pre-evaluated the constant hex expressions for speed.
-    a = 13043109905998158313 #hex_to_uint("B5026F5AA96619E9")
+    a = 2567483615
     u, d = (11, 4294967295) #(11, hex_to_uint("FFFFFFFF"))
     s, b = (7, 2636928640) #(7, hex_to_uint("9D2C5680"))
     t, c = (15, 4022730752) #(15, hex_to_uint("EFC60000"))
     l = 18
     f = 1812433253    
-    
+
     #Declare State variables
     index = n
     state = [0 for num in range(n)] #This is just an allocator for the state space.
@@ -50,13 +50,13 @@ def MT19937_stream(seed: int = 5489) -> int:
             index = 0
             
         #compute and yield value
-        y = state[index]
-        y = y ^ ((y >> u) & d)
-        y = y ^ ((y << s) & b)
-        y = y ^ ((y << t) & c)
-        y = y ^ (y >> 1)
+        y_0 = state[index]
+        y_1 = y_0 ^ ((y_0 >> u) & d)
+        y_2 = y_1 ^ ((y_1 << s) & b)
+        y_3 = y_2 ^ ((y_2 << t) & c)
+        y_4 = y_3 ^ (y_3 >> 1)
 
-        yield y
+        yield y_4
         index += 1
 
 #Challenge Code: TEST
@@ -64,4 +64,3 @@ if __name__ == "__main__":
     g = MT19937_stream()
     for i in range(10):
         print(str(i)+"\t:\t"+str(next(g)))
-        
