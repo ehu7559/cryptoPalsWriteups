@@ -27,7 +27,7 @@ def crack_time_MT19937(latest, output_words, decrement = -1, max_depth = -1):
             return output
         
         output += decrement
-    print("Could not crack seed!", end="\r")
+    print("Could not crack seed!")
     return -1
 
 #Challenge code!

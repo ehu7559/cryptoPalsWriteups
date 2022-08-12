@@ -13,7 +13,13 @@ def hex_to_uint(hex: str) -> int:
     return bytes_to_uint(bytes.fromhex(hex))
 
 def MT19937_stream(seed: int = 5489) -> int:
-    
+    generator = MT19937_generator(initialize_MT19937_state(seed))
+    #print(state)
+    while True:
+        yield(next(generator))
+
+def MT19937_generator(state_buffer, index=None):
+    state = [x for x in state_buffer]
     #Set quantities
     w, n, m, r = (32, 624, 397, 31)
     #Pre-evaluated the constant hex expressions for speed.
@@ -25,17 +31,11 @@ def MT19937_stream(seed: int = 5489) -> int:
     f = 1812433253    
 
     #Declare State variables
-    index = n
-    state = [0 for num in range(n)] #This is just an allocator for the state space.
+    if index is None:
+        index = n
+
     lower_mask = (1 << r) - 1
     upper_mask = (~lower_mask) % (2 ** w)
-    
-    #Initialize State with seed
-    state[0] = (seed % (2 ** w))
-    for i in range(1, n):
-        #MT[i] := lowest w bits of (f * (MT[i-1] xor (MT[i-1] >> (w-2))) + i)
-        state[i] = (f * (state[i - 1] ^ (state[i-1] >> (w - 2)))) % (2 ** w)
-
     #Yielding Loop
     while True:
         #If state is exhausted
@@ -50,14 +50,41 @@ def MT19937_stream(seed: int = 5489) -> int:
             index = 0
             
         #compute and yield value
-        y_0 = state[index]
-        y_1 = y_0 ^ ((y_0 >> u) & d)
-        y_2 = y_1 ^ ((y_1 << s) & b)
-        y_3 = y_2 ^ ((y_2 << t) & c)
-        y_4 = y_3 ^ (y_3 >> 1)
+        yield(temper_transform(state[index]))
 
-        yield y_4
         index += 1
+        
+def initialize_MT19937_state(seed):
+    
+    w, n = (32, 624)
+    f = 1812433253
+    state = [0 for num in range(n)] #This is just an allocator for the state space.
+
+    #Initialize State with seed
+    state[0] = (seed % (2 ** w))
+    for i in range(1, n):
+        #MT[i] := lowest w bits of (f * (MT[i-1] xor (MT[i-1] >> (w-2))) + i)
+        state[i] = (f * (state[i - 1] ^ (state[i-1] >> (w - 2)))) % (2 ** w)
+    
+    return state
+
+def temper_transform(num):
+    return temper_d(temper_c(temper_b(temper_a(num))))
+
+def temper_a(num):
+    u, d = (11, 4294967295)
+    return num ^ ((num >> u) & d)
+
+def temper_b(num):
+    s, b = (7, 2636928640)
+    return num ^ ((num << s) & b)
+
+def temper_c(num):
+    t, c = (15, 4022730752)
+    return num ^ ((num << t) & c)
+
+def temper_d(num):
+    return num ^ (num >> 1)
 
 #Challenge Code: TEST
 if __name__ == "__main__":
