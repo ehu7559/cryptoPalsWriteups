@@ -5,11 +5,11 @@ from time import time, sleep
 from random import randint #Okay I COULD use my MT19937 implementation but humor me here.
 from s3c21 import MT19937_stream
 
-def crack_time_MT19937(latest, output_words, decrement = -1, max_depth = -1):
-    output = latest
+def crack_MT19937_seed(start, output_words, increment = 1, max_depth = -1):
+    output = start
     n = len(output_words) #Precompute and save for speed.
     if max_depth <= 0:
-        max_depth = latest
+        max_depth = 2**32 - start - 1
     for i in range(max_depth):
         #Generate as many words as is necessary to produce that output
         print(f"Checking Seed: {output}", end="\r")
@@ -26,7 +26,7 @@ def crack_time_MT19937(latest, output_words, decrement = -1, max_depth = -1):
             print(f"Cracked Seed: {output}")
             return output
         
-        output += decrement
+        output += increment
     print("Could not crack seed!")
     return -1
 
@@ -53,5 +53,5 @@ if __name__ == "__main__":
     #crack_start_time = int(time() + chall_sleep_time)
     print(f"Beginning Crack at simulated time {crack_start_time}")
     
-    cracked_seed = crack_time_MT19937(crack_start_time, chall_words, -1, crack_start_time)
+    cracked_seed = crack_MT19937_seed(crack_start_time, chall_words, -1, crack_start_time)
     print(cracked_seed)

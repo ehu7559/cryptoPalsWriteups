@@ -70,10 +70,14 @@ if __name__ == "__main__":
 
     #Test Un-tempering function
     print("Testing Temper Transform Inversion")
-    for i in range(1000):
+    for i in range(100):
+        print(f"Testing {i+1} of 100", end="\r")
+        sleep(0.05)
         r = randint(0, 2**32 - 1)
         if r != untemper_MT19937(temper_transform(r)):
             print("Failed Detemper Consistency Check")
+            break
+    print("")
     #Create generator with a random seed.
     chall_seed = randint(0, 2*32 - 1)
     chall_stream = MT19937_stream(chall_seed)
@@ -82,9 +86,9 @@ if __name__ == "__main__":
 
     #Continuously Generate 
     print("Generating and Checking")
-    print("GENERATED:          CLONED:             MATCH:")
-    for i in range(32):
+    print("INDEX:  GENERATED:      CLONED:         MATCH:")
+    for i in range(1000):
         a = next(chall_stream)
         b = next(cloned_stream)
-        print(f"{a}{' ' * (20 -len(str(a)))}{b}{' ' * (20 -len(str(b)))}{a==b}")
-        sleep(0.5)
+        print(f"{i+1}{' ' * (8 - len(str(i+1)))}{a}{' ' * (16 -len(str(a)))}{b}{' ' * (16 -len(str(b)))}{a==b}", end="\r")
+        sleep(0.05)
