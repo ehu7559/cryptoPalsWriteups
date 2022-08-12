@@ -53,7 +53,7 @@ def MT19937_generator(state_buffer, index=None):
         yield(temper_transform(state[index]))
 
         index += 1
-        
+
 def initialize_MT19937_state(seed):
     
     w, n = (32, 624)

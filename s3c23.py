@@ -8,20 +8,8 @@ from random import randint
 def untemper_MT19937(num):
     if num >= 2**32:
         return untemper_MT19937(num % (2**32))
-    #Tempering variables
-    u, d = (11, 4294967295)
-    s, b = (7, 2636928640)
-    t, c = (15, 4022730752)
-
-    #Untemper Step: y_4 = y_3 ^ (y_3 >> 1)
-    y_3 = untemper_step(num,  -1 , 2**32 - 1)
-    #Untemper Step: y_3 = y_2 ^ ((y_2 << t) & c)
-    y_2 = untemper_step(y_3, t, c)
-    #Untemper Step: y_2 = y_1 ^ ((y_1 << s) & b)
-    y_1 = untemper_step(y_2, s, b)
-    #Untemper Step: y_1 = y_0 ^ ((y_0 >> u) & d)
-    y_0 = untemper_step(y_1, -1 * u, d)
-    return y_0
+    #Tempering functions called in reverse order.
+    return untemper_a(untemper_b(untemper_c(untemper_d(num))))
 
 def untemper_step(value, shift, mask):
     '''Computes x where value = x ^ ((x << shift) & mask)'''
@@ -42,7 +30,7 @@ def untemper_step(value, shift, mask):
         
         #Compute x bit and compute it.
         x[i] = y_i if (i < shift) else y_i ^ (x[i-shift] & m_i)
-        acc += curr if x[i] == 1 else 0
+        acc += (curr if x[i] == 1 else 0)
         
         #For next iteration
         y = y // 2
@@ -64,7 +52,7 @@ def untemper_c(num):
     return untemper_step(num, t, c)
 
 def untemper_d(num):
-    untemper_step(num,  -1 , 2**32 - 1)
+    return untemper_step(num,  -1 , 2**32 - 1)
 
 def inverse_32_bits(num):
     out = 0
@@ -75,36 +63,28 @@ def inverse_32_bits(num):
 
 def clone_MT19937(output):
     state_buffer = [untemper_MT19937(x) for x in output]
-    cloned_generator = MT19937_generator(state_buffer, 0)
-    for i in range(624):
-        old_output_i = next(cloned_generator)
-        print(f"Checking Output: {old_output_i} : {output[i]}")
-        sleep(0.1)
-        #if old_output_i != output[i]:
-            #print(f"ERROR DETECTED AT INDEX {i}")
-    print("Successfully Cloned Generator!")
+    cloned_generator = MT19937_generator(state_buffer)
     return cloned_generator
 
 if __name__ == "__main__":
-    print("Testing Untempering: Step A")
-    for i in range(624):
-        tempered = temper_a(i)
-        untempered = untemper_a(i)
-        if tempered != untempered:
-            print("A is broken")
-            print(f"{i} : {tempered} = {untempered}")
-            break
-    for i in range(624):
-        tempered = temper_b(i)
-        untempered = untemper_b(i)
-        if tempered != untempered:
-            print("B is broken")
-            print(f"{i} : {tempered} = {untempered}")
-            break
-    for i in range(624):
-        tempered = temper_b(i)
-        untempered = untemper_b(i)
-        if tempered != untempered:
-            print("B is broken")
-            print(f"{i} : {tempered} = {untempered}")
-            break
+
+    #Test Un-tempering function
+    print("Testing Temper Transform Inversion")
+    for i in range(1000):
+        r = randint(0, 2**32 - 1)
+        if r != untemper_MT19937(temper_transform(r)):
+            print("Failed Detemper Consistency Check")
+    #Create generator with a random seed.
+    chall_seed = randint(0, 2*32 - 1)
+    chall_stream = MT19937_stream(chall_seed)
+    chall_output = [next(chall_stream) for i in range(624)]
+    cloned_stream = clone_MT19937(chall_output)
+
+    #Continuously Generate 
+    print("Generating and Checking")
+    print("GENERATED:          CLONED:             MATCH:")
+    for i in range(32):
+        a = next(chall_stream)
+        b = next(cloned_stream)
+        print(f"{a}{' ' * (20 -len(str(a)))}{b}{' ' * (20 -len(str(b)))}{a==b}")
+        sleep(0.5)
