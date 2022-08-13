@@ -36,9 +36,6 @@ def attack_block(oracle, block):
         #Add it to the output
         output[i] =  pad_length ^ zeroing_iv[i]
         
-        #Check for edge cases (1/256 chance but i'm not taking it)
-        
-    
     return output
 
 #Main Attack Loop
