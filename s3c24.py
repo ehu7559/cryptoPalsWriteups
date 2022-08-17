@@ -23,7 +23,6 @@ def MT19937_cipher(seed, data):
     keystream = MT19937_bytestream(seed)
     return bytes([x ^ next(keystream) for x in data])
 
-
 def get_cipher_oracle(seed):
     return lambda x : MT19937_cipher(seed, x)
 
@@ -41,8 +40,6 @@ def MT19937_cipher_KPA(plaintext, oracle):
             return i
     #print("No Seed Found")
     return -1
-        
-        
 
 if __name__ == "__main__":
     #Generate 16-bit seed and encryption oracle

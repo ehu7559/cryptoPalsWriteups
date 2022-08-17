@@ -1,7 +1,6 @@
 #Clone an MT19937 RNG from its output
 
 from s3c21 import MT19937_stream, MT19937_generator, temper_transform
-from s3c21 import temper_a, temper_b, temper_c, temper_d
 from time import sleep
 from random import randint
 
@@ -77,7 +76,8 @@ if __name__ == "__main__":
         if r != untemper_MT19937(temper_transform(r)):
             print("Failed Detemper Consistency Check")
             break
-    print("")
+    print("Tempering Transform Invesion Test Passed!")
+    
     #Create generator with a random seed.
     chall_seed = randint(0, 2*32 - 1)
     chall_stream = MT19937_stream(chall_seed)

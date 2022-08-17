@@ -4,7 +4,7 @@ from s1c6 import score_text, decrypt
 from s3c18 import encrypt_AES_CTR
 from random import randint
 from base64 import b64decode
-import time
+from time import sleep
 
 def safe_print(buffer, default_char=ord("*")):
     filtered_buffer = bytes([(a if a in range(32, 127) else default_char) for a in buffer])
@@ -65,7 +65,7 @@ def guess_key_demo(ciphertexts):
         for j in range(256):
             key_guess[i] = j
             print(f"Cracking: {key_guess.hex()}", end="\r")
-            time.sleep(0.005)
+            sleep(0.005)
 
             #Generate the resulting plaintext
             maybe_plain = bytes([a ^ j for a in same_slices[i]])

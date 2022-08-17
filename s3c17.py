@@ -23,7 +23,7 @@ def attack_block(oracle, block):
     output = bytearray(16)
 
     #For each of the bytes
-    for i in range(15, -1, -1): #Coutns back from 15
+    for i in range(15, -1, -1): #Counts back from 15
         pad_length = 16 - i
         #modify previous bytes to get proper zeroing iv
         for j in range(i + 1, 16):

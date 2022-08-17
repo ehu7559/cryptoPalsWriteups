@@ -1,17 +1,5 @@
 #Implement the Mersenne Twister
 
-def bytes_to_uint(buffer:bytes) -> int:
-    buf = bytearray(buffer)
-    acc = 0
-    curr = 1
-    while len(buf) > 0:
-        acc += buf.pop() * curr
-        curr *= 256
-    return acc
-
-def hex_to_uint(hex: str) -> int:
-    return bytes_to_uint(bytes.fromhex(hex))
-
 def MT19937_stream(seed: int = 5489) -> int:
     generator = MT19937_generator(initialize_MT19937_state(seed))
     #print(state)
@@ -68,23 +56,16 @@ def initialize_MT19937_state(seed):
     
     return state
 
-def temper_transform(num):
-    return temper_d(temper_c(temper_b(temper_a(num))))
-
-def temper_a(num):
+def temper_transform(state_val):
+    num = state_val
     u, d = (11, 4294967295)
-    return num ^ ((num >> u) & d)
-
-def temper_b(num):
     s, b = (7, 2636928640)
-    return num ^ ((num << s) & b)
-
-def temper_c(num):
     t, c = (15, 4022730752)
-    return num ^ ((num << t) & c)
-
-def temper_d(num):
-    return num ^ (num >> 1)
+    num = num ^ ((num >> u) & d)
+    num = num ^ ((num << s) & b)
+    num = num ^ ((num << t) & c)
+    num = num ^ (num >> 1)
+    return num
 
 #Challenge Code: TEST
 if __name__ == "__main__":
