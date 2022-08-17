@@ -152,7 +152,8 @@ I did not implement very efficiently.
 It's actually possible to clone the state with just over two state buffers of
 output. One simply needs to be able to detect which interval(s) of 624 outputs
 come from the same state buffer, which can be accomplished by brute force. This
-removes the challenge's artificial requirement that the 
+removes the challenge's artificial requirement that the sample output be exactly
+one state buffer's worth of output with nothing in front of it.
 
 One might also theoretically be able to determine the boundaries between two
 states by using a side-channel timing attack to detect the relatively expensive
@@ -166,3 +167,13 @@ AES CTR mode, with the "key" being a seed instead.
 The same attacks will work on it as seen in previous challenges. I won't bore
 the reader with a lengthy discussion of them given that challenges 18 through 20
 focused on those attacks already, with more to come.
+
+## Set 3 Closing Remarks:
+Well this was entertaining! To be honest, this set took me a while because I did
+not want to implement the MT19937 RNG. (Incidentally, I did find a writeup on
+the internet by someone else who left these challenges for later.)
+
+We are also almost done with AES attacks. These challenges have been extremely
+useful in my learning. My thanks to Tylir, a recruiter from NCC group for 
+introducing me to these challenges after I got rejected for a job. I don't think
+you knew at the time, but you helped me discover my passion.

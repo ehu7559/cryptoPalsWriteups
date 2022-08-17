@@ -20,8 +20,6 @@ Open the following (replacing A and B with the appropriate numbers)
 - https://cryptopals.com/sets/[A]/challenges/[B]
 ```
 
-
-
 ## Interesting Things:
 Challenges 7, 10, and 18 include by-hand implementations of AES128 in ECB, CBC, and CTR modes respectively.
 Mostly written in spare time at work.
