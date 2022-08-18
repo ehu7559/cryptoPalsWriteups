@@ -69,6 +69,12 @@ class SHA1Digest:
             output.extend(encode_uint_big_endian(self.h[i], 4))
         return bytes(output).hex()
 
+def sha1_hash(data : bytes):
+    digest = SHA1Digest()
+    digest.ingest(data)
+    digest.finalize()
+    return digest.get_hash()
+
 def hash_file(filename):
     digest = SHA1Digest()
     with open(filename, "rb") as in_file:
@@ -98,6 +104,11 @@ def decode_uint_big_endian(data):
 
 def leftrotate(num, shift, length=32):
     return (num * (2 ** shift) + (num // (2**(length - shift)))) % (2**length)
+
+def SHA1_keyed_MAC(key, message):
+    pair = bytearray(key)
+    pair.extend(message)
+    return (bytes(pair), sha1_hash(pair))
 
 if __name__ == "__main__":
     print(hash_file("emptyfile.txt"))
