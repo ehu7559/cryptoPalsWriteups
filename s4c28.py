@@ -23,12 +23,13 @@ class SHA1Digest:
         
         chunk_hash = self.hash_chunk(new_chunk)
 
-        self.h = [(self.h[i] + chunk_hash[i]) % (2 ** 32) for i in range(5)]
+        self.h = [(self.h[i] + chunk_hash[i]) % (4294967296) for i in range(5)]
         return
 
     def hash_chunk(self, chunk):
         if len(chunk) != 64:
             raise Exception("ERROR: Tried to hash hunk of length " + len(chunk) + " bytes instead of 64")
+        
         #Message Schedule
         w = [decode_uint_big_endian(chunk[4 * i: 4 * (i + 1)]) for i in range(16)]
 
@@ -50,7 +51,7 @@ class SHA1Digest:
             f = F_ARR[i//20]
             k = K_ARR[i//20]
 
-            temp = (leftrotate(a, 5) + f + e + k + w[i]) % (2 ** 32)
+            temp = (leftrotate(a, 5) + f + e + k + w[i]) % (4294967296)
             e, d, c, b, a = (d, c, leftrotate(b, 30), a, temp)
 
         return [a, b, c, d, e]
