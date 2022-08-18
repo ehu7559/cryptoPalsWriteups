@@ -154,7 +154,7 @@ def encrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
     for i in range(1,10):
         output = encrypt_round(output, round_keys[i])
     
-    #Final round (with canonical missing mix_columns operation.
+    #Final round (with canonical missing mix_columns operation)
     return encrypt_final_round(output, round_keys[10])
 
 def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:

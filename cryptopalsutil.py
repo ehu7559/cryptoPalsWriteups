@@ -13,3 +13,12 @@ def retrieve_b64(filename: str) -> bytes:
 class AES:
 
     pass
+
+class SHA1:
+    pass
+
+class DiffieHellman:
+    pass
+
+class RSA:
+    pass
