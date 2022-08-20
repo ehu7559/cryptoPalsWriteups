@@ -19,10 +19,7 @@ def mod_exp(b, x, n):
 
 #Actual function
 def do_diffie_hellman(prime: int, generator: int) -> bytes:
-    #Select prime
     
-    #Select secrets
-
     #Compute shared secret
     pass
 

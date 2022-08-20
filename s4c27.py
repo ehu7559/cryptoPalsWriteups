@@ -3,6 +3,7 @@
 #Imports
 from random import randint
 from s2c10 import decrypt_AES_CBC_128, encrypt_AES_CBC_128
+
 #Validation function
 def is_valid_ciphertext(data, key, iv):
     plain_data = decrypt_AES_CBC_128(data, key, iv)
@@ -28,6 +29,7 @@ def attack(intercepted_message, decryption_server):
         print("ERROR: Message transformation did not trigger server failure")
     recovered_key = bytes([newplain[i] ^ newplain[i+32] for i in range(16)])
     return recovered_key
+
 #Challenge Code
 if __name__ == "__main__":
     #Generate key

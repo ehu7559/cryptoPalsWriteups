@@ -22,11 +22,7 @@ def is_oracle_ECB(target):
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
 def get_oracle_block_size(target):
-    '''Computes size of a target oracle
-    TODO: IMPLEMENT THIS FOR REAL
-    Can be done by sending progressively longer pads until the start of the
-    ciphertext is exactly two or three cycles of a repeated block.
-    '''
+    '''Computes size of a target oracle using GCD'''
     initial_length = len(target(bytes(0)))
     extender = 0
     while len(target(bytes(extender))) == initial_length:
@@ -64,7 +60,6 @@ def attack_ECB_oracle(target):
     window = bytearray(target_block_size - 1)
     #For every block
     for i in range(num_blocks):
-        #print("BLOCKS DECRYPTED: " + str(i))
         for j in range(target_block_size):
             #block index is i
             #padding size should be (target_block_size - (j + 1))
@@ -82,7 +77,6 @@ def attack_ECB_oracle(target):
             
             #Append the byte to the output
             output.append(new_byte)
-            print(chr(new_byte))
     
     #Trim it down
     end_pad_size = output[-1]

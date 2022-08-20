@@ -36,9 +36,7 @@ def MT19937_cipher_KPA(plaintext, oracle):
             if (brute_text[j] != ciphertext[j]):
                 match = False
         if match:
-            #print(f"\nFound Seed: {i}")
             return i
-    #print("No Seed Found")
     return -1
 
 if __name__ == "__main__":
