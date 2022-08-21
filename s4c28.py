@@ -1,6 +1,6 @@
 #SHA-1 Keyed MAC
 
-class SHA1Digest:
+class SHA1:
 
     def __init__(self):
         '''Initializes a SHA-1 hash object with the default values'''
@@ -62,7 +62,6 @@ class SHA1Digest:
 
         return [a, b, c, d, e]
 
-    #Need to check length
     def finalize(self) -> None:
         '''Pads and ingests any remaining'''
         self.buffer.append(0x80)
@@ -72,43 +71,50 @@ class SHA1Digest:
         while len(self.buffer) > 0:
             self.ingest_chunk()
         return
-    
-    #Working as intended
+
     def get_hash(self):
         output = bytearray()
         for i in range(5):
             output.extend(encode_uint_big_endian(self.h[i], 4))
         return bytes(output)
 
-    #Working as intended.
     def get_hash_str(self):
         return self.get_hash().hex()
 
-    def from_hash_str(hash_str):
-        new_digest = SHA1Digest()
+    def from_hash_str(hash_str : str):
+        '''Creates a SHA1 Message Digest with an internal state of hash_str'''
+        new_digest = SHA1()
         new_digest.h = [decode_uint_big_endian(bytes.fromhex(hash_str)[4 * i : 4 * (i + 1)]) for i in range(5)]
         return new_digest
 
     def set_length(self, length: int):
         self.length = length
 
-def sha1_hash(data : bytes):
-    digest = SHA1Digest()
-    digest.ingest(data)
-    digest.finalize()
-    return digest.get_hash_str()
+    def hash(data):
+        digest = SHA1()
+        digest.ingest(data)
+        digest.finalize()
+        return digest.get_hash_str()
+    
+    def keyed_MAC(key, message):
+        pair = bytearray(key)
+        pair.extend(message)
+        return (bytes(message), SHA1(bytes(pair)))
 
-def hash_file(filename):
-    digest = SHA1Digest()
-    with open(filename, "rb") as in_file:
-        quarter_chunk = in_file.read(16)
-        while quarter_chunk:
-            digest.ingest(quarter_chunk)
+    def hash_file(filename):
+        digest = SHA1()
+        with open(filename, "rb") as in_file:
             quarter_chunk = in_file.read(16)
-    digest.finalize()
-    return digest.get_hash_str()
+            while quarter_chunk:
+                digest.ingest(quarter_chunk)
+                quarter_chunk = in_file.read(16)
+        digest.finalize()
+        return digest.get_hash_str()
 
-#Working as intended
+    def validate_keyed_MAC(key, message, hash_str):
+        _, real_hash = SHA1.keyed_MAC(key, message)
+        return real_hash == hash_str
+
 def encode_uint_big_endian(num, length):
     output = bytearray()
     curr = int(num)
@@ -117,7 +123,6 @@ def encode_uint_big_endian(num, length):
         curr = curr // 256
     return bytes(output)
 
-#Working as intended.
 def decode_uint_big_endian(data):
     output = 0
     curr = bytearray(data)
@@ -130,12 +135,8 @@ def decode_uint_big_endian(data):
 def leftrotate(num, shift, length=32):
     return (num * (2 ** shift) + (num // (2**(length - shift)))) % (2**length)
 
-def SHA1_keyed_MAC(key, message):
-    pair = bytearray(key)
-    pair.extend(message)
-    return (bytes(message), sha1_hash(bytes(pair)))
-
+#Challenge Code
 if __name__ == "__main__":
-    print("emptyfile.txt : " + hash_file("emptyfile.txt"))
-    print("8.txt : " + hash_file("8.txt"))
-    print("set1guide.md : " + hash_file("set1guide.md"))
+    print("emptyfile.txt : " + SHA1.hash_file("emptyfile.txt"))
+    print("8.txt : " + SHA1.hash_file("8.txt"))
+    print("set1guide.md : " + SHA1.hash_file("set1guide.md"))
