@@ -12,7 +12,7 @@ class SHA1:
         '''Takes in data, increments length, and hashes complete blocks'''
         self.length += len(data)
         self.buffer.extend(data)
-        while len(self.buffer) > 64:
+        while len(self.buffer) >= 64:
             self.ingest_chunk()
         return
 
@@ -50,7 +50,7 @@ class SHA1:
         d = int(self.h[3])
         e = int(self.h[4])
 
-        #Initialize temp
+        #Hashing Rounds
         for i in range(80):
             F_ARR = [((b & c) | ((~b) & d)), (b ^ c ^ d), ((b & c) | (b & d) | (c & d)), (b ^ c ^ d)]
             K_ARR = [0x5A827999, 0x6ED9EBA1, 0x8F1BBCDC, 0xCA62C1D6]
@@ -64,13 +64,19 @@ class SHA1:
 
     def finalize(self) -> None:
         '''Pads and ingests any remaining'''
-        self.buffer.append(0x80)
-        while len(self.buffer) % 64 != 56:
-            self.buffer.append(0)
-        self.buffer.extend(encode_uint_big_endian(self.length * 8, 8))
+        self.buffer = SHA1.pad_chunk(self.buffer, self.length * 8)
         while len(self.buffer) > 0:
             self.ingest_chunk()
         return
+
+    def pad_chunk(data: bytes, num_bits: int):
+        '''Padding function'''
+        buf = bytearray(data)
+        buf.append(0x80)
+        while len(buf) % 64 != 56:
+            buf.append(0)
+        buf.extend(encode_uint_big_endian(num_bits, 8))
+        return buf
 
     def get_hash(self):
         output = bytearray()
@@ -99,15 +105,15 @@ class SHA1:
     def keyed_MAC(key, message):
         pair = bytearray(key)
         pair.extend(message)
-        return (bytes(message), SHA1(bytes(pair)))
+        return (bytes(message), SHA1.hash(bytes(pair)))
 
     def hash_file(filename):
         digest = SHA1()
         with open(filename, "rb") as in_file:
-            quarter_chunk = in_file.read(16)
+            quarter_chunk = in_file.read(64)
             while quarter_chunk:
                 digest.ingest(quarter_chunk)
-                quarter_chunk = in_file.read(16)
+                quarter_chunk = in_file.read(64)
         digest.finalize()
         return digest.get_hash_str()
 
@@ -140,3 +146,10 @@ if __name__ == "__main__":
     print("emptyfile.txt : " + SHA1.hash_file("emptyfile.txt"))
     print("8.txt : " + SHA1.hash_file("8.txt"))
     print("set1guide.md : " + SHA1.hash_file("set1guide.md"))
+
+'''
+REFERENCE RESULTS
+emptyfile.txt : da39a3ee5e6b4b0d3255bfef95601890afd80709
+8.txt : 24398342fe6cf15b8782db8ae8cdd6fa7f777278
+set1guide.md : 46cef14f6c0354684fb8de036d4ba7217bc051c0
+'''

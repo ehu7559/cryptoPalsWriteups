@@ -10,14 +10,14 @@ from s2c16 import join_bufs
 from random import randint, choice
 
 #Padding Oracle (In a real attack this would send a request and judge by server response)
-def get_padding_oracle(aes_key):
+def get_padding_oracle(aes_key: bytes) -> function:
     return lambda ct, iv : valid_pad(decrypt_AES_CBC_128(ct, aes_key, iv))
 
-def apply_iv(a, b):
+def apply_iv(a: bytes, b: bytes) -> bytes:
     return bytes([(a[i] ^ b[i]) for i in range(len(a))])
 
 #Attack Helper (Actually conducts the attack)
-def attack_block(oracle, block):
+def attack_block(oracle: function, block: bytes) -> bytes:
     #Initialize brute-force procedure    
     zeroing_iv = bytearray(16)
     output = bytearray(16)
@@ -39,7 +39,7 @@ def attack_block(oracle, block):
     return output
 
 #Main Attack Loop
-def attack(oracle, ciphertext, init_vector):
+def attack(oracle: function, ciphertext: bytes, init_vector: bytes) -> bytes:
     #Break it into blocks.
     ct_blocks = cipher_blocks(ciphertext)
     pt_blocks = []
@@ -57,11 +57,11 @@ def attack(oracle, ciphertext, init_vector):
     #Join and return output
     return trim_padding(join_bufs(pt_blocks))
 
-def choose_text():
+def choose_text() -> bytes:
     with open("17.txt", "r") as f:
         return bytes(b64decode(choice(f.readlines()).strip()))
 
-def get_challenge():
+def get_challenge() -> tuple:
     #Generate key
     chall_key = bytes([randint(0,255) for i in range(16)])
     chall_iv = bytes([randint(0,255) for i in range(16)])
@@ -75,8 +75,8 @@ def get_challenge():
     chall_oracle = get_padding_oracle(chall_key)
 
     #Return ciphertext, iv, and oracle
-    return [ciphertext, chall_iv, chall_oracle]
-
+    return (ciphertext, chall_iv, chall_oracle)
+    
 #CHALLENGE CODE:
 if __name__ == "__main__":
     chall_ct, chall_iv, chall_o = get_challenge()

@@ -2,22 +2,22 @@
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
 from random import randint
 
-def join_bufs(bufs: list):
+def join_bufs(bufs: list) -> bytes:
     output = bytearray()
     for i in bufs:
         output.extend(i)
     return bytes(output)
 
 #ORACLE FUNCTIONS
-def oracle_16_a(aes_key: bytes, init_vector: bytes):
+def oracle_16_a(aes_key: bytes, init_vector: bytes) -> function:
     oracle_pre = "comment1=cooking%20MCs;userdata=".encode("utf-8")
     oracle_suf = ";comment2=%%20like%%20a%20pound%%20of%%20bacon".encode("utf-8")
     return lambda x : encrypt_AES_CBC_128(join_bufs([oracle_pre, x, oracle_suf]), aes_key, init_vector)
 
-def oracle_16_b(aes_key,init_vector): 
+def oracle_16_b(aes_key: bytes, init_vector: bytes) -> function: 
     return lambda x : check_win(decrypt_AES_CBC_128(x, aes_key, init_vector))
 
-def check_win(plain_text):
+def check_win(plain_text: bytes) -> bool:
     target_substring = ";admin=true;"
     ptr = 0
     for c in plain_text:
@@ -30,7 +30,7 @@ def check_win(plain_text):
     return False
 
 #Oracle-generation function.
-def generate_oracles():
+def generate_oracles() -> tuple:
     #Generate AES key
     challenge_key = bytes([randint(0,255) for i in range(16)])
     challenge_iv= bytes([randint(0,255) for i in range(16)])
@@ -40,7 +40,7 @@ def generate_oracles():
     oracle_b = oracle_16_b(challenge_key, challenge_iv)
 
     #Return the two oracles
-    return [oracle_a, oracle_b]
+    return (oracle_a, oracle_b)
 
 #Buffer xor-ing function.
 '''
@@ -48,11 +48,11 @@ Gonna be honest here, I actually like functional programming just a little bit.
 While being difficult to work with at times, it is very satisfying to write for
 cryptography problems.
 '''
-def buf_xor(a, b):
-    return bytes([(a[i] ^ b[i] if i < len(b) else a[i]) for i in range(len(a))])if len(a) >= len(b) else buf_xor(a,b)
+def buf_xor(a: bytes, b: bytes) -> bytes:
+    return bytes([(a[i] ^ b[i] if i < len(b) else a[i]) for i in range(len(a))])if len(a) >= len(b) else buf_xor(b, a)
 
 #Attack function
-def attack(oracle):
+def attack(oracle: function) -> bytes:
     #Generate base
     payload = bytes([0 for i in range(16)])
     oracle_base = bytearray(oracle(payload))

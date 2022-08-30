@@ -7,7 +7,7 @@ from s1c7 import encrypt_AES_ECB_128
 from s2c12 import attack_ECB_oracle #Bytes-object merger
 
 #Generate Class 14 ECB Oracle
-def gen_oracle_14(secret_text):
+def gen_oracle_14(secret_text: bytes) -> function:
     #Generate Oracle Constants
     secret_key = bytes([randint(0,255) for i in range(16)])
     secret_data = bytes(secret_text)
@@ -16,17 +16,17 @@ def gen_oracle_14(secret_text):
     #Generate oracle
     return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk,secret_data])),secret_key))
     
-def cipher_blocks(ciphertext):
+def cipher_blocks(ciphertext: bytes) -> list:
     return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]
 
-def join_cipher(blocks):
+def join_cipher(blocks: list) -> bytes:
     output = bytearray()
     for bl in blocks:
         output.extend(bl)
     return bytes(output)
 
 #Oracle prefix length determination
-def get_oracle_prefix_len(oracle):
+def get_oracle_prefix_len(oracle: function) -> bytes:
     no_text = oracle(bytes())
     just_one = oracle(bytes(1))
     #Find block where it starts
@@ -46,9 +46,10 @@ def get_oracle_prefix_len(oracle):
     return num_full_blocks * 16 + trailing_mod
 
 #Pseudo-oracle
-def pseudo_oracle(oracle):
+def pseudo_oracle(oracle: function) -> function:
     #Get length of prefix through get_oracle_prefix_len
     oracle_prefix_len = get_oracle_prefix_len(oracle)
+    
     #Generate new lambda function by adding more padding and splicing.
     mask_pad = bytes(16 - (oracle_prefix_len % 16))
 

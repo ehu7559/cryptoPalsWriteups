@@ -9,6 +9,7 @@ def pad(data: bytes) -> bytes:
     output.extend(bytes([gap for i in range(gap)]))
     return output
 
+#Trims data in accordance with PKCS#7. Does not safeguard against bad data.
 def trim_padding(block: bytes) -> bytes:
     datalen = (len(block) - block[-1]) #Works with PKCS7 padding of any type
     return bytes([block[i] for i in range(datalen)])

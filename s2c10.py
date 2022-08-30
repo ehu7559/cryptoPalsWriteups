@@ -10,6 +10,7 @@ def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, initialization_vector: byte
     pad = get_pad(len(data))
     working = bytearray()
     iv = bytes(initialization_vector)
+    
     for b in data:
         working.append(b) #I thought about xoring bitwise here, but len() may be slow.
         if len(working) == 16:

@@ -1,5 +1,5 @@
 #Padding oracle yaaaay
-def valid_pad(plaintext):
+def valid_pad(plaintext: bytes) -> bool:
     if len(plaintext) % 16 > 0 or len(plaintext) < 16:
         return False #Improper length
     #Check padding

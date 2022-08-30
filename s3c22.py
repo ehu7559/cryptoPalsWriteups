@@ -5,7 +5,7 @@ from time import time, sleep
 from random import randint #Okay I COULD use my MT19937 implementation but humor me here.
 from s3c21 import MT19937_stream
 
-def crack_MT19937_seed(start, output_words, increment = 1, max_depth = -1):
+def crack_MT19937_seed(start: int, output_words: list, increment = 1, max_depth = -1) -> int:
     output = start
     n = len(output_words) #Precompute and save for speed.
     if max_depth <= 0:

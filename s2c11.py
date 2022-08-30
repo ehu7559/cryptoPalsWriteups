@@ -19,7 +19,7 @@ def oracle_crypt(plain_text: bytes, aes_key: bytes, init_vec: bytes, AES_mode: s
         return encrypt_AES_CBC_128(modified_plaintext, aes_key, init_vec)
     return encrypt_AES_ECB_128(modified_plaintext, aes_key)
 
-def run_test():
+def run_test() -> bool:
     #Generate random 16-bit key and initialization vector.
     chosen_plain_text = bytes("A" * 256, "ascii")
     rand_key = bytes([(randint(0,255)) for i in range(16)])
@@ -31,7 +31,7 @@ def run_test():
     oracle_out = oracle_crypt(chosen_plain_text,rand_key,init_vector,operation_mode)
     
     guess = "ECB" if probablyECB(oracle_out) else "CBC"
-    print("Guessed: " + guess + " ACTUAL: " + operation_mode)
+    print("Guessed: " + guess + " ACTUAL: " + operation_mode, end="\r")
     #Check if correct
     return guess == operation_mode
 
@@ -43,5 +43,5 @@ if __name__ == "__main__":
         successes += (1 if run_test() else 0)
     
     #Display results
-    print("Success Rate: " + str(successes) + "/"+str(TEST_ROUNDS))
+    print("Success Rate: " + str(successes) + "/"+str(TEST_ROUNDS) + "\t\t\t\t")
     

@@ -23,3 +23,14 @@ Open the following (replacing A and B with the appropriate numbers)
 ## Interesting Things:
 Challenges 7, 10, and 18 include by-hand implementations of AES128 in ECB, CBC, and CTR modes respectively.
 Mostly written in spare time at work.
+
+
+## Completion Status:
+```
+Set 1:  1   2   3   4   5   6   7   8
+Set 2:  9   10  11  12  13  14  15  16
+Set 3:  17  18  19  20  21  22  23  24
+Set 4:  25  26  27  28  29      31  32
+Set 5:  33
+Set 6:  
+```

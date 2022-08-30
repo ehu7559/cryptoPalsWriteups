@@ -1,4 +1,3 @@
-
 #Challenge 20
 
 #Imports
@@ -6,7 +5,7 @@ from s1c6 import guess_key, decrypt
 from s3c19 import get_crypt_oracle, retrieve_lines, safe_print
 
 #Attack function
-def challenge_20_attack(ciphertexts):
+def challenge_20_attack(ciphertexts: list) -> int:
     #Get shortest string length
     shortest = len(min(ciphertexts, key=len))
     #Concatenate them

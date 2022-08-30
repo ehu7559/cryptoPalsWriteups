@@ -35,6 +35,7 @@ def MT19937_cipher_KPA(plaintext, oracle):
         for j in range(len(ciphertext)):
             if (brute_text[j] != ciphertext[j]):
                 match = False
+                break #<-- Saves some computing power for long plaintexts
         if match:
             return i
     return -1

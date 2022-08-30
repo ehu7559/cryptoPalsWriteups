@@ -5,7 +5,7 @@ from base64 import b64decode
 from s1c7 import encrypt_AES_ECB_128
 
 #Block Encryption Function
-def gen_block(aes_key, nonce, ctr):
+def gen_block(aes_key: bytes, nonce: int, ctr: int) -> bytes:
     
     #Prepare nonce and counter (challenge indicates little-endian uint64)
     nonce_bytes = bytearray(8)
@@ -25,24 +25,24 @@ def gen_block(aes_key, nonce, ctr):
     return encrypt_AES_ECB_128(bytes(block), aes_key)
 
 #Keystream oracle function
-def aes_ctr_keystream(aes_key, nonce):
+def aes_ctr_keystream(aes_key: bytes, nonce: int) -> int:
     counter = 0
     while True:
         #Generate keystream block
         output = gen_block(aes_key, nonce, counter)
 
-        #Compute with the 
+        #Yield blocks, then recompute 
         for i in range(16):
             yield output[i]
         counter += 1
 
 #CTR Mode Implementation
-def encrypt_AES_CTR(data, key, nonce):
+def encrypt_AES_CTR(data: bytes, key: bytes, nonce: int) -> bytes:
     stream = aes_ctr_keystream(key, nonce)
     return bytes([i ^ next(stream) for i in data])
 
 #Alias for compatibility
-def decrypt_AES_CTR(data, key, nonce):
+def decrypt_AES_CTR(data: bytes, key: bytes, nonce: int) -> bytes:
     return encrypt_AES_CTR(data, key, nonce)
 
 #Challenge Code

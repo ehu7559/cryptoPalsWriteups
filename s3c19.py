@@ -6,31 +6,31 @@ from random import randint
 from base64 import b64decode
 from time import sleep
 
-def safe_print(buffer, default_char=ord("*")):
+def safe_print(buffer: bytes, default_char=ord("*")):
     filtered_buffer = bytes([(a if a in range(32, 127) else default_char) for a in buffer])
     print(filtered_buffer.decode("ascii"))
 
 #Oracle Generation Function
-def get_crypt_oracle():
+def get_crypt_oracle() -> function:
     o_key = bytes([randint(0,255) for i in range(16)])
     o_nonce = randint(0, 2**31)
     return lambda x : encrypt_AES_CTR(x, o_key, o_nonce)
 
-def multislice(buffers, index):
+def multislice(buffers: bytes, index: int) -> bytes:
     output = bytearray()
     for buf in buffers:
         if index in range(len(buf)):
             output.append(buf[index])
     return bytes(output)
 
-def can_be_ascii(buffer):
+def can_be_ascii(buffer: bytes):
     for a in buffer:
         if a not in range(32, 127):
             return False
     return True
 
 #Based on an assumption that output is in ASCII
-def safe_byte_crack(ciphertext):
+def safe_byte_crack(ciphertext: bytes) -> int:
     best_i = 0
     max_score = 0
     for i in range(256):
@@ -51,11 +51,11 @@ def safe_byte_crack(ciphertext):
     return best_i
         
 #Main key-attack function
-def guess_key(ciphertexts):
+def guess_key(ciphertexts: bytes) -> bytes:
     longest_length = len(max(ciphertexts,key=len))
     return bytes([safe_byte_crack(multislice(ciphertexts, i)) for i in range(longest_length)])
 
-def guess_key_demo(ciphertexts):
+def guess_key_demo(ciphertexts: bytes):
     longest_length = len(max(ciphertexts, key=len))
     same_slices = [multislice(ciphertexts, i) for i in range(longest_length)]
     key_guess = bytearray(longest_length)
@@ -85,7 +85,7 @@ def guess_key_demo(ciphertexts):
         
 
 #Data retrieval function
-def retrieve_lines(filename):
+def retrieve_lines(filename: str) -> list:
     with open(filename, "r") as f:
         return [bytes(b64decode(l)) for l in f.readlines()]
 

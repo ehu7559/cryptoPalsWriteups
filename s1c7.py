@@ -16,7 +16,8 @@ While only decryption was required for this challenge, I elected to include the
 code for encryption as well to make for easy importing of AES ECB methods (and
 by extension any other mode of AES). The encryption functions are best placed
 here given that I technically learned them first and that the two processes are,
-of course, related. They will also be used in later challenges.
+of course, related. They will also be used in later challenges, so I will leave
+them here to keep my import statements short.
 '''
 
 #Imports
@@ -53,7 +54,7 @@ def inv_shift_rows(block: bytes) -> bytes:
     return bytes([(block[INV_SR_TABLE[i]]) for i in range(16)])
     
 #HELPER METHOD TO MULTIPLY FOR MIX_COLUMNS
-def multiply(b,a):
+def multiply(b, a):
     if b == 1:
         return a
     tmp = (a<<1) & 0xff

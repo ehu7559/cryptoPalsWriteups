@@ -4,7 +4,7 @@ from s1c7 import encrypt_AES_ECB_128
 from s1c8 import probablyECB
 
 
-def generate_oracle(secret_txt: bytes) :
+def generate_oracle(secret_txt: bytes) -> function:
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
     #Generate constant key and secret-text
@@ -18,10 +18,10 @@ def compute_gcd(a: int , b: int) -> int:
         return compute_gcd(b,a)
     return b if a % b == 0 else compute_gcd(b, a % b)
 
-def is_oracle_ECB(target):
+def is_oracle_ECB(target: function) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
-def get_oracle_block_size(target):
+def get_oracle_block_size(target: function) -> int:
     '''Computes size of a target oracle using GCD'''
     initial_length = len(target(bytes(0)))
     extender = 0
@@ -29,7 +29,7 @@ def get_oracle_block_size(target):
         extender += 1
     return compute_gcd(initial_length, len(target(bytes(extender))))
 
-def enum_oracle(header, target_oracle, desired_block):
+def enum_oracle(header: bytes, target_oracle: function, desired_block: bytes):
     for i in range(256):
         ith_plain = b''.join([header, bytes([i])])
         ith_block = extract_block(target_oracle(ith_plain), 0, len(header) + 1)
@@ -37,10 +37,10 @@ def enum_oracle(header, target_oracle, desired_block):
             return i
     return 0
 
-def extract_block(data, index, size=16):
+def extract_block(data: bytes, index: int, size=16) -> bytes:
     return bytes(data[index * size: (index + 1) * size])
     
-def attack_ECB_oracle(target):
+def attack_ECB_oracle(target: function) -> bytes:
     '''Obtains secret of a target oracle'''
     
     #Declare output as bytearray (to append to)

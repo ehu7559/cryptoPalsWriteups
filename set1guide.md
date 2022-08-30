@@ -5,7 +5,7 @@
 The challenge asks us to convert hex strings to base64.
 
 This challenge is rather simple. We are simply converting hex to base64 encoding
-for this challenge. It's not that hard. Uses the base64 library because it's an
+for this challenge. It's not that hard. Use the base64 library because it's an
 absolutely essential function.
 
 ## Challenge 2: Fixed XOR
@@ -23,17 +23,19 @@ The challenge asks us to decrypt the given plaintext, which has been encrypted
 by XOR-ing each byte of the plaintext with a single, constant byte value.
 
 The third challenge is the first attack on a cryptosystem, albeit an entirely
-easy one. The approach here brute-forces the 256 keys for each ciphertext and
+trivial one. The approach here brute-forces the 256 keys for each ciphertext and
 then determines the highest-scoring plaintext to determine the most likely key.
-
+ 
 Language classification is a rather complex thing to implement, so a simple
 frequency-based analysis is used to score the texts. Based off a well-known
 alphabetic frequency distribution, we can assign each alphabetic character a
 point value. The scoring function returns the sum of the point values of the
 characters within the string. This has the natural effect of preferring texts
 which contain more common characters. One could theoretically change the 
-function to normalize the score by dividing by length, but given the nature of
-the challenge, scores are compared only between texts of the same length.
+function to normalize the score by dividing by length to eliminate the bias
+towards longer texts which have more characters. Given the nature of the 
+challenge, however, scores are compared only between texts of the same length,
+making this unnecessary.
 
 The `crackbyte()` function actually attempts the challenge.
 
@@ -46,33 +48,22 @@ What we are looking for is one of the ciphertexts which is encrypted with single
 character XOR. To make it more explicit, what we want is a ciphertext which, for
 some single-character decryption (0-255), highly resembles English.
 
-Leveraging much of the code from the previous challenge, it should be relatively
-simple to iterate through the ciphertexts, brute-forcing each one and find the
+Leveraging the code from the previous challenge, it should be relatively simple 
+to iterate through the ciphertexts, brute-forcing each one and find the 
 ciphertext and key which yield the highest English resemblance. Depending on the
-accuracy of the scoring function, certain false positivees may outrank the
-answer. Thus, I decided to print any ciphertexts which were above a certain 
-score according to my own method. Once the threshold is raised high enough to
-reduce as much noise as possible, the answer should be easy to recognize.
+accuracy of the scoring function, certain false positives may outrank the
+answer. Thus, I decided to print any plaintexts which scored above a certain
+threshold according to my own method. Once the threshold is raised high enough,
+the answer should be easy to recognize.
 
 ## Challenge 5: Implement repeating-key XOR
 
-This challenge should immediately jump out to anyone who has encountered the
-Vigenere cipher. The only real difference is the keyspace and the operation used
-between two characters (XOR instead of addition mod 26).
+This challenge should be immediately recognizable to anyone familiar with the
+Vigenere cipher. The only real difference is that this cipher uses bitwise XOR
+while the Vigenere cipher uses addition mod 26.
 
 The function body itself is a literal one-liner. Due to the nature of the XOR
 operator, the decryption function is equivalent to the encryption function.
-
-`(a xor b xor b) = a`
-
-Proof
-```
-ciphertext byte = (a xor b)
-plaintext byte = (a xor b) xor b = a xor (b xor b)
-```
-
-There's not much to say about this challenge. The description is essentially
-self-explanatory, along with the code.
 
 ## Challenge 6: Break repeating-key XOR
 
@@ -80,9 +71,10 @@ We are now asked to break this Vigenere-like cipher.
 
 The Hamming distance function I wrote is clunky but gets the point across. As
 with much of this repository, it was written in my downtime at an internship. My
-manager was kind enough to let me code so that the endless calls did not break
-me. The Hamming Distance between two bytes can be represented by the number of
-1s in the binary representation of the bitwise XOR of the two bytes.
+manager was kind enough to let me code on my work laptop during my free time so
+that the monotony of working in tech support did not break my sanity. The 
+Hamming Distance between two bytes can be  represented by the number of 1s in 
+the binary representation of the bitwise XOR of the two bytes.
 
 The procedure is as follows.
 1. Determine Key Length
@@ -99,7 +91,7 @@ be a noticably lower Hamming distance between the two blocks.
 
 The simple method suggested by the challenge does not guarantee sufficient
 accuracy on guessing the key length. It is, as noted in the very angry comments
-above the function in the code, biased as fuck. (I was quite miffed)
+above the function in the code, "extremely broken".
 
 Instead, I expanded upon the suggestion and computed the average normalized
 Hamming distance for any two blocks in the ciphertext. This is, of course, a

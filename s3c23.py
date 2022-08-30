@@ -4,7 +4,7 @@ from s3c21 import MT19937_stream, MT19937_generator, temper_transform
 from time import sleep
 from random import randint
 
-def untemper_MT19937(num):
+def untemper_MT19937(num: int) -> int:
     if num >= 2**32:
         return untemper_MT19937(num % (2**32))
     #Tempering functions called in reverse order.

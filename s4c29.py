@@ -19,19 +19,13 @@ def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max
         payload.extend(message) #Append message to the placeholder key
 
         #Compute and encode the pair's length
-        pair_length_bytes =len(payload)
-        pair_length_encoded = encode_uint_big_endian(pair_length_bytes * 8, 8)
+        pair_length_bytes = len(payload)
         
-        #Pad the payload and set the digest's length to the padded length
-        payload.append(128)
-        while len(payload) % 64 != 56:
-            payload.append(0)
-        payload.extend(pair_length_encoded)
-        
-        digest.set_length(len(payload))
+        digested = SHA1.pad_chunk(payload , pair_length_bytes * 8)
+        digest.set_length(len(digested))
 
         #Craft forged message (Remove key prefix add tail)
-        forged_message = bytearray(payload[key_length:]) #Forged = message + glue
+        forged_message = bytearray(digested[key_length:]) #Forged = message + glue
         forged_message.extend(message_tail)
 
         #Ingest the message tail and finalize it.

@@ -3,7 +3,7 @@ from s1c7 import encrypt_AES_ECB_128, decrypt_AES_ECB_128
 from random import randint
 
 #Parsing Routine
-def parse_cookie(c):
+def parse_cookie(c: str) -> str:
     output = "{\n"
     lines = c.split("&")
     for l in lines:
@@ -15,13 +15,13 @@ def parse_cookie(c):
 #ORACLE GENERATORS:
 
 #Encryption Oracle
-def profile_oracle(aes_key):
+def profile_oracle(aes_key: bytes) -> function:
     return lambda string : encrypt_AES_ECB_128((parse_cookie("email="+string + "&uid=5&role=user")).encode("utf-8"), aes_key)
 #Decryption Oracle
-def decrypt_oracle(aes_key):
+def decrypt_oracle(aes_key: bytes) -> function:
     return lambda x : decrypt_AES_ECB_128(x, aes_key)
 
-def get_oracles():
+def get_oracles() -> tuple:
     #Generate random key
     rand_aes_key = bytes([randint(0,255) for i in range(16)])
     
@@ -32,10 +32,10 @@ def get_oracles():
     dro = decrypt_oracle(rand_aes_key)
     
     #Return the two oracles together.
-    return [pfo, dro]
+    return (pfo, dro)
     
 #Gain admin block
-def get_admin_block(pf_oracle):
+def get_admin_block(pf_oracle: function) -> bytes:
     #Construct attack buffer
     get_admin_str = "abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
     
@@ -46,14 +46,14 @@ def get_admin_block(pf_oracle):
     return bytes(admin_cookie_crypt[16:32])
 
 #Get template to put admin_block right next to.
-def get_profile_base(pf_oracle):
+def get_profile_base(pf_oracle: function) -> bytes:
     #Analogous structure to get_admin_block function
     get_base_str = "abcdefghi"
     base_cookie_crypt = pf_oracle(get_base_str)
     return bytes(base_cookie_crypt[0:32])
     
 #Attack Function
-def attack_oracle(oracle):
+def attack_oracle(oracle: function) -> bytes:
     #Get "admin" suffix.
     ad_block = get_admin_block(oracle)
     
@@ -68,13 +68,12 @@ def attack_oracle(oracle):
 if __name__ == "__main__":
     
     #Create Oracles
-    challenge_oracles = get_oracles()
-    challenge_a = challenge_oracles[0]
-    challenge_b = challenge_oracles[1]
+    chall_pro, chall_dro = get_oracles()
+
     #Attack the profile oracle
-    attack_attempt = attack_oracle(challenge_a)
+    attack_attempt = attack_oracle(chall_pro)
     
     #Decrypt using the oracle and check
-    print(challenge_b(attack_attempt).decode("utf-8"))
+    print(chall_dro(attack_attempt).decode("utf-8"))
     #Print status of challenge
     print("--- CHALLENGE STATUS: COMPLETE ---")
