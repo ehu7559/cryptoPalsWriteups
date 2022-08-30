@@ -102,8 +102,16 @@ MD4 code was based off a cursory search.
 
 ## Challenge 31:
 
-[ IN PROGRESS ]
+Given the nature of the challenges, I have resorted to using lambdas rather than
+actually implementing a web server.
+
+Early-exit string comparisons allow us to determine how many consecutive bytes
+of the string were correct.
 
 ## Challenge 32:
+
+When the delay becomes far less measurable, we can resort to repeated comparison
+operations to make the time difference more appreciable and also tune out the
+variance in actual comparison time.
 
 [ IN PROGRESS ]
