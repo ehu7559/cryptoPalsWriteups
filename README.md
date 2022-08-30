@@ -20,10 +20,15 @@ Open the following (replacing A and B with the appropriate numbers)
 - https://cryptopals.com/sets/[A]/challenges/[B]
 ```
 
-## Interesting Things:
-Challenges 7, 10, and 18 include by-hand implementations of AES128 in ECB, CBC, and CTR modes respectively.
-Mostly written in spare time at work.
-
+## Modules of Interest (the challenges most imported from):
+```
+Challenge 7:    AES-128 ECB
+Challenge 10:   AES-128 CBC
+Challenge 18:   AES-128 CTR
+Challenge 21:   MT19937 PRNG
+Challenge 28:   SHA-1 (and SHA-1 keyed MAC)
+Challenge 33:   Diffie Hellman Key Exchange
+```
 
 ## Completion Status:
 ```
