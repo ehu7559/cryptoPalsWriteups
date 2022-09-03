@@ -4,7 +4,7 @@ from s1c7 import encrypt_AES_ECB_128
 from s1c8 import probablyECB
 
 
-def generate_oracle(secret_txt: bytes) -> function:
+def generate_oracle(secret_txt: bytes):
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
     #Generate constant key and secret-text
@@ -12,24 +12,21 @@ def generate_oracle(secret_txt: bytes) -> function:
     secret_txt = bytes(secret_txt)
     return (lambda atk : encrypt_AES_ECB_128(b''.join([atk,secret_txt]),secret_key))
 
-def compute_gcd(a: int , b: int) -> int:
-    '''Simple way of implementing block size detection using Extended Euclidian Algorithm, grabbed from my coursework :)'''
-    if b > a:
-        return compute_gcd(b,a)
-    return b if a % b == 0 else compute_gcd(b, a % b)
 
-def is_oracle_ECB(target: function) -> bool:
+def is_oracle_ECB(target) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
-def get_oracle_block_size(target: function) -> int:
+def get_oracle_block_size(target) -> int:
     '''Computes size of a target oracle using GCD'''
     initial_length = len(target(bytes(0)))
     extender = 0
     while len(target(bytes(extender))) == initial_length:
         extender += 1
-    return compute_gcd(initial_length, len(target(bytes(extender))))
+    return len(target(bytes(extender))) - initial_length
+    #^ I fixed this yet again. I was stupid and used the Extended Euclidian
+    #Algorithm to do it before. I am, at times, a bit of an idiot.
 
-def enum_oracle(header: bytes, target_oracle: function, desired_block: bytes):
+def enum_oracle(header: bytes, target_oracle, desired_block: bytes):
     for i in range(256):
         ith_plain = b''.join([header, bytes([i])])
         ith_block = extract_block(target_oracle(ith_plain), 0, len(header) + 1)
@@ -40,7 +37,7 @@ def enum_oracle(header: bytes, target_oracle: function, desired_block: bytes):
 def extract_block(data: bytes, index: int, size=16) -> bytes:
     return bytes(data[index * size: (index + 1) * size])
     
-def attack_ECB_oracle(target: function) -> bytes:
+def attack_ECB_oracle(target) -> bytes:
     '''Obtains secret of a target oracle'''
     
     #Declare output as bytearray (to append to)
@@ -77,6 +74,7 @@ def attack_ECB_oracle(target: function) -> bytes:
             
             #Append the byte to the output
             output.append(new_byte)
+            print(chr(new_byte), end='')
     
     #Trim it down
     end_pad_size = output[-1]

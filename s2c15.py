@@ -1,17 +1,25 @@
+from s1c7 import decrypt_block_128
+
 #Padding oracle yaaaay
-def valid_pad(plaintext: bytes) -> bool:
+def is_valid_pad(plaintext: bytes) -> bool:
     if len(plaintext) % 16 > 0 or len(plaintext) < 16:
         return False #Improper length
-    #Check padding
-    padding_size = plaintext[-1]
-    if padding_size == 0:
+    #Truncate to last 16 bytes
+    plaintext = bytearray(plaintext[-16:])
+    pad_len = plaintext[-1]
+    if pad_len > 16 or pad_len == 0:
         return False
-    if padding_size > 16:
-        return False
-    for i in range(padding_size):
-        if plaintext[-1 - i] != padding_size:
+    for i in range(pad_len):
+        if plaintext.pop() != pad_len:
             return False
     return True
-    
+
+def is_valid_CBC_padding(data, key, iv):
+    while len(data) > 16:
+        iv, data = data[:16], data[16:]
+    data = decrypt_block_128(data, key)
+    data = bytes([data[i] ^ iv[i] for i in range(16)])
+    return is_valid_pad(data)
+
 if __name__ == "__main__":
     print("--- CHALLENGE STATUS: COMPLETE ---")

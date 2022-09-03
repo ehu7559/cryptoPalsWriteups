@@ -11,7 +11,7 @@ def safe_print(buffer: bytes, default_char=ord("*")):
     print(filtered_buffer.decode("ascii"))
 
 #Oracle Generation Function
-def get_crypt_oracle() -> function:
+def get_crypt_oracle():
     o_key = bytes([randint(0,255) for i in range(16)])
     o_nonce = randint(0, 2**31)
     return lambda x : encrypt_AES_CTR(x, o_key, o_nonce)

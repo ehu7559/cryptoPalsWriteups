@@ -23,7 +23,7 @@ def crack_MT19937_seed(start: int, output_words: list, increment = 1, max_depth 
     
         #If not solved, decrement and attempt to crack again.
         if solved:
-            print(f"Cracked Seed: {output}")
+            print(f"Cracked Seed: {output} ")
             return output
         
         output += increment

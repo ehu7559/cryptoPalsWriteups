@@ -22,11 +22,11 @@ Open the following (replacing A and B with the appropriate numbers)
 
 ## Modules of Interest (the challenges most imported from):
 ```
-Challenge 7:    AES-128 ECB
-Challenge 10:   AES-128 CBC
-Challenge 18:   AES-128 CTR
-Challenge 21:   MT19937 PRNG
-Challenge 28:   SHA-1 (and SHA-1 keyed MAC)
+Challenge 7:    AES-128 ECB (Advanced Encryption Standard, 128-bit, Electronic Code Book mode)
+Challenge 10:   AES-128 CBC (Advanced Encryption Standard, 128-bit, Cipher Block Chain mode)
+Challenge 18:   AES-128 CTR (Advanced Encryption Standard, 128-bit, Counter mode)
+Challenge 21:   MT19937 PRNG (Mersenne-Twister 19937 Psuedo-Random Number Generator)
+Challenge 28:   SHA-1 (Secure Hash Algorithm 1)
 Challenge 33:   Diffie Hellman Key Exchange
 ```
 
@@ -36,6 +36,6 @@ Set 1:  1   2   3   4   5   6   7   8
 Set 2:  9   10  11  12  13  14  15  16
 Set 3:  17  18  19  20  21  22  23  24
 Set 4:  25  26  27  28  29      31  32
-Set 5:  33
+Set 5:  33  34
 Set 6:  
 ```

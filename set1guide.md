@@ -187,7 +187,7 @@ inv sub bytes, inv shift rows, and add round_key_0
 The full specs of AES can be found on Wikipedia. I'm just a little too tired to
 write a full explanation. My code is also rather neatly formatted for this one
 in particular, so I recommend giving it a read. I won't bore you to death with a
-boring explanation of it.
+detailed explanation of it.
 
 As noted in the code, writing code to encrypt AES ECB was not yet necessary, but
 was very handy in future challenges.

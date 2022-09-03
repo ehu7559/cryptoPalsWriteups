@@ -15,10 +15,10 @@ def parse_cookie(c: str) -> str:
 #ORACLE GENERATORS:
 
 #Encryption Oracle
-def profile_oracle(aes_key: bytes) -> function:
+def profile_oracle(aes_key: bytes):
     return lambda string : encrypt_AES_ECB_128((parse_cookie("email="+string + "&uid=5&role=user")).encode("utf-8"), aes_key)
 #Decryption Oracle
-def decrypt_oracle(aes_key: bytes) -> function:
+def decrypt_oracle(aes_key: bytes):
     return lambda x : decrypt_AES_ECB_128(x, aes_key)
 
 def get_oracles() -> tuple:
@@ -35,7 +35,7 @@ def get_oracles() -> tuple:
     return (pfo, dro)
     
 #Gain admin block
-def get_admin_block(pf_oracle: function) -> bytes:
+def get_admin_block(pf_oracle) -> bytes:
     #Construct attack buffer
     get_admin_str = "abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
     
@@ -46,14 +46,14 @@ def get_admin_block(pf_oracle: function) -> bytes:
     return bytes(admin_cookie_crypt[16:32])
 
 #Get template to put admin_block right next to.
-def get_profile_base(pf_oracle: function) -> bytes:
+def get_profile_base(pf_oracle) -> bytes:
     #Analogous structure to get_admin_block function
     get_base_str = "abcdefghi"
     base_cookie_crypt = pf_oracle(get_base_str)
     return bytes(base_cookie_crypt[0:32])
     
 #Attack Function
-def attack_oracle(oracle: function) -> bytes:
+def attack_oracle(oracle) -> bytes:
     #Get "admin" suffix.
     ad_block = get_admin_block(oracle)
     

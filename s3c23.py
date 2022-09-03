@@ -76,7 +76,7 @@ if __name__ == "__main__":
         if r != untemper_MT19937(temper_transform(r)):
             print("Failed Detemper Consistency Check")
             break
-    print("Tempering Transform Invesion Test Passed!")
+    print("Tempering Transform Inversion Test Passed!")
     
     #Create generator with a random seed.
     chall_seed = randint(0, 2*32 - 1)

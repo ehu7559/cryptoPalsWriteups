@@ -171,9 +171,9 @@ focused on those attacks already, with more to come.
 ## Set 3 Closing Remarks:
 Well this was entertaining! To be honest, this set took me a while because I did
 not want to implement the MT19937 RNG. (Incidentally, I did find a writeup on
-the internet by someone else who left these challenges for later.)
+the internet by someone else who also left these challenges for later.)
 
 We are also almost done with AES attacks. These challenges have been extremely
 useful in my learning. My thanks to Tylir, a recruiter from NCC group for 
 introducing me to these challenges after I got rejected for a job. I don't think
-you knew at the time, but you helped me discover my passion.
+you knew at the time, but you helped me discover my passion. 

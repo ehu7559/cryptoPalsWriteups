@@ -2,18 +2,30 @@
 
 #Imports
 from random import randint
+from s1c7 import decrypt_block_128
 from s2c10 import decrypt_AES_CBC_128, encrypt_AES_CBC_128
+from s2c15 import is_valid_CBC_padding
 
 #Validation function
 def is_valid_ciphertext(data, key, iv):
-    plain_data = decrypt_AES_CBC_128(data, key, iv)
+    plain_data = decrypt_AES_CBC_no_trim(data, key, iv)
     for a in plain_data:
         if a not in range(127):
             return False 
     return True
 
+def decrypt_AES_CBC_no_trim(data, key, iv):
+    output = bytearray()
+    while len(data) > 0:
+        plain_block = decrypt_block_128(data[:16], key)
+        plain_block = (bytes([iv[i] ^ plain_block[i] for i in range(16)]))
+        iv = data[:16]
+        data = data[16:]
+        output.extend(plain_block)
+    return bytes(output)
+
 def get_server_oracle(key, iv):
-    return lambda x : bytes() if is_valid_ciphertext(x, key, iv) else decrypt_AES_CBC_128(x, key, iv) 
+    return lambda x : bytes() if is_valid_ciphertext(x, key, iv) else decrypt_AES_CBC_no_trim(x, key, iv) 
 
 #Attack Function
 def attack(intercepted_message, decryption_server):

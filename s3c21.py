@@ -6,7 +6,7 @@ def MT19937_stream(seed: int = 5489) -> int:
     while True:
         yield(next(generator))
 
-def MT19937_generator(state_buffer : list, index=None) -> function:
+def MT19937_generator(state_buffer : list, index=None):
     state = [x for x in state_buffer]
     #Set quantities
     w, n, m, r = (32, 624, 397, 31)
@@ -42,7 +42,7 @@ def MT19937_generator(state_buffer : list, index=None) -> function:
 
         index += 1
 
-def initialize_MT19937_state(seed: int) -> function:
+def initialize_MT19937_state(seed: int):
     
     w, n = (32, 624)
     f = 1812433253

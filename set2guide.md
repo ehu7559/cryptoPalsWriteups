@@ -98,9 +98,10 @@ diet consisting of the letter `"A"`, which should reveal the repetition of ECB,
 if the oracle is indeed using it. 
 
 #### Determining block length
-We already know this, but my code has a note on how you could do it. I think it
-would be good to implement, but it honestly seems like more trouble than it is
-worth. I was, after all, excited to finish the challenge.
+We already know this, but we have to do it anyway. We can gradually add 
+incrementally longer inputs until we have two lengths given ciphertexts whose
+lengths differ by 1. This allows us to know the minimum difference between two
+ciphertexts' length.
 
 #### Feeding it specific inputs
 See the `attack_ECB_oracle()` function. For the sake of simplicity, I chose to

@@ -106,12 +106,20 @@ Given the nature of the challenges, I have resorted to using lambdas rather than
 actually implementing a web server.
 
 Early-exit string comparisons allow us to determine how many consecutive bytes
-of the string were correct.
+of the string were correct. Using this knowledge, we can test each byte's values
+and select the one with the longest comparison time (indicating that the
+comparator function checked another byte).
+
+This works best on POSIX-based systems, as Windows' timekeeping leaves much to
+be desired.
 
 ## Challenge 32:
 
 When the delay becomes far less measurable, we can resort to repeated comparison
 operations to make the time difference more appreciable and also tune out the
-variance in actual comparison time.
+variance in actual comparison time. This does, however, substantially increase
+the time required to carry out an attack. Fortunately, we are blessed by the
+lower time per byte anyway, resulting in a runtime comparable to that of the
+previous challenge.
 
 [ IN PROGRESS ]

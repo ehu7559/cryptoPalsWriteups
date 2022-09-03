@@ -35,7 +35,7 @@ INV_SB_TABLE = bytes([82, 9, 106, 213, 48, 54, 165, 56, 191, 64, 163, 158, 129, 
 SR_TABLE = bytes([0, 5, 10, 15, 4, 9, 14, 3, 8, 13, 2, 7, 12, 1, 6, 11])
 INV_SR_TABLE = bytes([0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3])
 ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])  #PRELOADED CONSTANTS FTW
-  
+
 #FUNCTIONS FOR AES
 #Sub bytes
 def sub_bytes(block: bytes) -> bytes:
@@ -92,9 +92,15 @@ def inv_add_round_key(block: bytes, round_key: bytes) -> bytes:
     return add_round_key(block, inv_mix_columns(round_key))
 
 #PKCS7 Padding as per RFC 5652, given length of data to encrypt.
-def get_pad(length):
+def get_pad(length: int) -> bytes:
     pad_length = 16 - (length % 16)
     return bytes([(pad_length) for i in range(pad_length)])
+
+#More useful padding function
+def pad_block(data: bytes) -> bytes:
+    data = bytearray(data)
+    data.extend(get_pad(len(data)))
+    return bytes(data)
 
 #Round Key Extension Function
 def run_key_schedule(keybytes: bytes) -> list[bytes]:
@@ -171,42 +177,42 @@ def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
     
     #Final round (with canonical missing inv_mix_columns operation)
     return decrypt_final_round(output,round_keys[0])
-    
+
+def trim_padding(block: bytes) -> bytes:
+    if len(block) == 0:
+        raise Exception("Trying to trim an empty AES ciphertext!")
+    if len(block) % 16 > 0:
+        raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
+    padding_length = block[-1]
+    if padding_length == 0 or padding_length > 16:
+        raise Exception(f"Expected Padding Length in interval [1,16], found {padding_length} instead!")
+    for i in range(padding_length):
+        if block[-1] != padding_length:
+            raise Exception("Padding Not Compliant with PKCS#7")
+        block = block[:-1]
+    return bytes(block)
+
 #Main Encryption Function for ECB128
 def encrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
     output = bytearray()
-    
-    #Pad the data if necessary
-    pad = get_pad(len(data))
-    working = bytearray()
-    for b in data:
-        working.append(b)
-        if len(working) == 16:
-            output.extend(encrypt_block_128(bytes(working), aes_key))
-            working = bytearray()
-    
-    working.extend(pad) #Pad for final block
-    output.extend(encrypt_block_128(bytes(working), aes_key)) #Encrypt the last block
-
+    padded = False
+    while not padded:
+        if len(data) < 16:
+            data = pad_block(data)
+            padded = True
+        output.extend(encrypt_block_128(bytes(data[:16]), aes_key))
+        data = data[16:] #Remove block
     return bytes(output)
 
 #Main Decryption Functions
 def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
-
-    #BLOCKS: Much more efficient thanks to known block parity
-    num_blocks = len(data)//16
     output = bytearray()
-
-    #Decrypt
-    for i in range(num_blocks):
-        output.extend(decrypt_block_128(data[16 * i: 16 * (i + 1)], aes_key))
-        
-    #Trim the padding
-    to_trim = output[-1]
-    for i in range(to_trim):
-        if output.pop() not in [to_trim, 0]: #Check that value of pad is still valid
-            print("ERROR: PADDING IS NOT COMPLIANT WITH PKCS#7")
-    
+    while len(data) > 0:
+        new_block = decrypt_block_128(data[:16], aes_key)
+        data = data[16:]
+        if len(data) == 0:
+            new_block = trim_padding(new_block)
+        output.extend(new_block)
     return bytes(output)
     
 #Challenge Data Retrieval

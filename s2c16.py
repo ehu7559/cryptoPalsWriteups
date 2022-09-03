@@ -9,12 +9,12 @@ def join_bufs(bufs: list) -> bytes:
     return bytes(output)
 
 #ORACLE FUNCTIONS
-def oracle_16_a(aes_key: bytes, init_vector: bytes) -> function:
+def oracle_16_a(aes_key: bytes, init_vector: bytes):
     oracle_pre = "comment1=cooking%20MCs;userdata=".encode("utf-8")
     oracle_suf = ";comment2=%%20like%%20a%20pound%%20of%%20bacon".encode("utf-8")
     return lambda x : encrypt_AES_CBC_128(join_bufs([oracle_pre, x, oracle_suf]), aes_key, init_vector)
 
-def oracle_16_b(aes_key: bytes, init_vector: bytes) -> function: 
+def oracle_16_b(aes_key: bytes, init_vector: bytes): 
     return lambda x : check_win(decrypt_AES_CBC_128(x, aes_key, init_vector))
 
 def check_win(plain_text: bytes) -> bool:
@@ -52,7 +52,7 @@ def buf_xor(a: bytes, b: bytes) -> bytes:
     return bytes([(a[i] ^ b[i] if i < len(b) else a[i]) for i in range(len(a))])if len(a) >= len(b) else buf_xor(b, a)
 
 #Attack function
-def attack(oracle: function) -> bytes:
+def attack(oracle) -> bytes:
     #Generate base
     payload = bytes([0 for i in range(16)])
     oracle_base = bytearray(oracle(payload))

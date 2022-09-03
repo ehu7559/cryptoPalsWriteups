@@ -7,7 +7,7 @@ from s1c7 import encrypt_AES_ECB_128
 from s2c12 import attack_ECB_oracle #Bytes-object merger
 
 #Generate Class 14 ECB Oracle
-def gen_oracle_14(secret_text: bytes) -> function:
+def gen_oracle_14(secret_text: bytes):
     #Generate Oracle Constants
     secret_key = bytes([randint(0,255) for i in range(16)])
     secret_data = bytes(secret_text)
@@ -26,7 +26,7 @@ def join_cipher(blocks: list) -> bytes:
     return bytes(output)
 
 #Oracle prefix length determination
-def get_oracle_prefix_len(oracle: function) -> bytes:
+def get_oracle_prefix_len(oracle) -> bytes:
     no_text = oracle(bytes())
     just_one = oracle(bytes(1))
     #Find block where it starts
@@ -46,7 +46,7 @@ def get_oracle_prefix_len(oracle: function) -> bytes:
     return num_full_blocks * 16 + trailing_mod
 
 #Pseudo-oracle
-def pseudo_oracle(oracle: function) -> function:
+def pseudo_oracle(oracle):
     #Get length of prefix through get_oracle_prefix_len
     oracle_prefix_len = get_oracle_prefix_len(oracle)
     

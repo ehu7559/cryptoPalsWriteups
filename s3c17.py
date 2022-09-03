@@ -5,19 +5,19 @@ from base64 import b64decode
 from s2c9 import trim_padding
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
 from s2c14 import cipher_blocks
-from s2c15 import valid_pad
+from s2c15 import is_valid_CBC_padding
 from s2c16 import join_bufs
 from random import randint, choice
 
 #Padding Oracle (In a real attack this would send a request and judge by server response)
-def get_padding_oracle(aes_key: bytes) -> function:
-    return lambda ct, iv : valid_pad(decrypt_AES_CBC_128(ct, aes_key, iv))
+def get_padding_oracle(aes_key: bytes):
+    return lambda ct, iv : is_valid_CBC_padding(ct, aes_key, iv)
 
 def apply_iv(a: bytes, b: bytes) -> bytes:
     return bytes([(a[i] ^ b[i]) for i in range(len(a))])
 
 #Attack Helper (Actually conducts the attack)
-def attack_block(oracle: function, block: bytes) -> bytes:
+def attack_block(oracle, block: bytes) -> bytes:
     #Initialize brute-force procedure    
     zeroing_iv = bytearray(16)
     output = bytearray(16)
@@ -39,7 +39,7 @@ def attack_block(oracle: function, block: bytes) -> bytes:
     return output
 
 #Main Attack Loop
-def attack(oracle: function, ciphertext: bytes, init_vector: bytes) -> bytes:
+def attack(oracle, ciphertext: bytes, init_vector: bytes) -> bytes:
     #Break it into blocks.
     ct_blocks = cipher_blocks(ciphertext)
     pt_blocks = []
