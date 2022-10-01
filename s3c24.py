@@ -26,28 +26,29 @@ def MT19937_cipher(seed, data):
 def get_cipher_oracle(seed):
     return lambda x : MT19937_cipher(seed, x)
 
-def MT19937_cipher_KPA(plaintext, oracle):
-    ciphertext = oracle(plaintext)
+
+def MT19937_cipher_KPA(oracle):
+    ciphertext = oracle(bytes([0 for i in range(2496)]))
     for i in range(2**16):
         print(f"TRYING SEED: {i}", end="\r")
-        brute_text = MT19937_cipher(i, plaintext)
+        brute_gen = MT19937_bytestream(i)
         match = True
-        for j in range(len(ciphertext)):
-            if (brute_text[j] != ciphertext[j]):
+        for j in range(2496):
+            if next(brute_gen) != ciphertext[j]:
                 match = False
-                break #<-- Saves some computing power for long plaintexts
+                break
         if match:
             return i
     return -1
 
+#Run Challenge.
 if __name__ == "__main__":
     #Generate 16-bit seed and encryption oracle
     chall_seed = randint(0, 2**16 - 1)
     chall_oracle = get_cipher_oracle(chall_seed)
 
     #Generate known plaintext
-    chall_plaintext = bytes(randint(0, 255) for i in range(2496))
-    cracked_seed = MT19937_cipher_KPA(chall_plaintext, chall_oracle)
+    cracked_seed = MT19937_cipher_KPA(chall_oracle)
 
     #Print results.
     print(f"Challenge Seed: {chall_seed}\nCracked Seed: {cracked_seed}")

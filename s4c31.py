@@ -37,7 +37,7 @@ def artificial_timing_attack(oracle):
         best_time = 0
         for j in range(256):
             attack_buffer[i] = j
-            j_time = get_median_time(oracle, attack_buffer, 1)
+            j_time = get_median_time(oracle, attack_buffer, 100)
             #print(attack_buffer.hex(), end="\r")
             if j_time > best_time:
                 best_j = j

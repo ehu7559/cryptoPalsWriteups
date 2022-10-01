@@ -114,7 +114,7 @@ def run_key_schedule(keybytes: bytes) -> list[bytes]:
         prev_column = bytearray(key_columns[i-1])
 
         #Compute new column as per Lawrence book
-        if i%4 == 0:
+        if i % 4 == 0:
             #Compute T(W(i-1)) 
             shifted_column = bytearray([prev_column[(i + 1) % 4] for i in range(4)])
             subbed_column = bytearray([(SB_TABLE[shifted_column[i]]) for i in range(4)])

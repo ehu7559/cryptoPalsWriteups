@@ -19,7 +19,7 @@ def insecure_comparison(a: bytes, b: bytes):
 
 
 #Server
-#TODO: I hate web frameworks and this isn't cryptographic. :|
+#TODO: I hate web frameworks and this isn't cryptographic. :(
 #So I've just used an oracle here. It's so much easier.
 #Otherwise you should just grab some web framework boilerplating.
 

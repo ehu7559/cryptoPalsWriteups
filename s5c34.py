@@ -70,6 +70,7 @@ if __name__ == "__main__":
     b_m_2 = secret_message(b_got, Bob.get_secret())
     m_saw_from_b = reveal_message(b_m_2, 0).decode("ascii")
     print(f"Mindy Saw: |{m_saw_from_b}|" )
+
     #M->A
     #Relay that to A
     

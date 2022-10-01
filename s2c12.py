@@ -12,7 +12,6 @@ def generate_oracle(secret_txt: bytes):
     secret_txt = bytes(secret_txt)
     return (lambda atk : encrypt_AES_ECB_128(b''.join([atk,secret_txt]),secret_key))
 
-
 def is_oracle_ECB(target) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))
 

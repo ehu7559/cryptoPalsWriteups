@@ -4,7 +4,6 @@
 from random import randint
 from s1c7 import decrypt_block_128
 from s2c10 import decrypt_AES_CBC_128, encrypt_AES_CBC_128
-from s2c15 import is_valid_CBC_padding
 
 #Validation function
 def is_valid_ciphertext(data, key, iv):
@@ -30,12 +29,13 @@ def get_server_oracle(key, iv):
 #Attack Function
 def attack(intercepted_message, decryption_server):
     if len(intercepted_message) < 16:
+        #Not even a whole ciphertext block. Basically impossible.
         print("ERROR: Message length is insufficient to conduct attack")
         return
     payload = bytearray()
-    payload.extend([intercepted_message[i] for i in range(16)])
+    payload.extend(intercepted_message[:16])
     payload.extend(bytes(16))
-    payload.extend([intercepted_message[i] for i in range(16)])
+    payload.extend(intercepted_message[:16])
     newplain = decryption_server(payload)
     if len(newplain) == 0:
         print("ERROR: Message transformation did not trigger server failure")
@@ -53,11 +53,14 @@ if __name__ == "__main__":
     print("SETTING UP CHALLENGES...")
     chall_server = get_server_oracle(chall_key, chall_iv)
     #Generate sender message
-    plain_message = bytes([ord(c) for c in "This message is a placeholder. Please make sure that this is long enough to carry out the attack."])
+    
+    plain_message = "This message is a placeholder. Please make sure that this is long enough to carry out the attack.".encode("ascii")
     encrypted_message = encrypt_AES_CBC_128(plain_message, chall_key, chall_iv)
 
     #Perform attack
     print("PERFORMING ATTACK...")
     cracked_key = attack(encrypted_message, chall_server)
+    print(f"CHALLENGE KEY: \t{chall_key.hex()}")
+    print(f"CRACKED KEY: \t{cracked_key.hex()}")
     cracked_text = decrypt_AES_CBC_128(encrypted_message, cracked_key, cracked_key)
-    print(cracked_text.decode("ascii"))
+    print("RECOVERED MESSAGE: " + cracked_text.decode("ascii"))

@@ -14,7 +14,7 @@ def gen_oracle_14(secret_text: bytes):
     prefix_len = randint(0,255)
     prefix_data = bytes([randint(0,255) for i in range(prefix_len)])
     #Generate oracle
-    return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk,secret_data])),secret_key))
+    return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk, secret_data])), secret_key))
     
 def cipher_blocks(ciphertext: bytes) -> list:
     return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]

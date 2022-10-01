@@ -29,7 +29,7 @@ def MT19937_generator(state_buffer : list, index=None):
         #If state is exhausted
         if index == n:
             #Generate next n bytes of state through twist!
-            for i in range(0, n-1):
+            for i in range(0, n):
                 x = (state[i] & upper_mask) + (state[(i + 1) % n] & lower_mask)
                 xA = x >> 1
                 if not x%2 == 0:

@@ -41,16 +41,7 @@ def generate_oracles() -> tuple:
 
     #Return the two oracles
     return (oracle_a, oracle_b)
-
-#Buffer xor-ing function.
-'''
-Gonna be honest here, I actually like functional programming just a little bit.
-While being difficult to work with at times, it is very satisfying to write for
-cryptography problems.
-'''
-def buf_xor(a: bytes, b: bytes) -> bytes:
-    return bytes([(a[i] ^ b[i] if i < len(b) else a[i]) for i in range(len(a))])if len(a) >= len(b) else buf_xor(b, a)
-
+    
 #Attack function
 def attack(oracle) -> bytes:
     #Generate base

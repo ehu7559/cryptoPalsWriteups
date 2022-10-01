@@ -144,10 +144,7 @@ def leftrotate(num, shift, length=32):
 #Challenge Code
 if __name__ == "__main__":
     print("8.txt : " + SHA1.hash_file("8.txt"))
-    print("set1guide.md : " + SHA1.hash_file("set1guide.md"))
-
 '''
 REFERENCE RESULTS
 8.txt : 24398342fe6cf15b8782db8ae8cdd6fa7f777278
-set1guide.md : 46cef14f6c0354684fb8de036d4ba7217bc051c0
 '''
