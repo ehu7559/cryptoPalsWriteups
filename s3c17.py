@@ -3,7 +3,7 @@
 #Imports
 from base64 import b64decode
 from s2c9 import trim_padding
-from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
+from s2c10 import encrypt_AES_CBC_128
 from s2c14 import cipher_blocks
 from s2c15 import is_valid_CBC_padding
 from s2c16 import join_bufs

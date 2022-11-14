@@ -4,6 +4,7 @@ from random import randint
 #Much faster, more compact, and very very efficient.
 def mod_exp(b: int, x: int, n: int) -> int:
     '''Computes residue class b ** x mod n, where all are non-negative integers'''
+    #Very useful for Diffie-Hellman Key Exchange and RSA encryption/decryptiono
     #I know you can just use pow, but this is MY implementation! (and just as fast) 
     if x == 0:
         return 1 #Simple catch case
@@ -16,7 +17,7 @@ def mod_exp(b: int, x: int, n: int) -> int:
         x = x // 2
     return acc
 
-#party class
+#party class: The endpoints in the key exchanege protocol.
 class DHParty:
 
     def __init__(self):
@@ -86,3 +87,4 @@ if __name__ == "__main__":
 
     print(f"ALICE GOT: \t{Alice.get_secret()}")
     print(f"BOB GOT: \t{Bob.get_secret()}")
+    

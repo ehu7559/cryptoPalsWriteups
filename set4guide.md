@@ -122,4 +122,12 @@ the time required to carry out an attack. Fortunately, we are blessed by the
 lower time per byte anyway, resulting in a runtime comparable to that of the
 previous challenge.
 
-[ IN PROGRESS ]
+Run on Linux. I swear to god Windows is horrible for this.
+
+## Closing Remarks:
+
+This was fun, I suppose. Much of it was painful. I still haven't implemented MD4
+as of the time of writing, but I genuinely cannot be bothered to finish it. It's
+just so tedious and slow that I don't care. I could not possibly care less. I am
+lookvery much looking forward to the fifth and sixth challenge sets, where I can
+actually demonstrate my mathematical knowledge.

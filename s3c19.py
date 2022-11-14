@@ -82,7 +82,6 @@ def guess_key_demo(ciphertexts: bytes):
         key_guess[i] = best_j
     print("")
     return bytes(key_guess)
-        
 
 #Data retrieval function
 def retrieve_lines(filename: str) -> list:

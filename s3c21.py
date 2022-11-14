@@ -11,12 +11,7 @@ def MT19937_generator(state_buffer : list, index=None):
     #Set quantities
     w, n, m, r = (32, 624, 397, 31)
     #Pre-evaluated the constant hex expressions for speed.
-    a = 2567483615
-    u, d = (11, 4294967295) #(11, hex_to_uint("FFFFFFFF"))
-    s, b = (7, 2636928640) #(7, hex_to_uint("9D2C5680"))
-    t, c = (15, 4022730752) #(15, hex_to_uint("EFC60000"))
-    l = 18
-    f = 1812433253    
+    a = 2567483615   
 
     #Declare State variables
     if index is None:

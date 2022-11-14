@@ -67,17 +67,6 @@ def clone_MT19937(output):
 
 if __name__ == "__main__":
 
-    #Test Un-tempering function
-    print("Testing Temper Transform Inversion")
-    for i in range(100):
-        print(f"Testing {i+1} of 100", end="\r")
-        sleep(0.05)
-        r = randint(0, 2**32 - 1)
-        if r != untemper_MT19937(temper_transform(r)):
-            print("Failed Detemper Consistency Check")
-            break
-    print("Tempering Transform Inversion Test Passed!")
-    
     #Create generator with a random seed.
     chall_seed = randint(0, 2*32 - 1)
     chall_stream = MT19937_stream(chall_seed)
