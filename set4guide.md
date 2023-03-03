@@ -129,5 +129,5 @@ Run on Linux. I swear to god Windows is horrible for this.
 This was fun, I suppose. Much of it was painful. I still haven't implemented MD4
 as of the time of writing, but I genuinely cannot be bothered to finish it. It's
 just so tedious and slow that I don't care. I could not possibly care less. I am
-lookvery much looking forward to the fifth and sixth challenge sets, where I can
+very much looking forward to the fifth and sixth challenge sets, where I can
 actually demonstrate my mathematical knowledge.

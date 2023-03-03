@@ -1,6 +1,6 @@
 def probablyECB(data: bytes) -> bool:
     blocks = []
-    num_blocks = len(data) //16
+    num_blocks = len(data) // 16
 
     #Chunkify it
     for i in range(num_blocks):

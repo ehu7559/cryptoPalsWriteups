@@ -4,20 +4,28 @@ from random import randint
 #Much faster, more compact, and very very efficient.
 def mod_exp(b: int, x: int, n: int) -> int:
     '''Computes residue class b ** x mod n, where all are non-negative integers'''
-    #Very useful for Diffie-Hellman Key Exchange and RSA encryption/decryptiono
+    #Very useful for Diffie-Hellman Key Exchange and RSA encryption/decryption
     #I know you can just use pow, but this is MY implementation! (and just as fast) 
-    if x == 0:
-        return 1 #Simple catch case
+    acc = 1 #accumulator
+    curr_pow = b % n #Addition of the n enforces b < n. Useful to avoid some unnecessary overheads.
+    while x > 0:
+        acc *= 1 if (x % 2 == 0) else curr_pow
+        acc = acc % n
+        curr_pow = (curr_pow * curr_pow) % n
+        x = x >> 1
+    return acc
+
+def unbounded_exp(b: int, x: int) -> int:
+    '''mod_exp without the mod part'''
     acc = 1 #accumulator
     curr_pow = b
     while x > 0:
         acc *= 1 if (x % 2 == 0) else curr_pow
-        acc = acc % n
-        curr_pow = (curr_pow ** 2) % n
-        x = x // 2
+        curr_pow *= curr_pow
+        x = x >> 1
     return acc
-
-#party class: The endpoints in the key exchanege protocol.
+    
+#party class: The endpoints in the key exchange protocol.
 class DHParty:
 
     def __init__(self):
@@ -53,7 +61,7 @@ class DHParty:
     #Alice takes bob's public key and computes the shared secret
     def finish_handshake(self, pub_key_back):
         self.shared_secret = mod_exp(pub_key_back, self.secret_key, self.p)
-        return self.get_secret
+        return self.get_secret()
 
     def get_public_key(self):
         if self.p is None or self.g is None or self.secret_key is None:

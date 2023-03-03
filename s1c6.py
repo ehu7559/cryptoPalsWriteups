@@ -1,16 +1,18 @@
 #CONSTANTS AND IMPORTS
 from base64 import b64decode
-from s1c4 import score_text
+from s1c3 import score_text
+from s1c5 import decrypt
 KEY_SIZE_LIMIT = 100
 
 #Simple summation method. should work for texts of the same length 
 
 def ham_dist_byte(a: int, b: int) -> int:
+    '''XORs two bytes and counts the 1s in the resulting binary operation'''
     n = a ^ b
     output = 0
     for i in range(8):
         output += n % 2
-        n = n//2
+        n = n >> 1
     return output
 
 def hamming_distance(buf_a: bytes, buf_b: bytes) -> int:
@@ -24,14 +26,15 @@ def hamming_distance(buf_a: bytes, buf_b: bytes) -> int:
 This function is incredibly slow, but yields a far higher confidence in the
 resulting Kasiski analysis. The suggested method of using a single block size to
 check this is extremely broken, especially given shorter key sizes' 
-susceptibility to the biases found in the beginning of the text.
+susceptibility to the biases found in the beginning of the text. This function
+is quadratic in time with respect to the length of the data, which is horrible.
 
 In the original implementation, this would consistently return a key length of 5
 characters, which was patently incorrect given that the actual key length was 29
 characters, leading to an entirely illegible ciphertext that took multiple days
 to resolve (as 5 and 29 are coprime). This problem led to much filtering on
 printable characters and other attempts to obtain the plaintext assuming that
-the key length was 5, all becuase of the suggested funciton.
+the key length was 5, all becuase of the suggested function.
 '''
 def score_key_length(data: bytes, length: int) -> int:
     avg_hamming_score = 0
@@ -47,6 +50,8 @@ This is the algorithm I used for Kasiski analysis during CMSC414 and CMSC456 at
 the University of Maryland.
 
 Thanks to Dr. Marsh and Dr. Manning for teaching me this.
+
+(Addendum: I may or may not be a little proud that this is a one-liner :3 )
 '''
 def score_key_length_wrap(data: bytes, length: int) -> int:
     return sum([ham_dist_byte(data[i], data[(i + length) % len(data)]) for i in range(len(data))])/ (len(data) * 1.0)
@@ -67,7 +72,7 @@ def guess_key_length(data: bytes) -> int:
             guess = i
             guess_score = sc    
     return guess
-
+    
 #Striping mechanism
 #Used to isolate characters encrypted with the same index of the key.
 def stripe(data: bytes, num_blocks: int) -> list[bytes]:
@@ -125,8 +130,8 @@ def decrypt(data: bytes, key: bytes) -> bytes:
 def crack(data: bytes) -> str:
     print("Guessing Key Length...")
     key_length_guess = guess_key_length(data)
-    print("Key Length: " + str(key_length_guess))
-    print("\nGuessing Key:")
+    print("\nKey Length: " + str(key_length_guess))
+    print("\nGuessing Key...")
     key_guess = guess_key(data, key_length_guess)
     print("Key: " + str(key_guess))
     print("\nDecrypting...")

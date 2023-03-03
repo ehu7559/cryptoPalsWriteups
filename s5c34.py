@@ -7,11 +7,15 @@ from s5c33 import DHParty
 from random import randint
 
 def encode_int(num):
+    '''Has the property of return an empty bytes object for 0'''
     output = bytearray()
     while num > 0:
         output.insert(0, num % 256)
-        num = num // 256
-    return bytes(output) 
+        num = num >> 8
+    return bytes(output)
+
+def decode_int(buf : bytes):
+    return int(buf.hex(), 16)
 
 def secret_message(message, secret_num):
     helper_iv = bytes([randint(0, 255) for i in range(16)])    
@@ -52,23 +56,23 @@ if __name__ == "__main__":
     #A->M
     #Send AES-CBC(SHA1(s)[0:16], iv=random(16), msg) + iv
     msg = "You have completed Set 5, Challenge 33! This is a generic message.".encode("ascii")    
-    print("Alice Sent: |" + msg.decode("ascii") + "|")
+    print("Alice Sent: \t|" + msg.decode("ascii") + "|")
     a_m_2 = secret_message(msg, Alice.get_secret())
     m_saw_from_a = reveal_message(a_m_2, 0).decode("ascii")
-    print(f"Mindy Saw: |{m_saw_from_a}|" )
+    print(f"Mindy Saw: \t|{m_saw_from_a}|" )
+    
     #M->B
     #Relay that to B
     m_b_2 = a_m_2
-
     forged_key = bytes.fromhex(SHA1.hash(encode_int(0)))[0:16]
 
     #B->M
     #Send AES-CBC(SHA1(s)[0:16], iv=random(16), A's msg) + iv
     b_got = reveal_message(m_b_2, Bob.get_secret())
-    print("Bob Recieved: |"+ b_got.decode("ascii") + "|")
+    print("Bob Recieved: \t|"+ b_got.decode("ascii") + "|")
     b_m_2 = secret_message(b_got, Bob.get_secret())
     m_saw_from_b = reveal_message(b_m_2, 0).decode("ascii")
-    print(f"Mindy Saw: |{m_saw_from_b}|" )
+    print(f"Mindy Saw: \t|{m_saw_from_b}|" )
 
     #M->A
     #Relay that to A

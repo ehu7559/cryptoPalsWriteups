@@ -4,7 +4,7 @@
 from random import randint
 from base64 import b64decode
 from s1c7 import encrypt_AES_ECB_128 
-from s2c12 import attack_ECB_oracle #Bytes-object merger
+from s2c12 import attack_ECB_oracle
 
 #Generate Class 14 ECB Oracle
 def gen_oracle_14(secret_text: bytes):

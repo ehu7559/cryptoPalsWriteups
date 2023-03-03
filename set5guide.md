@@ -48,16 +48,91 @@ def mod_exp(b: int, x: int, n: int) -> int:
         acc *= 1 if (x % 2 == 0) else curr_pow
         acc = acc % n
         curr_pow = (curr_pow ** 2) % n
-        x = x // 2
+        x = x >> 1
     return acc
 ```
+
+I believe this to be the algorithm used in the canon Python implementation of
+the `pow()` function, although given that many of Python's keywords are written
+in C, I'm not entirely sure. At any rate, this is an exponential speedup, at a
+constant space complexity no less!
+
 
 **Protocol Implementation:**  
 I have (against my own better judgement) implemented this as an object-oriented
 protocol for the sake of clarity and readability. The code should be legible on
 its own, so I shall spare the reader a lengthy explanation.
 
+```
+TODO: Redo thie Diffie-Hellman challenges in a functional style instead.
+Who in their right mind would use object oriented programming? You're awful.
+```
+
 ## Challenge 34:
 
 Here we implement a Man-in-the-middle attack on Diffie-Hellman with parameter
-injection.
+injection. The reader should optimally be familiar enough with high school math
+to figure out what's going on.
+
+## Challenge 35:
+
+I have elected to skip this one. It does not provide much useful knowledge to
+those who have already spent enough time playing around with Diffie Hellman. 
+
+I will return to this challenge at a later date.
+
+## Challenge 36:
+
+This challenge involves implementation of the SRP (Secure Remote Password)
+Protocol. 
+
+Secure Remote Password utilizes the same computationally complex problem as 
+Diffie-Hellman key exchange: the dicrete logarithm problem.
+
+A pre-shared secret in the form of a password, here treated as a string. 
+
+N is a NIST prime. In essence, on that is sufficiently large to make a
+brute-force attempt at the discrete logarithm problem infeasible.
+
+The constant `g` is specified to be a generator of the set of in integers mod N.
+Since N is a NIST prime, g can be almost any integer mod N, just not 1 or 0. In
+this case, g is selected as g=2.
+
+The constant `k` is a value that must be determined and agreed upon by the
+parties. In the standards for SRP-6, the value is predetermined as `k = 3`, but
+SRP-6a allows the computation of k with the setup's hash function. The hash 
+function here is the standard one: SHA-256.
+
+The point of the SRP protocol is to compute a shared secret based on the 
+password. This technique is known as "Password-Authenticated Key Exchange", or
+"PAKE".
+
+The Diffie-Hellman Key Exchange protocol is vulnerable to offline brute-force 
+attacks. Given sufficient time, an observer to the Diffie-Hellman Key Exchange
+could compute the shared secret through a trivial brute-force. (Simply test
+increasing powers of the generator `g` until one of the two parties' public
+portion is obtained, then raise the other public "key" to that power to compute
+the shared secret)
+
+The SRP protocol incorporates the password into the interaction such that it is
+not possible for an observer to discern any shared secrets using only the
+information transmitted during the protocol.
+
+### The SRP Protocol (Annotated):
+
+**Initial Agreement:**  
+```
+C & S
+Agree on N=[NIST Prime], g=2, k=3, I (email), P (password)
+```
+The client and server agree on the vital parameters of the protocol.
+
+`N` is a NIST prime, sufficiently large and with the desirable mathematical
+properties such that the discrete logarithm problem is sufficiently guarded
+against primes.
+
+`g` is the generator element mod `N`, with `g = 2` in this case.
+
+`k` is a coefficient here for protection against a 2-for-1 guessing attack, and
+thus helps maintain the computational difficulty of the problem.
+

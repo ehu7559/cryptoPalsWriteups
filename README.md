@@ -1,10 +1,13 @@
 # cryptoPalsWriteups
-A currently expanding set of Python programs and guides to the Matasano Cryptopals Challenges. Implemented in Python, made with love.
+A currently expanding set of Python programs and guides to the Matasano Cryptopals Challenges. Implemented in Python, made with love, stress, and unbridled ambition.
+
+## DISCLAIMER:
+This repository contains source code for implementations of various cryptographic protocols,some of which are, at the time of writing, still standard. The implementations are based on a combination of course study, mathematical texts, and reference to well-known open standards. The code in this repository is known to contain multiple vulnerabilities and lacks the safeguards required for truly secure cryptography. Under no circumstances should this be used for actual security. The author of this repo takes no responsibility for those who fail to heed this warning. Use well-reputed cryptographic libraries/implementations. Don't trust some rando's implementation, and don't use your own.
 
 ## Introduction:
 I have endeavoured to make my code at least generally understandable to those who are semi-fluent in Python and reading/doing the challenges along with me. However, since I have almost certainly failed to achieve that, each set gets its own writeup file containing a writeup for each of the eight challenges.
 
-This code is written with minimal imports. As of this writing, only vanilla Python libraries are used (such as base64, time, and random). My goal was to expose as much of the inner workings to cryptographic computations as possible. Whenever it has educational potential (such as Challenge 7, implementing AES-128 ECB), I have endeavored to write my code with as few external imports as possible in order to present all of the necessary information for the reader in the source code.
+This code is written with minimal imports. As of this writing, mostly non-cryptographic Python libraries are used (such as base64, time, and random), with the occasional import of SHA-256 for compactness reasons. My goal was to expose as much of the inner workings to cryptographic computations as possible. Whenever it has educational potential (such as Challenge 7, implementing AES-128 ECB), I have endeavored to write my code with as few external imports as possible in order to present all of the necessary information for the reader in the source code.
 
 I highly recommend you proceed in ascending order. Challenges often import code from previous, related challenges, especially past Challenge 7. The context will make things much more understandable.
 
@@ -21,6 +24,11 @@ Open the following (replacing A and B with the appropriate numbers)
 ```
 
 ## Modules of Interest (the challenges most imported from):
+
+The following challenges are primarily concerned with implementation of
+protocols that are used in later exercises, and are thus of particular interest
+to students of cryptosystems.
+
 ```
 Challenge 7:    AES-128 ECB (Advanced Encryption Standard, 128-bit, Electronic Code Book mode)
 Challenge 10:   AES-128 CBC (Advanced Encryption Standard, 128-bit, Cipher Block Chain mode)
@@ -36,6 +44,10 @@ Set 1:  1   2   3   4   5   6   7   8
 Set 2:  9   10  11  12  13  14  15  16
 Set 3:  17  18  19  20  21  22  23  24
 Set 4:  25  26  27  28  29      31  32
-Set 5:  33  34
+Set 5:  33  34      36  37
 Set 6:  
+
+Current Priorities:
+ - Refactoring and cleaning up Challenges 1 - 34 [In progress]
+ - Challenges 38 - 40 [Under development]
 ```

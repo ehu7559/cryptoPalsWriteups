@@ -1,6 +1,6 @@
 #Clone an MT19937 RNG from its output
 
-from s3c21 import MT19937_stream, MT19937_generator, temper_transform
+from s3c21 import MT19937_stream, MT19937_generator
 from time import sleep
 from random import randint
 
@@ -32,8 +32,8 @@ def untemper_step(value, shift, mask):
         acc += (curr if x[i] == 1 else 0)
         
         #For next iteration
-        y = y // 2
-        m = m // 2
+        y = y >> 1
+        m = m >> 1
         curr *= 2
 
     return acc
@@ -79,5 +79,5 @@ if __name__ == "__main__":
     for i in range(1000):
         a = next(chall_stream)
         b = next(cloned_stream)
-        print(f"{i+1}{' ' * (8 - len(str(i+1)))}{a}{' ' * (16 -len(str(a)))}{b}{' ' * (16 -len(str(b)))}{a==b}", end="\r")
+        print(f"{i+1}{' ' * (8 - len(str(i+1)))}{a}{' ' * (16 -len(str(a)))}{b}{' ' * (16 -len(str(b)))}{a==b}", end="\t\t\t\r")
         sleep(0.05)

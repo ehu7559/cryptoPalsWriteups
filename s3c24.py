@@ -8,11 +8,11 @@ def MT19937_bytestream(seed):
     while True:
         x = next(generator)
         byte_stack.append(x%256)
-        x = x // 256
+        x = x >> 8
         byte_stack.append(x%256)
-        x = x // 256
+        x = x >> 8
         byte_stack.append(x%256)
-        x = x // 256
+        x = x >> 8
         byte_stack.append(x%256)
         yield byte_stack.pop()
         yield byte_stack.pop()

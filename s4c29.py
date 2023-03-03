@@ -1,5 +1,5 @@
 #Break a SHA-1 keyed MAC using length extension
-from s4c28 import SHA1, encode_uint_big_endian
+from s4c28 import SHA1
 from random import randint
 
 #Oracle generator

@@ -14,9 +14,8 @@ def insecure_comparison(a: bytes, b: bytes):
     for i in range(len(a)):
         if a[i] != b[i]:
             return False
-        sleep(0.001) #Apparently my old code was capable of running with tolerance of 5 milliseconds. So I have tightened it!
+        sleep(0.1) #Apparently my old code was capable of running with tolerance of 5 milliseconds. So I have tightened it!
     return True
-
 
 #Server
 #TODO: I hate web frameworks and this isn't cryptographic. :(
@@ -42,7 +41,6 @@ def artificial_timing_attack(oracle):
         print(f"Progress: {(i + 1) * 5}%", end="\r") #One must be careful not to print too often for fear of slowing down the computer!
     return bytes(attack_buffer)
     
-
 def run_time_test(oracle, data: bytes, num_rounds: int):
     #wouldn't really need this if I wasn't testing this shit on Windows :|
     output = 0

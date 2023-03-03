@@ -12,13 +12,13 @@ def gen_block(aes_key: bytes, nonce: int, ctr: int) -> bytes:
     non = int(nonce)
     for i in range(8):
         nonce_bytes[i] = non%256
-        non = non // 256
+        non = non >> 8
     
     counter_bytes = bytearray(8)
     count = int(ctr)
     for i in range(8):
         counter_bytes[i] = count%256
-        count = count // 256
+        count = count >> 8
     
     block = bytearray(nonce_bytes)
     block.extend(counter_bytes)

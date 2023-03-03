@@ -126,7 +126,7 @@ def encode_uint_big_endian(num, length):
     curr = int(num)
     for i in range(length):
         output.insert(0, curr % 256)
-        curr = curr // 256
+        curr = curr >> 8
     return bytes(output)
 
 def decode_uint_big_endian(data):

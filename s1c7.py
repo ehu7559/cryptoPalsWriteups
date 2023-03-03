@@ -1,5 +1,11 @@
 #AES-ECB Implementation
-'''My thanks to Drs. Nathan Manning and Jonathan Katz
+'''
+--- WARNING ---
+NOT INTENDED FOR CRYPTOGRAPHIC USE.
+USE A MORE SECURE IMPLEMENTATION.
+THIS IMPLEMENTATION IS FOR EDUCATIONAL PURPOSES ONLY.
+---------------
+My thanks to Drs. Nathan Manning and Jonathan Katz
 
 This was done by hand for educational reasons. This is by no means an efficient
 implementation (although efforts have been made to make this as streamlined as
@@ -234,7 +240,6 @@ def challenge():
     KEY = bytes("YELLOW SUBMARINE","utf-8")
     plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
     print(plain_bytes.decode("ascii"))
-
 
 if __name__ == "__main__":
     challenge()

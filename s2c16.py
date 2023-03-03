@@ -62,6 +62,5 @@ if __name__ == "__main__":
 
     #Run challenge and print result
     sliced_message = attack(chall_a)
-    print("CORRECT" if chall_b(sliced_message) else"WRONG" )
-
+    print("CORRECT" if chall_b(sliced_message) else "WRONG")
     print("--- CHALLENGE STATUS: COMPLETE ---")
