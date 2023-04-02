@@ -54,7 +54,7 @@ def pseudo_oracle(oracle):
     mask_pad = bytes(16 - (oracle_prefix_len % 16))
 
     #Generate middle oracle.
-    return (lambda x : (oracle(b''.join([mask_pad, x]))[oracle_prefix_len + len(mask_pad)]))
+    return (lambda x : (oracle(b''.join([mask_pad, x]))[oracle_prefix_len + len(mask_pad):]))
     
 #Challenge code
 if __name__ == "__main__":

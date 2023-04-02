@@ -17,7 +17,6 @@ def encrypt_AES_CBC_128(data: bytes, aes_key: bytes, iv: bytes) -> bytes:
         data = data[16:] #Consume
         iv = encrypt_block_128(iv, aes_key) #Encrypt
         output.extend(iv) #Append
-        
     return bytes(output)
 
 #Main Decryption Functions

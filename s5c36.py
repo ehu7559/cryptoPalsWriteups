@@ -101,7 +101,7 @@ def client_side_compute(client_compute_params, received_B):
     N, g, k, I, P, a, A = client_compute_params
     salt, B = received_B
 
-    uH = hash_sha256(encode_int(B), encode_int(A)) #Takes advantage of salting mechanism to avoid byte manipulation
+    uH = hash_sha256(encode_int(B), encode_int(A)) #Takes advantage of salting mechanism to avoid bytes-object manipulation
     u = int(uH, 16) #I feel like adding "0x" to the front involves too much memory overhead.
 
     xH = hash_sha256(bytes(P, "ascii"), salt)

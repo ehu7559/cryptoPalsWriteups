@@ -45,10 +45,11 @@ def MT19937_cipher_KPA(oracle):
 if __name__ == "__main__":
     #Generate 16-bit seed and encryption oracle
     chall_seed = randint(0, 2**16 - 1)
+    print(f"Challenge Seed: {chall_seed}")
     chall_oracle = get_cipher_oracle(chall_seed)
 
     #Generate known plaintext
     cracked_seed = MT19937_cipher_KPA(chall_oracle)
 
     #Print results.
-    print(f"Challenge Seed: {chall_seed}\nCracked Seed: {cracked_seed}")
+    print(f"Cracked Seed: {cracked_seed}")

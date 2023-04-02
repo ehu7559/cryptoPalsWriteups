@@ -24,3 +24,6 @@ def trim_padding(block: bytes) -> bytes:
             raise Exception("Padding Not Compliant with PKCS#7")
         block = block[:-1]
     return bytes(block)
+
+if __name__ == "__main__":
+    print("--- CHALLENGE COMPLETE ---")

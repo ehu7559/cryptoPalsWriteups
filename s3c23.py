@@ -68,11 +68,15 @@ def clone_MT19937(output):
 if __name__ == "__main__":
 
     #Create generator with a random seed.
+    
     chall_seed = randint(0, 2*32 - 1)
+    print("Creating MT19937 Pseudo-random Generator")
     chall_stream = MT19937_stream(chall_seed)
     chall_output = [next(chall_stream) for i in range(624)]
-    cloned_stream = clone_MT19937(chall_output)
 
+    print("Cloning Generator... ", end="")
+    cloned_stream = clone_MT19937(chall_output)
+    print("Done")
     #Continuously Generate 
     print("Generating and Checking")
     print("INDEX:  GENERATED:      CLONED:         MATCH:")

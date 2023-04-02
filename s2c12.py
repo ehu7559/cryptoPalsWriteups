@@ -16,7 +16,7 @@ def is_oracle_ECB(target) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
 def get_oracle_block_size(target) -> int:
-    '''Computes size of a target oracle using GCD'''
+    '''Computes size of a target oracle using'''
     initial_length = len(target(bytes(0)))
     extender = 0
     while len(target(bytes(extender))) == initial_length:
@@ -24,6 +24,8 @@ def get_oracle_block_size(target) -> int:
     return len(target(bytes(extender))) - initial_length
     #^ I fixed this yet again. I was stupid and used the Extended Euclidian
     #Algorithm to do it before. I am, at times, a bit of an idiot.
+    #Increments the length of the input until a new block is added.
+    #uses null buffers to save space in the code.
 
 def enum_oracle(header: bytes, target_oracle, desired_block: bytes):
     for i in range(256):

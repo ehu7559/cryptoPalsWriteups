@@ -31,7 +31,7 @@ def gcd(a, b):
     if a < b:
         a, b = b, a
     while a % b:
-        #It can be easily proven that gcd(a, b) = gcd(b, a % b)
+        #It can be proven that gcd(a, b) = gcd(b, a % b)
         '''
         let x = gcd(a, b)
         let c, d be such that a = cb + d, where d is in Z_b
@@ -77,3 +77,24 @@ def mod_inv(x, n):
 
     return low % n
 
+#RSA key-gen
+def compute_rsa_key(p : int, q : int):
+    '''Given two NIST primes, computes an RSA public and private key'''
+    
+    #It is the duty of the idiot using my code (me) to make sure the primes are selected properly.
+
+    #Constants
+    n = p * q                   #RSA modulus
+    phi_n = (p - 1) * (q - 1)   #Euler's Totient of modulus. Order of the multiplicative group U(n)
+    e = (1 << 16) + 1           #Public key exponent
+    d = mod_inv(e, phi_n)       #Private key exponent    
+
+    pub_key = (n, e)
+    priv_key = (n, d)
+    return (pub_key, priv_key)
+
+#Prime-generation left out because it's computationally expensive and also just plain complicated.
+
+#Main function
+if __name__ == "__main__":
+    pass

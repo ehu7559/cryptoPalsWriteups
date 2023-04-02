@@ -123,6 +123,7 @@ lower time per byte anyway, resulting in a runtime comparable to that of the
 previous challenge.
 
 Run on Linux. I swear to god Windows is horrible for this.
+I also curse myself for using Python rather than a faster language.
 
 ## Closing Remarks:
 

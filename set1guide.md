@@ -169,14 +169,14 @@ mess. The inverse is also just XORing the round key, but the INV_ARK operation
 actually performs an `inverse_mix_columns()` on the round key before xor-ing it. It
 will be amusingly beautiful once you realize how symmetric AES really is.
 
-### ENCRYPTION
+**ENCRYPTION:**
 ```
 ADD ROUND_KEY_0
 For i in 0 -> 10:
     sub bytes, shift rows, mix_columns, and add round_key_i
 sub bytes, shift rows, and add round_key 10
 ```
-### DECRYPTION:
+**DECRYPTION:**
 ```
 Add round_key_10
 for i in 9 -> 0

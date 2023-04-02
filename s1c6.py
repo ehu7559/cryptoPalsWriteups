@@ -1,6 +1,6 @@
 #CONSTANTS AND IMPORTS
 from base64 import b64decode
-from s1c3 import score_text
+from s1c3 import score_english_buffer, guess_single_byte_xor_key
 from s1c5 import decrypt
 KEY_SIZE_LIMIT = 100
 
@@ -94,32 +94,12 @@ def can_be_ascii(buffer: bytes) -> bool:
             return False
     return True
 
-def safe_byte_crack(ciphertext: bytes) -> int:
-    best_i = 0
-    max_score = 0
-    for i in range(256):
-
-        #Generate the resulting plaintext
-        maybe_plain = bytes([a ^ i for a in ciphertext])
-        
-        #Filter out the unprintables as null-candidates
-        if not can_be_ascii(maybe_plain):
-            continue
-        
-        new_score = score_text(maybe_plain)
-        
-        if new_score >= max_score:
-            best_i = i
-            max_score = new_score
-
-    return best_i
-
 #Key-guessing function
 def guess_key(data: bytes, length: int) -> bytes:
     blocks = stripe(data, length)
     kb = bytearray()
     for bl in blocks:
-        kb.append(safe_byte_crack(bl))
+        kb.append(guess_single_byte_xor_key(bl))
     return bytes(kb)
 
 #Decryption function
@@ -151,4 +131,6 @@ def retrieve_data(filename):
 if __name__ == "__main__":    
     ciphertext = retrieve_data("6.txt")
     print(crack(ciphertext))
+    #The proper key is this
+    print(decrypt(ciphertext, "Terminator X: Bring the noise".encode("ascii")).decode("ascii"))
     print('--- CHALLENGE STATUS: COMPLETE ---')

@@ -44,4 +44,3 @@ if __name__ == "__main__":
     
     #Display results
     print("Success Rate: " + str(successes) + "/"+str(TEST_ROUNDS) + "\t\t\t\t")
-    

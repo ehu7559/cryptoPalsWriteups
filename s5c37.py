@@ -1,4 +1,7 @@
-from s5c36 import generate_test_params, hash_sha256,server_init ,server_send_B,server_side_compute,client_side_compute, client_send_salted_HMAC,server_verdict
+#Break SRP with a zero key
+
+#imports
+from s5c36 import generate_test_params, hash_sha256, server_init, server_send_B,server_side_compute, client_side_compute, client_send_salted_HMAC,server_verdict
 
 def client_send_0_as_A(init_params):
     return (init_params + (0, 0), 0)
@@ -9,7 +12,7 @@ def client_gen_zerokey_HMAC(salt):
 
 #Run SRP protocol with 0-key vulnerability
 def SRP_ZeroKey(test_params, test_constants):
-    test_a, test_b               = test_constants
+    test_a, test_b = test_constants
 
     #Pass different parameters to client vs server.
     N, g, k, I, P = test_params
