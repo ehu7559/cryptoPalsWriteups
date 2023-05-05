@@ -8,7 +8,7 @@ from random import randint, choice
 
 def oracle_crypt(plain_text: bytes, aes_key: bytes, init_vec: bytes, AES_mode: str) -> bytes:
     random_padding_length = randint(5,10)
-    rand_pad = bytes([ord("x") for i in range(random_padding_length)])
+    rand_pad = bytes([ord("x") for _ in range(random_padding_length)])
     
     modified_plaintext = bytearray()
     modified_plaintext.extend(rand_pad)
@@ -22,8 +22,8 @@ def oracle_crypt(plain_text: bytes, aes_key: bytes, init_vec: bytes, AES_mode: s
 def run_test() -> bool:
     #Generate random 16-bit key and initialization vector.
     chosen_plain_text = bytes("A" * 256, "ascii")
-    rand_key = bytes([(randint(0,255)) for i in range(16)])
-    init_vector = bytes([(randint(0,255)) for i in range(16)])
+    rand_key = bytes([(randint(0,255)) for _ in range(16)])
+    init_vector = bytes([(randint(0,255)) for _ in range(16)])
     #Select mode of operation randomly
     operation_mode = choice(["ECB","CBC"])
     

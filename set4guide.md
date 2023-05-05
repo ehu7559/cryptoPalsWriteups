@@ -92,7 +92,20 @@ progressively longer key lengths until our forged message is authenticated.
 The "glue padding" can be computed as long as you have access to the initial
 hash and a guess at the key length.
 
+**An Interesting Diversion:**
+```Markdown
+I had this idea on the train to prevent padding attacks on SHA-1 and, by
+extension, similar hashes using this approach.
 
+One could apply the SHA-1 hash to the actual data, then append that to the end
+before hashing again and using the second output as the actual hash. This would,
+in my estimation, require that an attacker be able to compute the hash of an
+unknown plaintext rather than simply knowing the length of the padded message.
+
+I'm actually not quite sure this is correct, given that the challenge requires
+the attacker to know the data being hashed and thus they would have no problem
+hashing that data themselves.
+```
 ## Challenge 30:
 
 We repeat the challenge with MD4. Those who have read through the previous
@@ -123,7 +136,9 @@ lower time per byte anyway, resulting in a runtime comparable to that of the
 previous challenge.
 
 Run on Linux. I swear to god Windows is horrible for this.
-I also curse myself for using Python rather than a faster language.
+I also curse myself for using Python rather than a faster language. Python is
+far more sensitive to background computational load due to the time, and thus
+more trials are required to have a chance of tuning out the noise.
 
 ## Closing Remarks:
 

@@ -16,14 +16,14 @@ Using the properties of CBC, it is possible to manipulate a single bit of the
 ciphertext to alter the corresponding bit in the next block's plaintext. Using
 this, we can then repeatedly alter the ciphertext in order to find the values
 which give the last block valid padding of different lengths. One might begin to
-see why set 16 was placed right before this.
+see why challenge 16 was placed right before this.
 
 Given an *n*-block ciphertext, we can attack each of the *n* blocks separately
 through the following process.
 
 The desired endings (paddings) for the block are
 
-```
+```Markdown
 ..............................01
 ............................0202
 ..........................030303
@@ -60,8 +60,8 @@ AES CTR (Counter) mode uses a counter and a nonce to generate a pseudorandom
 stream of bytes which is then XOR-ed against the plaintext to encrypt it.
 
 Each block of 16 bytes is XORed with the following block:
-```
-encrypt_AES_ECB( [64-bit nonce, 64-bit counter], key)
+```Markdown
+encrypt_AES_ECB([64-bit nonce, 64-bit counter], key)
 ```
 
 After every 16 bytes of encryption, the counter is incremented by 1 and the
@@ -102,7 +102,7 @@ challenge page.
 The Mersenne Twister's main loop consists of three primary components:
 
 - a state buffer to represent the internal state of the "registers".
-- a twist() operation for the shift feedback register
+- a `twist()` operation for the shift feedback register
 - a tempering transform to distribute bits evenly throughout a word of output.
 
 When initialized, the MT19937 Mersenne Twister RNG takes a seed and initializes

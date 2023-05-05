@@ -12,11 +12,10 @@ def client_gen_zerokey_HMAC(salt):
 
 #Run SRP protocol with 0-key vulnerability
 def SRP_ZeroKey(test_params, test_constants):
-    test_a, test_b = test_constants
+    _, test_b = test_constants #The value of a in this test doesn't matter.
 
     #Pass different parameters to client vs server.
     N, g, k, I, P = test_params
-    server_params = test_params #Server is unaltered.
     client_params = (N, g, k, I, "Unknown Password") #Client gets no password.
 
     print("Server Initializing...", end="")
@@ -51,7 +50,7 @@ def SRP_ZeroKey(test_params, test_constants):
     server_get_verdict           = server_verdict(server_side_computation,client_send_HMAC)
     print("Done")
 
-    print("Validated: " + str(server_get_verdict))
+    print(f"Validated: " + str(server_get_verdict))
 
 if __name__ == "__main__":
     run_params, run_constants = generate_test_params()

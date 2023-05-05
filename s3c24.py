@@ -7,13 +7,13 @@ def MT19937_bytestream(seed):
     byte_stack = bytearray()
     while True:
         x = next(generator)
-        byte_stack.append(x%256)
+        byte_stack.append(x % 256)
         x = x >> 8
-        byte_stack.append(x%256)
+        byte_stack.append(x % 256)
         x = x >> 8
-        byte_stack.append(x%256)
+        byte_stack.append(x % 256)
         x = x >> 8
-        byte_stack.append(x%256)
+        byte_stack.append(x % 256)
         yield byte_stack.pop()
         yield byte_stack.pop()
         yield byte_stack.pop()
@@ -28,7 +28,7 @@ def get_cipher_oracle(seed):
 
 
 def MT19937_cipher_KPA(oracle):
-    ciphertext = oracle(bytes([0 for i in range(2496)]))
+    ciphertext = oracle(bytes(2496))
     for i in range(2**16):
         print(f"TRYING SEED: {i}", end="\r")
         brute_gen = MT19937_bytestream(i)
@@ -52,4 +52,4 @@ if __name__ == "__main__":
     cracked_seed = MT19937_cipher_KPA(chall_oracle)
 
     #Print results.
-    print(f"Cracked Seed: {cracked_seed}")
+    print(f"\nCracked Seed: {cracked_seed}")

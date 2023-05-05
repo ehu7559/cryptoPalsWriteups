@@ -31,13 +31,15 @@ To decrypt RSA using a simple cube root, leave off the final modulus operation; 
 from s5c39 import mod_inv as invmod
 from s5c33 import unbounded_exp as exp #Used for int_root function
 
-def int_root(n : int, r : int):
+def int_root(n : int, r : int) -> int:
     '''Computes rth root of n. Does not handle complex/Gaussian integers'''
-    #Safeguards
+    #Can't handle non-natural roots.
     if r < 1:
         raise Exception("Invalid value for root power")
+    #Quick catch case for speed.
     if n == 0:
         return 0
+    #Handling negatives
     if n < 0:
         if r % 2 == 0:
             raise Exception("Imaginary Number")
@@ -61,9 +63,11 @@ def int_root(n : int, r : int):
     raise Exception(f"The root {r} of {n} is not an integer.")
 
 #Haha funny lambda function definition
+#probably could have done this from the beginning but generalized solutions are cool.
 cube_root = lambda x : int_root(x, 3)
 
 def rsa_e3_broadcast_attack(ciphertexts, moduli):
+    '''Recovers a plaintext given the ciphertext resulting from encryption with three distinct RSA public keys.'''
     if len(ciphertexts) != 3:
         raise Exception(f"Expected 3 ciphertexts. Found {len(ciphertexts)}.")
     if len(moduli) != 3:
@@ -76,3 +80,6 @@ def rsa_e3_broadcast_attack(ciphertexts, moduli):
 
 if __name__ == "__main__":
     pass
+'''
+--------------------------------------------------------------------------------
+'''

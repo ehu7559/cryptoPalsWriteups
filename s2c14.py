@@ -3,16 +3,16 @@
 #Import modules
 from random import randint
 from base64 import b64decode
-from s1c7 import encrypt_AES_ECB_128 
-from s2c12 import attack_ECB_oracle
+from s1c7   import encrypt_AES_ECB_128 
+from s2c12  import attack_ECB_oracle
 
 #Generate Class 14 ECB Oracle
 def gen_oracle_14(secret_text: bytes):
     #Generate Oracle Constants
-    secret_key = bytes([randint(0,255) for i in range(16)])
+    secret_key = bytes([randint(0,255) for _ in range(16)])
     secret_data = bytes(secret_text)
     prefix_len = randint(0,255)
-    prefix_data = bytes([randint(0,255) for i in range(prefix_len)])
+    prefix_data = bytes([randint(0,255) for _ in range(prefix_len)])
     #Generate oracle
     return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk, secret_data])), secret_key))
     
@@ -36,7 +36,7 @@ def get_oracle_prefix_len(oracle) -> bytes:
     num_full_blocks = diff_ptr // 16 #Number of full blocks in pad.
     
     #Determine how long the pad needs to be to get a block.
-    two_blocks = bytes([255 for i in range(32)])
+    two_blocks = bytes([255 for _ in range(32)])
     trailing_mod = 0
     while True:
         enum_blocks = cipher_blocks(oracle(b''.join([bytes(16 - trailing_mod), two_blocks])))

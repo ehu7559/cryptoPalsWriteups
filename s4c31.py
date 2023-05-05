@@ -2,7 +2,7 @@
 
 #Imports
 from random import randint
-from time import process_time_ns, sleep, time_ns
+from time import process_time_ns, sleep
 
 GLOBAL_TIME = 0
 #HMAC-SHA1 implementation

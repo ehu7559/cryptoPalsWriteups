@@ -1,6 +1,6 @@
 #CONSTANTS AND IMPORTS
 from base64 import b64decode
-from s1c3 import score_english_buffer, guess_single_byte_xor_key
+from s1c3 import guess_single_byte_xor_key
 from s1c5 import decrypt
 KEY_SIZE_LIMIT = 100
 
@@ -15,12 +15,12 @@ def ham_dist_byte(a: int, b: int) -> int:
         n = n >> 1
     return output
 
+#CHANGED 20APR2023: made this function a 1-liner because 1-liners are cool.
+#   It has the added benefit of using the Python built-ins written in C, which
+#   probably has a tiny, insignificant speedup.
 def hamming_distance(buf_a: bytes, buf_b: bytes) -> int:
-    output = 0
-    for i in range(min(len(buf_a), len(buf_b))):
-        output += ham_dist_byte(buf_a[i], buf_b[i])
-    output += 8 * abs(len(buf_a) - len(buf_b))
-    return output
+    '''Computes the '''
+    return sum(map(lambda a, b : ham_dist_byte(a,b), iter(buf_a), iter(buf_b))) + 8 * abs(len(buf_a) - len(buf_b))
 
 '''
 This function is incredibly slow, but yields a far higher confidence in the
@@ -62,17 +62,19 @@ def guess_key_length(data: bytes) -> int:
         Returns the most likely key length in bytes given a ciphertext encrypted
         with repeated-key XOR'''
     if len(data) < 2:
-        return len(data)    
+        return len(data)
+    #'''
     guess = 1
     guess_score = 8     #Literally every bit is different
     for i in range(1,(min(len(data) // 2, KEY_SIZE_LIMIT))):
         sc = score_key_length_wrap(data,i)
+        print(f"Current Candidate: {guess} \tChecking: {i}", end="\r")
         if sc < guess_score: #Prefer shorter key size (I think it would make for more reliable frequency analysis)
-            print(f"Current Candidate: {guess} \tChecking: {i}", end="\r")
             guess = i
             guess_score = sc    
     return guess
-    
+    #'''
+    #return max(range(2, min(len(data)//2, KEY_SIZE_LIMIT)), key=lambda x : score_key_length_wrap(data,x))
 #Striping mechanism
 #Used to isolate characters encrypted with the same index of the key.
 def stripe(data: bytes, num_blocks: int) -> list[bytes]:
@@ -87,12 +89,6 @@ def stripe(data: bytes, num_blocks: int) -> list[bytes]:
         output[i%num_blocks].append(data[i])
     
     return output
-
-def can_be_ascii(buffer: bytes) -> bool:
-    for a in buffer:
-        if a not in range(127):
-            return False
-    return True
 
 #Key-guessing function
 def guess_key(data: bytes, length: int) -> bytes:
@@ -110,7 +106,7 @@ def decrypt(data: bytes, key: bytes) -> bytes:
 def crack(data: bytes) -> str:
     print("Guessing Key Length...")
     key_length_guess = guess_key_length(data)
-    print("\nKey Length: " + str(key_length_guess))
+    print(f"\nKey Length: {str(key_length_guess)}")
     print("\nGuessing Key...")
     key_guess = guess_key(data, key_length_guess)
     print("Key: " + str(key_guess))
@@ -131,6 +127,4 @@ def retrieve_data(filename):
 if __name__ == "__main__":    
     ciphertext = retrieve_data("6.txt")
     print(crack(ciphertext))
-    #The proper key is this
-    print(decrypt(ciphertext, "Terminator X: Bring the noise".encode("ascii")).decode("ascii"))
     print('--- CHALLENGE STATUS: COMPLETE ---')

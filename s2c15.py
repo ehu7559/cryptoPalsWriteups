@@ -17,6 +17,7 @@ def is_valid_pad(plaintext: bytes) -> bool:
 def is_valid_CBC_padding(data, key, iv):
     while len(data) > 16:
         iv, data = data[:16], data[16:]
+    assert(len(data) == 16)
     data = decrypt_block_128(data, key)
     data = bytes([data[i] ^ iv[i] for i in range(16)])
     return is_valid_pad(data)

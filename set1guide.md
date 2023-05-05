@@ -37,8 +37,6 @@ towards longer texts which have more characters. Given the nature of the
 challenge, however, scores are compared only between texts of the same length,
 making this unnecessary.
 
-The `crackbyte()` function actually attempts the challenge.
-
 ## Challenge 4: Detect single-character XOR
 
 The fourth challenge is conceptually a little bit harder than the third, but is
@@ -52,9 +50,8 @@ Leveraging the code from the previous challenge, it should be relatively simple
 to iterate through the ciphertexts, brute-forcing each one and find the 
 ciphertext and key which yield the highest English resemblance. Depending on the
 accuracy of the scoring function, certain false positives may outrank the
-answer. Thus, I decided to print any plaintexts which scored above a certain
-threshold according to my own method. Once the threshold is raised high enough,
-the answer should be easy to recognize.
+answer, and thus a threshold is implemented above which all plaintexts will be
+printed for manual classification.
 
 ## Challenge 5: Implement repeating-key XOR
 

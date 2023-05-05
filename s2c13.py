@@ -23,7 +23,7 @@ def decrypt_oracle(aes_key: bytes):
 
 def get_oracles() -> tuple:
     #Generate random key
-    rand_aes_key = bytes([randint(0,255) for i in range(16)])
+    rand_aes_key = bytes([randint(0,255) for _ in range(16)])
     
     #Generate profile oracle
     pfo = profile_oracle(rand_aes_key)

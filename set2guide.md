@@ -131,7 +131,7 @@ to craft messages without the key. Due to the block-cipher nature of AES, we
 also need to make sure patch together our desired message from whole blocks.
 
 Our desired plaintext is something like this
-```
+```Markdown
 {
     email=...
     uid=1
@@ -147,7 +147,7 @@ consider what blocks we need:
 
 We can obtain the second one by feeding a specially crafted email address.
 
-```
+```Markdown
 "abcdefgadmin\n}\t\t\t\t\t\t\t\t\t"
 ```
 
@@ -196,7 +196,7 @@ thorough understanding of ECB's properties.
 ## Challenge 15: PKCS#7 padding validation
 Honestly, I'm not entirely sure why this was its own challenge rather than a
 subproblem of Challenge 17 (which is probably the one thing it's actually used
-for. This one is a relatively easy one, especially if you happened to include
+for). This one is a relatively easy one, especially if you happened to include
 padding validation in your implementation of AES in challenge 7.
 
 ## Challenge 16: CBC bitflipping attacks

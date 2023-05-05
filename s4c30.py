@@ -31,7 +31,7 @@ class MD4:
             raise Exception("Insufficient Data To Ingest Block" + str(self.buffer))
 
         #Grab new chunk and hash it.
-        new_chunk = bytes([self.buffer.pop(0) for i in range(64)]) 
+        new_chunk = bytes(self.buffer[0:64])
         chunk_hash = self.hash_chunk(new_chunk)
         
         # Update hash state
@@ -57,7 +57,7 @@ class MD4:
         [ABCD  8  3]  [DABC  9  7]  [CDAB 10 11]  [BCDA 11 19]
         [ABCD 12  3]  [DABC 13  7]  [CDAB 14 11]  [BCDA 15 19]
         '''
-        A = (A + MD4.F(B, C, D) + x[0] << 3 )
+        A = (A + MD4.F(B, C, D) + x[0] << 3)
         D = (D + MD4.F(A, B, C) + x[1] << 3)
         pass
 

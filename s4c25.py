@@ -8,14 +8,13 @@ from s1c7 import retrieve_data, decrypt_AES_ECB_128
 #Ciphertext Generator
 def generate_challenge():
     nonce = randint(0, 2**64 - 1)
-
     key = bytes([randint(0,255) for i in range(16)])
     challenge_text = encrypt_AES_CTR(decrypt_AES_ECB_128(retrieve_data("7.txt"), bytes("YELLOW SUBMARINE","ascii")), key, nonce)
 
     return (challenge_text, (lambda x: encrypt_AES_CTR(x, key, nonce)))
 
 def edit_plain(base, edit, offset):
-    return bytes([(edit[i-offset] if i in range(offset, offset + len(edit)) else base[i])for i in range(len(base))])
+    return bytes([(edit[i - offset] if i in range(offset, offset + len(edit)) else base[i])for i in range(len(base))])
 
 def generate_oracle(crypt):
     return (lambda a, b, c : crypt(edit_plain(crypt(a), b, c)))

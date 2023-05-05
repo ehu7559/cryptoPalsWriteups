@@ -34,7 +34,7 @@ def attack(intercepted_message, decryption_server):
         return
     payload = bytearray()
     payload.extend(intercepted_message[:16])
-    payload.extend(bytes(16))
+    payload.extend(bytes(16)) #Null-padding
     payload.extend(intercepted_message[:16])
     newplain = decryption_server(payload)
     if len(newplain) == 0:

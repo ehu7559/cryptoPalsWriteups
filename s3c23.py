@@ -85,3 +85,5 @@ if __name__ == "__main__":
         b = next(cloned_stream)
         print(f"{i+1}{' ' * (8 - len(str(i+1)))}{a}{' ' * (16 -len(str(a)))}{b}{' ' * (16 -len(str(b)))}{a==b}", end="\t\t\t\r")
         sleep(0.05)
+        assert(a == b)
+    print("\nCHALLENGE COMPLETE")

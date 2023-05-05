@@ -170,7 +170,7 @@ def run_test(test_params, test_constants):
     print("Server Sending B... ", end="")
     server_post_B, server_B      = server_send_B(server_initialized, test_b)
     print("Done")
-    print("Client Side Computing", end="")
+    print("Client Side Computing... ", end="")
     client_side_computation      = client_side_compute(client_initialized, server_B)
     print("Done")
     print("Server Side Computing... ", end="")

@@ -7,7 +7,7 @@ def get_oracle(key):
     return lambda m, h : SHA1.validate_keyed_MAC(key, m, h)
 
 #Attack Function
-def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max_depth = 65535):
+def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max_depth : int = 65535):
     
     #Attack Loop for each key length possibility  (in bytes)
     for key_length in range(max_depth):
@@ -51,7 +51,6 @@ if __name__ == "__main__":
     chall_oracle = get_oracle(oracle_key)
 
     #Select Message
-    chall_message_len = randint(256, 512)
     chall_message = "This is a challenge message. Nothing up my sleeves at all.".encode("utf-8")
     chall_message, chall_init_hash = SHA1.keyed_MAC(oracle_key, chall_message)
     print("Message: " + str(chall_message))

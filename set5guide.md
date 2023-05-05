@@ -144,7 +144,7 @@ against currently known algorithms to solve it such that the solution is computa
 `k` is a coefficient here for protection against a 2-for-1 guessing attack, and
 thus helps maintain the computational difficulty of the problem.
 
-`I` is the email or any other identifier used to indicate to the server who the client is claiming to be and thus.
+`I` is the email or any other identifier used to indicate to the server who the client is claiming to be.
 
 `P` here is a shared secret known to both parties, but which cannot be transmitted in the clear due to its secrecy. The client will attempt to prove its knowledge of this value to the server.
 
@@ -187,7 +187,7 @@ security, to the standard `B` found in Diffie-Hellman. It also passes the salt
 to the client for computation.
 
 **Client and Server Computations**
-```
+```Markdown
 S, C
 Compute string uH = SHA256(A|B), u = integer of uH
 C
@@ -281,11 +281,55 @@ writing) standard algorithm for asymmetric encryption. Its successor (Kyber) is
 resistant to quantum-enabled attacks, but as large-scale quantum computing is 
 currently unavailable to the general public (although one must assume it is
 already possible that the intelligence community has a working quantum computer
-with the required scale/capabilities.)
+with the required scale/capabilities.), it is currently still in widespread
+use and is safe for communications which need not remain secret in the future.
+
+**A cryptographic aside:**
+```Markdown
+The advent of "Store Now, Decrypt Later" tactics has rendered RSA-encrypted
+communications ultimately insecure within perhaps the next decade. This is, as
+one might imagine, a serious problem, as the new Kyber encryption scheme built
+to resist quantum computing attacks is still not in widespread use. Thus, one
+must now assume that any asymmetric encryption they use is, at its core, only a
+temporary protection. Shor's algorithm is already capable of efficient integer
+factorization, and RSA is no longer a safe encryption scheme, even before the
+widespread adoption of quantum computing. RSA use must cease immediately if the
+secret is to remain future-proof.
+
+This is a terrifying prospect. Widespread adoption of quantum computers will, I
+am certain, at the very least up-end geopolitics, to put it rather mildly. I
+cannot imagine another outcome.
+
+Should we still have computers post-apocalypse, however, it will still be 
+feasible to use AES encryption, as Grover's algorithm (which reduces the time
+complexity of a naive exhaustive search to O(sqrt(n)) rather than O(n)) does not
+provide a super-polynomial speedup. Some form of AES derivative will suffice for
+symmetric key encryption, although key-sizes will need to be doubled to provide
+the same level of security.
+
+Thank you for reading this unhinged tangent. Please stare into the abyss with me
+and appreciate the eldritch horror that is mathematics.
+```
 
 RSA relies on the computational complexity of the integer factorization problem.
 The factorization problem is NP-hard, and thus for conventional computers there
 does not currently exist a known factorization algorithm that is bound by
-polynomial time.
+polynomial time. (RSA is actually NP-complete, meaning that, while it can be
+verified in polynomial time, it is as "hard" as any other computational problem
+in the problem space NP).
+
+While most public key exponents (conventionally denoted by `e`) are the sum of
+a few powers of 2 (Usually things like 3, 17, or 65537) to make sure encryption
+is quick, it is still well worth using a repeated-squaring technique to speed up
+exponentiation. For further speedup, use the `pow` function in Python, which is
+actually written in C and pre-compiled.
+
+*(As a Python programmer I cry a little bit whenever I'm reminded of this)*
 
 ## Challenge 40: Implement an E=3 RSA Broadcast attack
+
+This challenge makes use of the Chinese Remainder Theorem to decrypt a broadcast
+encrypted with three or more different RSA keys.
+
+A passive observer can obtain the plaintext using the ciphertexts resulting from
+encrypting the message with three or more distinct keys.

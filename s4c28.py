@@ -24,7 +24,8 @@ class SHA1:
             raise Exception("Insufficient Data To Ingest Block" + str(self.buffer))
 
         #Grab new chunk and hash it.
-        new_chunk = bytes([self.buffer.pop(0) for i in range(64)]) 
+        new_chunk = bytes(self.buffer[:64])
+        self.buffer = self.buffer[64:]
         chunk_hash = self.hash_chunk(new_chunk)
 
         #Update the inner hash value
@@ -73,6 +74,7 @@ class SHA1:
         '''Padding function'''
         buf = bytearray(data)
         buf.append(0x80)
+        #I could simply do better math, but I don't care. This is worst-case constant overhead.
         while len(buf) % 64 != 56:
             buf.append(0)
         buf.extend(encode_uint_big_endian(num_bits, 8))
@@ -101,7 +103,6 @@ class SHA1:
         digest.ingest(data)
         digest.finalize()
         return digest.get_hash_str()
-    
     def keyed_MAC(key, message):
         pair = bytearray(key)
         pair.extend(message)
@@ -131,11 +132,9 @@ def encode_uint_big_endian(num, length):
 
 def decode_uint_big_endian(data):
     output = 0
-    curr = bytearray(data)
-    place = 1
-    while len(curr) > 0:
-        output += (curr.pop() * place)
-        place *= 256
+    for b in data:
+        output = output << 8 #Put this shift in instead of using multiplication. I need to stop coding while half-asleep on a train
+        output += b
     return output
 
 def leftrotate(num, shift, length=32):

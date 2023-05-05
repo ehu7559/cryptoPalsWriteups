@@ -27,7 +27,7 @@ def forge_token(oracle):
 if __name__ == "__main__":
     #Generate key and nonce pair
     chall_nonce = randint(0, 2**64 - 1)
-    chall_key = bytes([randint(0, 255) for x in range(16)])
+    chall_key = bytes([randint(0, 255) for _ in range(16)])
 
     #Get oracle
     chall_oracle = get_oracle(chall_key, chall_nonce)

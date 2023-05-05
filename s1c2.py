@@ -2,7 +2,7 @@
 def xor(a, b):
     '''Generalized xor function that works on ints, hex strings, and bytes/bytearray objects. \nReturns the same type.'''
     if type(a) != type(b):
-        raise Exception("XOR Type Mismatch")
+        raise Exception(f"XOR Type Mismatch ({type(a)} != {type(b)})")
     if type(a) not in (str, bytes, bytearray, int):
         raise Exception(f"XOR operation not defined for type ({type(a)})")
     if type(a) == int:

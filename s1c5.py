@@ -1,7 +1,6 @@
 #Main functions
 def encrypt(data: bytes, key: bytes) -> bytes:
     return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
-
 def decrypt(data: bytes, key: bytes) -> bytes:
     return encrypt(data, key) #Decryption is equal to encryption. Thus, using alias here.
 

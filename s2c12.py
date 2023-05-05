@@ -8,7 +8,7 @@ def generate_oracle(secret_txt: bytes):
     '''Given a secret bytes object returns a function to encrypt it with variable front-padding'''
 
     #Generate constant key and secret-text
-    secret_key = bytes([(randint(0,255)) for i in range(16)])
+    secret_key = bytes([(randint(0,255)) for _ in range(16)])
     secret_txt = bytes(secret_txt)
     return (lambda atk : encrypt_AES_ECB_128(b''.join([atk,secret_txt]),secret_key))
 

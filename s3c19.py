@@ -1,6 +1,7 @@
 
 #IMPORTS
-from s1c6 import score_text, decrypt
+from s1c3 import score_english_buffer
+from s1c6 import decrypt
 from s3c18 import encrypt_AES_CTR
 from random import randint
 from base64 import b64decode
@@ -12,7 +13,7 @@ def safe_print(buffer: bytes, default_char=ord("*")):
 
 #Oracle Generation Function
 def get_crypt_oracle():
-    o_key = bytes([randint(0,255) for i in range(16)])
+    o_key = bytes([randint(0,255) for _ in range(16)])
     o_nonce = randint(0, 2**31)
     return lambda x : encrypt_AES_CTR(x, o_key, o_nonce)
 
@@ -42,7 +43,7 @@ def safe_byte_crack(ciphertext: bytes) -> int:
         if not can_be_ascii(maybe_plain):
             continue
         
-        new_score = score_text(maybe_plain)
+        new_score = score_english_buffer(maybe_plain)
         
         if new_score > max_score:
             best_i = i
@@ -74,7 +75,7 @@ def guess_key_demo(ciphertexts: bytes):
             if not can_be_ascii(maybe_plain):
                 continue
             
-            new_score = score_text(maybe_plain)
+            new_score = score_english_buffer(maybe_plain)
             
             if new_score > max_score:
                 best_j = j
