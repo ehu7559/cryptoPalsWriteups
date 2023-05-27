@@ -1,7 +1,7 @@
 #Implement Secure Remote Password (SRP) Protocol
 from random import randint
 from hashlib import sha256
-from s5c33 import mod_exp, unbounded_exp as exp
+from s5c33 import mod_exp
 from s5c34 import encode_int
 
 #Salted Hashing function:

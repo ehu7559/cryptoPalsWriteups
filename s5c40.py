@@ -32,7 +32,8 @@ from s5c39 import mod_inv as invmod
 from s5c33 import unbounded_exp as exp #Used for int_root function
 
 def int_root(n : int, r : int) -> int:
-    '''Computes rth root of n. Does not handle complex/Gaussian integers'''
+    '''Computes rth root of n. Does not handle complex/Gaussian integers
+    It's not that I don't like the built-ins. It's that casting from floating point to integer is not accurate enough.'''
     #Can't handle non-natural roots.
     if r < 1:
         raise Exception("Invalid value for root power")
@@ -64,6 +65,7 @@ def int_root(n : int, r : int) -> int:
 
 #Haha funny lambda function definition
 #probably could have done this from the beginning but generalized solutions are cool.
+#Also, it means I can use it in other problems later :3.
 cube_root = lambda x : int_root(x, 3)
 
 def rsa_e3_broadcast_attack(ciphertexts, moduli):
