@@ -98,11 +98,12 @@ class SHA1:
     def set_length(self, length: int):
         self.length = length
 
-    def hash(data):
+    def hash(data : bytes):
         digest = SHA1()
         digest.ingest(data)
         digest.finalize()
         return digest.get_hash_str()
+    
     def keyed_MAC(key, message):
         pair = bytearray(key)
         pair.extend(message)

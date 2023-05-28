@@ -272,7 +272,9 @@ Indeed, this was true of my own implementation.
 
 ## Challenge 38: Offline dictionary attack on simplified SRP
 
-`Work in Progress`
+I have elected to skip this challenge.
+I may revisit it when I have time, but as of now I do not find it to be worth
+spending time on this challenge.
 
 ## Challenge 39: Implement RSA
 
@@ -333,3 +335,13 @@ encrypted with three or more different RSA keys.
 
 A passive observer can obtain the plaintext using the ciphertexts resulting from
 encrypting the message with three or more distinct keys.
+
+As the numbers here are fairly large and may experience substantial errors when
+cube-roots are taken of their products thanks to the limited accuracy of
+floating point numbers, I have implemented an integer-root function myself and
+then created a lambda to give a short-hand cube-root function.
+
+## Closing Remarks:
+
+This set is fun, if quite tedious at times. It's fun to play around with the
+mind-bogglingly large numbers and understand their interactions.

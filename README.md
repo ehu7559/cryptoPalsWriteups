@@ -2,7 +2,7 @@
 A currently expanding set of Python programs and guides to the Matasano Cryptopals Challenges. Implemented in Python, made with love, stress, and unbridled ambition.
 
 ## DISCLAIMER:
-This repository contains source code for implementations of various cryptographic protocols,some of which are, at the time of writing, still standard. The implementations are based on a combination of course study, mathematical texts, and reference to well-known open standards. The code in this repository is known to contain multiple vulnerabilities and lacks the safeguards required for truly secure cryptography. Under no circumstances should this be used for actual security. The author of this repo takes no responsibility for those who fail to heed this warning. Use well-reputed cryptographic libraries/implementations. Don't trust some rando's implementation, and don't use your own.
+This repository contains source code for implementations of various cryptographic protocols, some of which are, at the time of writing, still standard. The implementations are based on a combination of course study, mathematical texts, and reference to well-known open standards. The code in this repository is known to contain multiple vulnerabilities and lacks the safeguards required for truly secure cryptography. Under no circumstances should this be used for actual security. The author of this repo takes no responsibility for those who fail to heed this warning. Use well-reputed cryptographic libraries/implementations. Don't trust some rando's implementation, and don't use your own.
 
 ## Introduction:
 I have endeavoured to make my code at least generally understandable to those who are semi-fluent in Python and reading/doing the challenges along with me. However, since I have almost certainly failed to achieve that, each set gets its own writeup file containing a writeup for each of the eight challenges.
@@ -23,6 +23,19 @@ Open the following (replacing A and B with the appropriate numbers)
 - https://cryptopals.com/sets/[A]/challenges/[B]
 ```
 
+## Note on simulated "servers"
+
+As networking is not the focus of these challenges, most of the communications
+protocols in the challenges has been removed.
+
+Where applicable, "oracle"-type servers have been replaced by lambda functions.
+
+Peer-to-peer communications (like Diffie Hellman) have been simulated step by
+step rather than utilizing network transmissions.
+
+These modifications to the challenge do not fundamentally alter the underlying
+cryptological concepts covered in the challenges.
+
 ## Modules of Interest (the challenges most imported from):
 
 The following challenges are primarily concerned with implementation of
@@ -36,6 +49,7 @@ Challenge 18:   AES-128 CTR (Advanced Encryption Standard, 128-bit, Counter mode
 Challenge 21:   MT19937 PRNG (Mersenne-Twister 19937 Psuedo-Random Number Generator)
 Challenge 28:   SHA-1 (Secure Hash Algorithm 1)
 Challenge 33:   Diffie Hellman Key Exchange
+Challenge 39:   RSA
 ```
 
 ## Completion Status:
@@ -44,8 +58,8 @@ Set 1:  1   2   3   4   5   6   7   8
 Set 2:  9   10  11  12  13  14  15  16
 Set 3:  17  18  19  20  21  22  23  24
 Set 4:  25  26  27  28  29      31  32
-Set 5:  33  34      36  37
-Set 6:  
+Set 5:  33  34      36  37      39  40
+Set 6:  41  42
 
 Current Priorities:
  - Refactoring and cleaning up Challenges 1 - 34 [In progress]
