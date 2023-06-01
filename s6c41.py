@@ -1,8 +1,5 @@
-#Challenge 41: 
+#Challenge 41: Implement unpadded message recovery oracle
 
-'''
-Note on encryption here:
-'''
 def craft_payload(ciphertext : int, public_exponent : int, public_modulus : int, s : int):
     return (pow(s, public_exponent, public_modulus) * ciphertext) % public_modulus
 

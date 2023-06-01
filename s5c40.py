@@ -31,7 +31,7 @@ To decrypt RSA using a simple cube root, leave off the final modulus operation; 
 from s5c39 import mod_inv as invmod
 from s5c33 import unbounded_exp as exp #Used for int_root function
 
-def int_root(n : int, r : int) -> int:
+def int_root(n : int, r : int, strict=False) -> int:
     '''Computes rth root of n. Does not handle complex/Gaussian integers
     It's not that I don't like the built-ins. It's that casting from floating point to integer is not accurate enough.'''
     #Can't handle non-natural roots.
@@ -61,7 +61,9 @@ def int_root(n : int, r : int) -> int:
     if exp(acc, r) == n:
         return acc
     
-    raise Exception(f"The root {r} of {n} is not an integer.")
+    if strict:
+        raise Exception(f"The root {r} of {n} is not an integer.")
+    return acc
 
 #Haha funny lambda function definition
 #probably could have done this from the beginning but generalized solutions are cool.
