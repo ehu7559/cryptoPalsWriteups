@@ -248,10 +248,15 @@ def retrieve_data(filename):
 
 #Main Function:
 def challenge():
-    ciphertext = retrieve_data("7.txt")
-    KEY = bytes("YELLOW SUBMARINE","utf-8")
-    plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
-    print(plain_bytes.decode("ascii"))
+    with open("7.txt", "r") as f:
+        ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
+        KEY = bytes("YELLOW SUBMARINE","utf-8")
+        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
+        print(plain_bytes.decode("ascii"))
 
 if __name__ == "__main__":
-    challenge()
+    with open("7.txt", "r") as f:
+        ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
+        KEY = bytes("YELLOW SUBMARINE","utf-8")
+        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
+        print(plain_bytes.decode("ascii"))

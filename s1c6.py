@@ -19,7 +19,7 @@ def ham_dist_byte(a: int, b: int) -> int:
 #   It has the added benefit of using the Python built-ins written in C, which
 #   probably has a tiny, insignificant speedup.
 def hamming_distance(buf_a: bytes, buf_b: bytes) -> int:
-    '''Computes the '''
+    '''Computes the total hamming distance for two byte-buffers. Any length mismatch is automatically counted as 8 bits of distance'''
     return sum(map(lambda a, b : ham_dist_byte(a,b), iter(buf_a), iter(buf_b))) + 8 * abs(len(buf_a) - len(buf_b))
 
 '''
@@ -34,7 +34,7 @@ characters, which was patently incorrect given that the actual key length was 29
 characters, leading to an entirely illegible ciphertext that took multiple days
 to resolve (as 5 and 29 are coprime). This problem led to much filtering on
 printable characters and other attempts to obtain the plaintext assuming that
-the key length was 5, all becuase of the suggested function.
+the key length was 5, all because of the suggested scoring method.
 '''
 def score_key_length(data: bytes, length: int) -> int:
     avg_hamming_score = 0
@@ -44,8 +44,9 @@ def score_key_length(data: bytes, length: int) -> int:
     return 2 * avg_hamming_score / ((len(data) // length) * ((len(data) // length) - 1) * length)
 
 '''
-This one would also have eliminated the biases a bit, sacrificing the truly 
-pedantic nature of score_key_length(data, length) for an O(n) speedup.
+This function also eliminates the biases a bit, sacrificing the truly pedantic 
+nature of score_key_length(data, length) for an O(n) speedup.
+
 This is the algorithm I used for Kasiski analysis during CMSC414 and CMSC456 at
 the University of Maryland.
 
@@ -61,20 +62,8 @@ def guess_key_length(data: bytes) -> int:
     '''(bytes) -> int
         Returns the most likely key length in bytes given a ciphertext encrypted
         with repeated-key XOR'''
-    if len(data) < 2:
-        return len(data)
-    #'''
-    guess = 1
-    guess_score = 8     #Literally every bit is different
-    for i in range(1,(min(len(data) // 2, KEY_SIZE_LIMIT))):
-        sc = score_key_length_wrap(data,i)
-        print(f"Current Candidate: {guess} \tChecking: {i}", end="\r")
-        if sc < guess_score: #Prefer shorter key size (I think it would make for more reliable frequency analysis)
-            guess = i
-            guess_score = sc    
-    return guess
-    #'''
-    #return max(range(2, min(len(data)//2, KEY_SIZE_LIMIT)), key=lambda x : score_key_length_wrap(data,x))
+    return min(range(min(len(data)//2, KEY_SIZE_LIMIT), 2, -1), key=lambda x : score_key_length_wrap(data,x))
+
 #Striping mechanism
 #Used to isolate characters encrypted with the same index of the key.
 def stripe(data: bytes, num_blocks: int) -> list[bytes]:
@@ -112,19 +101,14 @@ def crack(data: bytes) -> str:
     print("Key: " + str(key_guess))
     print("\nDecrypting...")
     return decrypt(data, key_guess).decode('ascii')
-
-def retrieve_data(filename):
-    '''(string) -> bytes'''
-    f = open(filename, "r")
-    ls = f.readlines()
-    f.close()
-    sixtyfour = ""
-    for l in ls:
-        sixtyfour += l.strip()
-    return bytes(b64decode(sixtyfour))
     
 #Retrieve data from the challenge file.
-if __name__ == "__main__":    
-    ciphertext = retrieve_data("6.txt")
-    print(crack(ciphertext))
-    print('--- CHALLENGE STATUS: COMPLETE ---')
+if __name__ == "__main__":
+    with open("6.txt", "r") as f:
+        ls = f.readlines()
+        sixtyfour = ""
+        for l in ls:
+            sixtyfour += l.strip()
+        ciphertext = b64decode("6.txt")
+        print(crack(ciphertext))
+        print('--- CHALLENGE STATUS: COMPLETE ---')

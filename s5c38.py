@@ -1,5 +1,5 @@
+#Challenge 38: Offline dictionary attack on simplified SRP
 '''
-Offline dictionary attack on simplified SRP
 S
 x = SHA256(salt|password)
     v = g**x % n

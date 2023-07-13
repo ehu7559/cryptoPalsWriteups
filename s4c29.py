@@ -1,4 +1,4 @@
-#Break a SHA-1 keyed MAC using length extension
+#Challenge 29: Break a SHA-1 keyed MAC using length extension
 from s4c28 import SHA1
 from random import randint
 

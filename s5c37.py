@@ -1,4 +1,4 @@
-#Break SRP with a zero key
+#Challenge 37: Break SRP with a zero key
 
 #imports
 from s5c36 import generate_test_params, hash_sha256, server_init, server_send_B,server_side_compute, client_side_compute, client_send_salted_HMAC,server_verdict

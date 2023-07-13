@@ -8,6 +8,11 @@ This challenge is rather simple. We are simply converting hex to base64 encoding
 for this challenge. It's not that hard. Use the base64 library because it's an
 absolutely essential function.
 
+Base64 is an encoding that uses the following character set:
+```abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/```
+The `=` character is also used to pad the string to a multiple of three, given
+that Base64 characters only encode 6 bits of information.
+
 ## Challenge 2: Fixed XOR
 
 The challenge wants us to implement a function capable of taking two hexadecimal
@@ -17,6 +22,15 @@ Wrote the function `hex_xor()`, which takes two hex-strings and decodes them
 before performing a bitwise xor of the two buffers with a list comprehension. 
 This is still basic programming.
 
+**Truth-table for XOR**:
+```
+A | B | A ^ B
+--+---+-------
+0 | 0 | 0
+0 | 1 | 1
+1 | 0 | 1
+1 | 1 | 0
+```
 ## Challenge 3: Single-byte XOR cipher
 
 The challenge asks us to decrypt the given plaintext, which has been encrypted
@@ -125,24 +139,24 @@ AES is built of four main steps.
 
 ### SUB BYTES:
 Implemented with a lookup table for convenience sake, but is, in
-actuality, also expressible as a matrix multiplication. TO invert it, simply use
-a lookup table that goes the other way. (`SB_TABLE[i] = j`, `INV_SB_TABLE[j] = i`)
+actuality, also expressible as a matrix multiplication. To invert it, simply use
+a lookup table that goes the other way. 
+(`SB_TABLE[i] = j`, `INV_SB_TABLE[j] = i`)
 
 ### SHIFT ROWS:
 Implemented with a mapping for compactness, but can be expressed
 as a manipulation of a matrix. For the inverse, use the reverse mapping.
 
+This step is designed to increase diffusion throughout the ciphertext. This
+prevents blocks from being
 #### SHIFT ROWS:
-
 ```
 0 4 8 c         0 4 8 c
 1 5 9 d  -->    5 9 d 1
 2 6 a e         a e 2 6
 3 7 b f         f 3 7 b
 ```
-
 #### INVERSE SHIFT ROWS:
-
 ```
 0 4 8 c         0 4 8 c
 1 5 9 d  -->    d 1 5 9
@@ -196,7 +210,9 @@ Much, much easier than challenge 7. Look for a ciphertext with a repeated block.
 Honestly there's not much to say here. This property of ECB is actually the
 source of its name: Electronic Code Book. For a given key, ECB is essentially a
 glorified lookup table. Thus, any identical plaintext blocks will then yield
-identical ciphertext blocks, with the same displacement from each other. 
+identical ciphertext blocks, with the same displacement from each other. This
+makes ciphertexts encrypted through ECB detectable by finding multiple blocks
+with the same value.
 
 ## Set 1 Closing Remarks:
 Set 1 is an interesting introduction to practical cryptography. It began with

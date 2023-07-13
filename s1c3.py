@@ -8,14 +8,10 @@ for k in alphabet:
 
 ignorable_chars = "1234567890!@#$%^&*(),.<>/?;:'\"[]\{\}\\|\n\t`~ "
 
-#Simple summation method. should work for texts of the same length 
-def is_printable_ascii_byte(x : int) -> bool:
-    '''Determines whether or not a byte is allowed in the plaintext'''
-    return chr(x).lower() in scores.keys() or chr(x) in ignorable_chars
-
 #CHANGED 20APR2023: changed into a filter statement rather than a list comprehension.
 def sanitize_buffer(buf : bytes) -> bytes:
     '''Sanitizes buffers to be "printable"/acceptable characters'''
+    is_printable_ascii_byte = lambda x : (chr(x).lower() in scores.keys() or chr(x) in ignorable_chars)
     return bytes(filter(is_printable_ascii_byte, buf)) #Not sure a filter here is cleaner/more Pythonic, but whatever it's cool to use it for once :)
 
 #CHANGED 20APR2023: used a map() function instead of iterating.

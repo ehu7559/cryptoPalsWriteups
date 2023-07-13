@@ -1,4 +1,4 @@
-#Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection
+#Challenge 34: Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection
 
 #Imports:
 from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     #A->M
     #Send AES-CBC(SHA1(s)[0:16], iv=random(16), msg) + iv
     msg = "You have completed Set 5, Challenge 33! This is a generic message.".encode("ascii")    
-    print("Alice Sent: \t|" + msg.decode("ascii") + "|")
+    print(f"Alice Sent: \t|{msg.decode('ascii')}|")
     a_m_2 = secret_message(msg, Alice.get_secret())
     m_saw_from_a = reveal_message(a_m_2, 0).decode("ascii")
     print(f"Mindy Saw: \t|{m_saw_from_a}|" )
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     #B->M
     #Send AES-CBC(SHA1(s)[0:16], iv=random(16), A's msg) + iv
     b_got = reveal_message(m_b_2, Bob.get_secret())
-    print("Bob Recieved: \t|"+ b_got.decode("ascii") + "|")
+    print(f"Bob Recieved: \t|{b_got.decode('ascii')}|")
     b_m_2 = secret_message(b_got, Bob.get_secret())
     m_saw_from_b = reveal_message(b_m_2, 0).decode("ascii")
     print(f"Mindy Saw: \t|{m_saw_from_b}|" )

@@ -1,4 +1,4 @@
-#Break an MD4 keyed MAC using length extension
+#Challenge 30: Break an MD4 keyed MAC using length extension
 
 #MD4 digest class
 from s4c28 import encode_uint_big_endian

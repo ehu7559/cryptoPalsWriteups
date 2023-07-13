@@ -26,13 +26,13 @@ def get_oracles() -> tuple:
     rand_aes_key = bytes([randint(0,255) for _ in range(16)])
     
     #Generate profile oracle
-    pfo = profile_oracle(rand_aes_key)
+    pro = profile_oracle(rand_aes_key)
     
     #Generate decryption oracle (for checking)
     dro = decrypt_oracle(rand_aes_key)
     
     #Return the two oracles together.
-    return (pfo, dro)
+    return (pro, dro)
     
 #Gain admin block
 def get_admin_block(pf_oracle) -> bytes:
@@ -66,13 +66,10 @@ def attack_oracle(oracle) -> bytes:
     
 #CHALLENGE 13!
 if __name__ == "__main__":
-    
     #Create Oracles
     chall_pro, chall_dro = get_oracles()
-
     #Attack the profile oracle
     attack_attempt = attack_oracle(chall_pro)
-    
     #Decrypt using the oracle and check
     print(chall_dro(attack_attempt).decode("utf-8"))
     #Print status of challenge

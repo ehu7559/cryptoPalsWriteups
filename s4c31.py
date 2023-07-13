@@ -1,4 +1,4 @@
-#Implement and break HMAC-SHA1 with an artificial timing leak
+#Challenge 31: Implement and break HMAC-SHA1 with an artificial timing leak
 
 #Imports
 from random import randint

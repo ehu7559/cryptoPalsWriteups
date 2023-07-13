@@ -1,4 +1,4 @@
-#Clone an MT19937 RNG from its output
+#Challenge 23: Clone an MT19937 RNG from its output
 
 from s3c21 import MT19937_stream, MT19937_generator
 from time import sleep

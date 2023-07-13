@@ -2,11 +2,21 @@
 
 ## BRIEFING:
 
-This is the first of several sets on block cipher cryptography. This is bread-and-butter crypto, the kind you'll see implemented in most web software that does crypto.
+```Markdown
+FROM SET 2 HOMEPAGE:
 
-This set is relatively easy. People that clear set 1 tend to clear set 2 somewhat quickly.
+This is the first of several sets on block cipher cryptography. This is
+bread-and-butter crypto, the kind you'll see implemented in most web software
+that does crypto.
 
-Three of the challenges in this set are extremely valuable in breaking real-world crypto; one allows you to decrypt messages encrypted in the default mode of AES, and the other two allow you to rewrite messages encrypted in the most popular modes of AES.
+This set is relatively easy. People that clear set 1 tend to clear set 2 
+somewhat quickly.
+
+Three of the challenges in this set are extremely valuable in breaking 
+real-world crypto; one allows you to decrypt messages encrypted in the default 
+mode of AES, and the other two allow you to rewrite messages encrypted in the 
+most popular modes of AES.
+```
 
 ## Challenge 9: Implement PKCS#7 padding
 I ripped this one entirely out of the Challenge 7 code I wrote. In the interest

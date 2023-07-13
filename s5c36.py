@@ -1,4 +1,4 @@
-#Implement Secure Remote Password (SRP) Protocol
+#Challenge 36: Implement Secure Remote Password (SRP) Protocol
 from random import randint
 from hashlib import sha256
 from s5c33 import mod_exp

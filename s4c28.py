@@ -1,4 +1,4 @@
-#SHA-1 Keyed MAC
+#Challenge 28: SHA-1 Keyed MAC
 
 class SHA1:
 

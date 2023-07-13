@@ -18,8 +18,7 @@ def probablyECB(data: bytes) -> bool:
 
 #CHALLENGE CODE
 if __name__ == "__main__":    
-    f = open("8.txt","r")
-    ls = f.readlines()
-    f.close()
-    for line in [l for l in ls if probablyECB(l.encode("ascii"))]:
-        print(line)
+    with open("8.txt","r") as f:
+        ls = f.readlines()
+        for line in [l for l in ls if probablyECB(l.encode("ascii"))]:
+            print(line)
