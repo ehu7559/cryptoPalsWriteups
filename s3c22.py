@@ -19,7 +19,12 @@ def crack_MT19937_seed(start: int, output_words: list, increment = 1, max_depth 
         #Check for correctness
         solved = True
         for j in range(n):
-            solved = solved and (output_words[j] == crack_words[j])
+            #solved = solved and (output_words[j] == crack_words[j])
+            if output_words[j] == crack_words[j]:
+                continue
+            #if not matched:
+            solved= False
+            break
     
         #If not solved, decrement and attempt to crack again.
         if solved:
