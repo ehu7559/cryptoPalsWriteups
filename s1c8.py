@@ -3,22 +3,21 @@ def probablyECB(data: bytes) -> bool:
     if (len(data) % 16):
         return False #Not being composed of 16-byte blocks indicates it probably isn't even an AES ciphertext
 
-    blocks = []
+    blocks = set()
     num_blocks = len(data) // 16
 
     #Chunkify it
     for i in range(num_blocks):
-        blocks.append(data[16 * i: 16 * (i + 1)])
-    
-    for i in range(num_blocks - 1):
-        for j in range(i + 1, num_blocks):
-            if blocks[i] == blocks[j]:
-                return True
+        block = data[16 * i: 16 * (i + 1)].hex()
+        if block in blocks:
+            return True
+        blocks.add(block)
     return False
 
 #CHALLENGE CODE
 if __name__ == "__main__":    
-    with open("8.txt","r") as f:
-        ls = f.readlines()
-        for line in [l for l in ls if probablyECB(l.encode("ascii"))]:
-            print(line)
+    with open("challenge-data/8.txt","r") as f:
+        for l in f.readlines():
+            l_b = bytes.fromhex(l)
+            if probablyECB(l_b):
+                print(l)

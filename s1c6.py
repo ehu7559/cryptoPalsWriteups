@@ -104,11 +104,11 @@ def crack(data: bytes) -> str:
     
 #Retrieve data from the challenge file.
 if __name__ == "__main__":
-    with open("6.txt", "r") as f:
+    with open("challenge-data/6.txt", "r") as f:
         ls = f.readlines()
         sixtyfour = ""
         for l in ls:
             sixtyfour += l.strip()
-        ciphertext = b64decode("6.txt")
+        ciphertext = b64decode(sixtyfour)
         print(crack(ciphertext))
         print('--- CHALLENGE STATUS: COMPLETE ---')

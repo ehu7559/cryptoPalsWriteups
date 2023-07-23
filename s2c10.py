@@ -31,30 +31,15 @@ def decrypt_AES_CBC_128(data: bytes, aes_key: bytes, iv: bytes) -> bytes:
         output.extend(plain_block)
     return bytes(output)
 
-    
-def retrieve_data(filename):
-    '''(string) -> bytes'''
-    f = open(filename, "r")
-    ls = f.readlines()
-    f.close()
-    
-    output = bytearray()
-    
-    for line in ls:
-        output.extend(b64decode(line.strip()))
-    return bytes(output)
-
-#Main Function:
-def challenge():
-    ciphertext = retrieve_data("10.txt")
-    KEY = bytes("YELLOW SUBMARINE","utf-8")
-    IV = bytes([0 for i in range(16)])
-    plain_bytes = decrypt_AES_CBC_128(ciphertext, KEY, IV)
-    print(plain_bytes.decode("ascii"))
-
-DOING_CHALLENGE = True
-
+#Main
 if __name__ == "__main__":
-    if DOING_CHALLENGE:
-        challenge()
-        
+    with open("challenge-data/10.txt") as f:
+        ciphertext = bytearray()
+        for l in f.readlines():
+            ciphertext.extend(b64decode(l.strip()))
+        ciphertext = bytes(ciphertext) #Casting it for my own satisfaction/comfort
+        KEY = bytes("YELLOW SUBMARINE","utf-8")
+        IV = bytes([0 for _ in range(16)])
+        plain_bytes = decrypt_AES_CBC_128(ciphertext, KEY, IV)
+        print(plain_bytes.decode("ascii"))
+    print("--- CHALLENGE COMPLETE ---")

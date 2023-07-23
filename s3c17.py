@@ -58,7 +58,7 @@ def attack(oracle, ciphertext: bytes, init_vector: bytes) -> bytes:
     return trim_padding(join_bufs(pt_blocks))
 
 def choose_text() -> bytes:
-    with open("17.txt", "r") as f:
+    with open("challenge-data/17.txt", "r") as f:
         return bytes(b64decode(choice(f.readlines()).strip()))
 
 def get_challenge() -> tuple:

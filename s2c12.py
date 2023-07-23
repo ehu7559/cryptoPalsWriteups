@@ -16,7 +16,7 @@ def is_oracle_ECB(target) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))
 
 def get_oracle_block_size(target) -> int:
-    '''Computes size of a target oracle using'''
+    '''Computes the block size of a target oracle'''
     initial_length = len(target(bytes(0)))
     extender = 0
     while len(target(bytes(extender))) == initial_length:

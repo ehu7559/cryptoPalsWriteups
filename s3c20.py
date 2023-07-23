@@ -20,7 +20,7 @@ if __name__ == "__main__":
     
     #Generate encryption oracle and challenge texts
     cryptoracle = get_crypt_oracle()
-    plain_texts = retrieve_lines("19.txt")
+    plain_texts = retrieve_lines("challenge-data/20.txt")
     cipher_texts = [cryptoracle(p) for p in plain_texts]
     
     #Attack

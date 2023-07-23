@@ -3,7 +3,7 @@ MIN_SCORE = 48
 
 #Challenge code
 if __name__ == "__main__":
-    with open("4.txt", "r") as f:
+    with open("challenge-data/4.txt", "r") as f:
         for l in f.readlines():
             buf = bytes.fromhex(l)
             key_guess = guess_single_byte_xor_key(buf)

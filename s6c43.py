@@ -57,4 +57,4 @@ if __name__ == "__main__":
     #Check that the string is correct
     print(SHA1.hash(chall_m))
     #I checked the SHA-1 hash for the message online. It seems they've put the wrong hash in the challenge text.
-
+    #Doesn't seem to hash to d2d0714f014a9784047eaeccf956520045c45265

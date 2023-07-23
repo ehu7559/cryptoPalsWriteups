@@ -96,7 +96,7 @@ if __name__ == "__main__":
     cryptoracle = get_crypt_oracle()
 
     #Retrieve data and process it
-    cipher_texts = retrieve_lines("19.txt")
+    cipher_texts = retrieve_lines("challenge-data/19.txt")
 
     #Attack
     chall_key_guess = bytearray(guess_key_demo(cipher_texts))

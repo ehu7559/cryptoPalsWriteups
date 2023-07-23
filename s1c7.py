@@ -26,9 +26,6 @@ of course, related. They will also be used in later challenges, so I will leave
 them here to keep my import statements short.
 '''
 
-#Imports
-from base64 import b64decode
-
 #Constants and lookup tables
 ROUNDS = {128 : 10, 192 : 12, 256 : 14}
 BLOCK_SIZE_BITS = 128
@@ -233,29 +230,11 @@ def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
         output.extend(new_block)
     return bytes(output)
     
-#Challenge Data Retrieval
-def retrieve_data(filename):
-    '''(string) -> bytes'''
-    f = open(filename, "r")
-    ls = f.readlines()
-    f.close()
-    
-    output = bytearray()
-    
-    for line in ls:
-        output.extend(b64decode(line.strip()))
-    return bytes(output)
-
-#Main Function:
-def challenge():
-    with open("7.txt", "r") as f:
-        ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
-        KEY = bytes("YELLOW SUBMARINE","utf-8")
-        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
-        print(plain_bytes.decode("ascii"))
-
+#Main 
 if __name__ == "__main__":
-    with open("7.txt", "r") as f:
+    with open("challenge-data/7.txt", "r") as f:
+        #Imports
+        from base64 import b64decode
         ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
         KEY = bytes("YELLOW SUBMARINE","utf-8")
         plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
