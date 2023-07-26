@@ -2,7 +2,8 @@
 
 #Imports
 from s1c6 import guess_key, decrypt
-from s3c19 import get_crypt_oracle, retrieve_lines, safe_print
+from base64 import b64decode
+from s3c19 import gen_crypt_oracle, defang_str_bytes
 
 #Attack function
 def challenge_20_attack(ciphertexts: list) -> int:
@@ -18,16 +19,21 @@ def challenge_20_attack(ciphertexts: list) -> int:
 #Challenge Code
 if __name__ == "__main__":
     
-    #Generate encryption oracle and challenge texts
-    cryptoracle = get_crypt_oracle()
-    plain_texts = retrieve_lines("challenge-data/20.txt")
-    cipher_texts = [cryptoracle(p) for p in plain_texts]
-    
-    #Attack
-    chall_key_guess = challenge_20_attack(cipher_texts)
+    with open("challenge-data/19.txt", "r") as f:
+        #Retrieve data and process it
+        plain_texts = [bytes(b64decode(l)) for l in f.readlines()]
 
-    #Decode and encrypt each text
-    for c in cipher_texts:
-        safe_print(decrypt(c,chall_key_guess))
-    
-    print("--- CHALLENGE STATUS: COMPLETE ---")
+        #Generate encryption oracle and encrypt the ciphertexts
+        chall_oracle = gen_crypt_oracle()
+        cipher_texts = [chall_oracle(p) for p in plain_texts]
+
+        key_guess = challenge_20_attack(cipher_texts)
+
+        recovered = [decrypt(c, key_guess) for c in cipher_texts]
+        
+        for (a, b) in zip(plain_texts, recovered):
+            print(a.decode())
+            print(defang_str_bytes(b))
+
+        #Compile guesses
+        print("--- CHALLENGE STATUS: COMPLETE ---")

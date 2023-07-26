@@ -8,10 +8,12 @@ for k in alphabet:
 
 ignorable_chars = "1234567890!@#$%^&*(),.<>/?;:'\"[]\{\}\\|\n\t`~ "
 
+
+is_printable_ascii_byte = lambda x : (chr(x).lower() in scores.keys() or chr(x) in ignorable_chars)
+
 #CHANGED 20APR2023: changed into a filter statement rather than a list comprehension.
 def sanitize_buffer(buf : bytes) -> bytes:
     '''Sanitizes buffers to be "printable"/acceptable characters'''
-    is_printable_ascii_byte = lambda x : (chr(x).lower() in scores.keys() or chr(x) in ignorable_chars)
     return bytes(filter(is_printable_ascii_byte, buf)) #Not sure a filter here is cleaner/more Pythonic, but whatever it's cool to use it for once :)
 
 #CHANGED 20APR2023: used a map() function instead of iterating.
@@ -21,7 +23,7 @@ def sum_score(buf : bytes) -> bytes:
     score_byte = (lambda num : (scores[chr(num)] if chr(num) in scores.keys() else (1 if chr(num) in ignorable_chars else 0)))
     return sum(map(score_byte, sanitize_buffer(buf)))
 
-def score_english_buffer(buf : bytes) -> int:
+def score_english_buffer(buf : bytes) -> float:
     '''Length-normalized scoring of a candidate plaintext buffered.'''
     return sum_score(buf)/len(buf)
 
@@ -30,16 +32,19 @@ def decrypt_single_byte_xor(buf : bytes, kb : int) -> bytes:
     return bytes([x ^ kb for x in buf])
 
 def safe_decode_string_from_bytes(buf : bytes) -> str:
-    '''Safely decodes and sanitizes a buffer from'''
+    '''Safely decodes and sanitizes a buffer'''
     return "".join([chr(c) for c in sanitize_buffer(buf)])
+
+def score_single_byte_xor_key(buf : bytes, x : int) -> float:
+    '''Scores a keybyte's likeliness to be a single-byte xor key for an English ciphertext'''
+    return score_english_buffer(decrypt_single_byte_xor(buf, x))
 
 def guess_single_byte_xor_key(buf : bytes) -> int:
     '''Returns the most likely key for a ciphertext buffer based on frequency analysis'''
-    return max(range(256), key= lambda x : score_english_buffer(decrypt_single_byte_xor(buf, x)))
-
+    return max(range(256), key= lambda x : score_single_byte_xor_key(buf, x)) 
 def rank_keybytes(buf : bytes):
     '''Returns the 256 possible keys, ranked in order of increasing plaintext score for a given buffer'''
-    return sorted(range(256), key=lambda x : score_english_buffer(decrypt_single_byte_xor(buf, x)))
+    return sorted(range(256), key=lambda x : score_single_byte_xor_key(buf, x))
     
 
 #Challenge code

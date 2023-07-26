@@ -94,6 +94,12 @@ Reapply the technique from Challenge 19 in the more traditional Vigenere cipher
 attack style. As the plaintexts are of relatively uniform length, the rest of
 the text should be easily guessable based on the words.
 
+An alternate approach would be to randomly pad the ciphertexts, run the test
+multiple times, and use the mode as the key. This, of course, isn't really
+practical compared to the approach used in Challenge 19, and would be a waste of
+time to implement. This would simply reduce the problem to a normal frequency
+analysis, but also increase sensitivity to biased randomness.
+
 ## Challenge 21: Implement the MT19937 Mersenne Twister RNG
 
 This challenge is relatively straightforward, hence the short description on the
