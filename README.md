@@ -65,3 +65,12 @@ Current Priorities:
  - Refactoring and cleaning up Challenges 1 - 34 [In progress]
  - Challenges 38 - 40 [Under development]
 ```
+
+## Thanks and Recognition:
+```text
+My dearest thanks to the following:
+ - My professors for teaching me the material that enabled me to understand
+    these challenges.
+ - My friends for listening to me ramble about cryptology late into the night.
+ - My managers/mentors for encouraging me to keep pursuing this passion of mine.
+```
