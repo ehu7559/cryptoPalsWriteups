@@ -15,6 +15,7 @@ def xor(a, b):
             a, b = bytes.fromhex(a), bytes.fromhex(b)
         except ValueError:
             raise Exception("String input must be hex")
+        n = n//2
         return bytes([a[i] ^ b[i] for i in range(n)]).hex()
     if type(a) == bytearray:
         return bytearray([a[i] ^ b[i] for i in range(n)])
@@ -23,5 +24,5 @@ def xor(a, b):
 
 '''the kid don't play'''
 if __name__ == "__main__":
-    print(xor("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965").decode("ascii"))
+    print(bytes.fromhex(xor("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965")).decode("ascii"))
     print("--- CHALLENGE STATUS: COMPLETE ---")

@@ -55,7 +55,6 @@ if __name__ == "__main__":
         sleep(0.01)
     
     #Crack
-    #crack_start_time = int(time() + chall_sleep_time)
     print(f"Beginning Crack at simulated time {crack_start_time}")
     
     cracked_seed = crack_MT19937_seed(crack_start_time, chall_words, -1, crack_start_time)

@@ -4,7 +4,7 @@ scores = {'e': 120, 't': 90, 'a': 80, 'i': 80, 'n': 80, 'o': 80, 's': 80, 'h': 6
 #Added this to prefer lowercase over uppercase.
 alphabet = list(scores.keys())
 for k in alphabet:
-    scores[k.capitalize()] = scores[k] - 1
+    scores[k.capitalize()] = scores[k] // 1.5
 
 ignorable_chars = "1234567890!@#$%^&*(),.<>/?;:'\"[]\{\}\\|\n\t`~ "
 
