@@ -87,10 +87,6 @@ def guess_key(data: bytes, length: int) -> bytes:
         kb.append(guess_single_byte_xor_key(bl))
     return bytes(kb)
 
-#Decryption function
-def decrypt(data: bytes, key: bytes) -> bytes:
-    return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])
-
 #All-in-one Cracking Function
 def crack(data: bytes) -> str:
     print("Guessing Key Length...")
@@ -98,17 +94,13 @@ def crack(data: bytes) -> str:
     print(f"\nKey Length: {str(key_length_guess)}")
     print("\nGuessing Key...")
     key_guess = guess_key(data, key_length_guess)
-    print("Key: " + str(key_guess))
+    print(f"Key: {key_guess.decode()}")
     print("\nDecrypting...")
     return decrypt(data, key_guess).decode('ascii')
     
 #Retrieve data from the challenge file.
 if __name__ == "__main__":
     with open("challenge-data/6.txt", "r") as f:
-        ls = f.readlines()
-        sixtyfour = ""
-        for l in ls:
-            sixtyfour += l.strip()
-        ciphertext = b64decode(sixtyfour)
+        ciphertext = b64decode("".join([l.strip() for l in f.readlines()]))
         print(crack(ciphertext))
         print('--- CHALLENGE STATUS: COMPLETE ---')
