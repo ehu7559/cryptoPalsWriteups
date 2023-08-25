@@ -57,6 +57,7 @@ def attack(oracle, ciphertext: bytes, init_vector: bytes) -> bytes:
     #Join and return output
     return trim_padding(join_bufs(pt_blocks))
 
+#TODO: move choose_text() and get_challenge() functions to __main__.
 def choose_text() -> bytes:
     with open("challenge-data/17.txt", "r") as f:
         return bytes(b64decode(choice(f.readlines()).strip()))

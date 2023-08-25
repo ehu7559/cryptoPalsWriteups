@@ -23,4 +23,5 @@ def is_valid_CBC_padding(data, key, iv):
     return is_valid_pad(data)
 
 if __name__ == "__main__":
+    print("This is an implementation challenge. There is no expected output.")
     print("--- CHALLENGE STATUS: COMPLETE ---")

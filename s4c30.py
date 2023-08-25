@@ -144,4 +144,5 @@ def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max
 
 #Run Challenge code
 if __name__ == "__main__":
-    pass
+    
+    print("--- CHALLENGE STATUS: TODO ---")

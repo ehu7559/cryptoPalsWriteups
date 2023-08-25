@@ -95,4 +95,5 @@ if __name__ == "__main__":
 
     print(f"ALICE GOT: \t{Alice.get_secret()}")
     print(f"BOB GOT: \t{Bob.get_secret()}")
-    
+
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if Alice.get_secret() == Bob.get_secret() else 'ERROR'} ---")

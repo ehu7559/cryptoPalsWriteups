@@ -43,4 +43,4 @@ if __name__ == "__main__":
         successes += (1 if run_test() else 0)
     
     #Display results
-    print("Success Rate: " + str(successes) + "/"+str(TEST_ROUNDS) + "\t\t\t\t")
+    print("Success Rate: " + str(successes) + "/"+str(TEST_ROUNDS) + "   ")

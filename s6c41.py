@@ -7,5 +7,5 @@ def recover_plaintext(retrieved_plaintext : bytes, public_modulus : int, s : int
     return (pow(s, -1, public_modulus) * retrieved_plaintext) % public_modulus 
 
 if __name__ == "__main__":
-    pass
-    
+    print("This is an implementation challenge. There is no expected output.")
+    print("--- CHALLENGE STATUS: COMPLETE ---")

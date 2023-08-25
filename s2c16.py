@@ -18,7 +18,7 @@ def oracle_16_b(aes_key: bytes, init_vector: bytes):
     return lambda x : check_win(decrypt_AES_CBC_128(x, aes_key, init_vector))
 
 def check_win(plain_text: bytes) -> bool:
-    target_substring = ";admin=true;"
+    target_substring = ";admin=true;" #This inefficient checking is to accomodate the bytes type.
     ptr = 0
     for c in plain_text:
         if c == ord(target_substring[ptr]):

@@ -86,3 +86,4 @@ if __name__ == "__main__":
     print("MESSAGE SHA1: " + ("." * 24) + SHA1.hash(chall_message))
     is_valid = check_signature_weak(forged, chall_message)
     print(f"SOLUTION ACCEPTED: {is_valid}")
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if is_valid else 'ERROR'} ---")

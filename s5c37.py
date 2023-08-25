@@ -42,7 +42,7 @@ def SRP_ZeroKey(test_params, test_constants):
     print("Client Sending modified K HMAC... ", end="")
     
     #Modify K
-    client_K, client_salt        = client_side_computation
+    _, client_salt               = client_side_computation
     client_send_HMAC =  client_gen_zerokey_HMAC(client_salt)
     print("Done")
     
@@ -51,6 +51,7 @@ def SRP_ZeroKey(test_params, test_constants):
     print("Done")
 
     print(f"Validated: " + str(server_get_verdict))
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if server_get_verdict else 'ERROR'} ---")
 
 if __name__ == "__main__":
     run_params, run_constants = generate_test_params()

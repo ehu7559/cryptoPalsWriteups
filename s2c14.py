@@ -66,7 +66,7 @@ if __name__ == "__main__":
     
     #Attack the new, prefix-less Oracle
     plain_guess = attack_ECB_oracle(fake)
-    print(plain_guess.decode("ascii"))
+    print("\n" + plain_guess.decode("ascii"))
     
     #Print challenge status
     print("--- CHALLENGE STATUS: COMPLETE ---")

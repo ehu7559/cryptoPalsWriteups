@@ -28,9 +28,9 @@ class DSA:
     def gen_signature(params):
         pass
 
-    def sign(params, message : bytes, k : int, keypair):
+    def sign(params, message : bytes, k : int, priv_key : int):
         p, q, g = params
-        x, _ = keypair
+        x = priv_key
         r = pow(g, k, p) % q
         k_inv = pow(k, -1, q)
         H_m = int((SHA1.hash(message)),base=16)
@@ -71,10 +71,25 @@ if __name__ == "__main__":
     chall_s = 857042759984254168557880549501802188789837994940
     chall_sig = (chall_r, chall_s)
 
-    for i in range(2**16):
+    sol_k = None
+
+    for i in range(1, 2**16):
         print(f"k = {i}", end="\r")
         chall_x = priv_key_from_known_k(chall_params, chall_message, chall_sig, i)
         chall_x_hex = hex(chall_x)[2:]
-        fingerprint = SHA1.hash(chall_x_hex.encode())
-        if fingerprint == "0954edd5e0afe5542a4adf012611a91912a3ec16":
-            print(f"k = {i}, x = {chall_x}")  
+        chall_y = y = pow(chall_g, chall_x, chall_p)
+        
+        sol_sig = DSA.sign(chall_params, chall_message, i, chall_x)
+        sol_r, sol_s = sol_sig
+
+        if sol_r == chall_r and sol_s == chall_s:
+            sol_k = i
+            print(f"\nSOLUTION: k = {i}, x = {chall_x}")
+            break
+    
+    sol_x = priv_key_from_known_k(chall_params, chall_message, chall_sig, sol_k)
+    sol_x_hex = hex(sol_x)[2:]
+    fingerprint = SHA1.hash(sol_x_hex.encode())
+    challenge_won = fingerprint == "0954edd5e0afe5542a4adf012611a91912a3ec16"
+    
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if challenge_won else 'ERROR'} ---")

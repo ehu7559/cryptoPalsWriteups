@@ -32,5 +32,5 @@ if __name__ == "__main__":
     #Get oracle
     chall_oracle = get_oracle(chall_key, chall_nonce)
     chall_forged = forge_token(chall_oracle)
-
-    print(f"Challenge Status: {'win' if check_win(chall_forged, chall_key, chall_nonce) else 'loss'}")
+    
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if check_win(chall_forged, chall_key, chall_nonce) else 'ERROR' } ---")

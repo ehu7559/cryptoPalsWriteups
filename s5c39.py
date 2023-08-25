@@ -96,4 +96,5 @@ def decrypt_rsa(ciphertext, private_key):
 
 #Main function
 if __name__ == "__main__":
-    pass
+    print("This is an implementation challenge. There is no expected output.")
+    print("--- CHALLENGE STATUS: COMPLETE ---")

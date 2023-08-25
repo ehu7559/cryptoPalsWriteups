@@ -62,6 +62,4 @@ if __name__ == "__main__":
     print("Forged Hash: " + forged_hash)
     check_msg, check_hash = SHA1.keyed_MAC(oracle_key, forged_message)
     print("Check Hash:  " + check_hash)
-
-    if forged_hash == check_hash:
-        print("--- CHALLENGE STATUS: COMPLETE ---")
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if forged_hash == check_hash else 'ERROR'} ---")

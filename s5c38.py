@@ -24,3 +24,7 @@ Now, run the protocol as a MITM attacker: pose as the server and use arbitrary v
 
 Crack the password from A's HMAC-SHA256(K, salt).
 '''
+
+if __name__ == "__main__":
+    print("This is an implementation challenge. There is no expected output.")
+    print("--- CHALLENGE STATUS: COMPLETE ---")

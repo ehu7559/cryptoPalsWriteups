@@ -87,5 +87,5 @@ def attack_ECB_oracle(target) -> bytes:
 if __name__ == "__main__":
     challenge_oracle = generate_oracle(b64decode("Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctdG9wIGRvd24gc28gbXkgaGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBqdXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUgYnkK"))
     plain_guess = attack_ECB_oracle(challenge_oracle)
-    print(plain_guess.decode("ascii"))
+    print("\n" + plain_guess.decode("ascii"))
     print("--- CHALLENGE STATUS: COMPLETE ---")

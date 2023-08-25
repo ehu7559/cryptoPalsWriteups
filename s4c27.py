@@ -64,3 +64,5 @@ if __name__ == "__main__":
     print(f"CRACKED KEY: \t{cracked_key.hex()}")
     cracked_text = decrypt_AES_CBC_128(encrypted_message, cracked_key, cracked_key)
     print("RECOVERED MESSAGE: " + cracked_text.decode("ascii"))
+
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if chall_key.hex() == cracked_key.hex() else 'ERROR'} ---")

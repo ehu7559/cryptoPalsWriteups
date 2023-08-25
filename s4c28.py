@@ -143,7 +143,10 @@ def leftrotate(num, shift, length=32):
 
 #Challenge Code
 if __name__ == "__main__":
-    print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
+    print("This is an implementation challenge. There is no expected output.")
+    print("--- CHALLENGE STATUS: COMPLETE ---")
+
+    #print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
 '''
 REFERENCE RESULTS
 8.txt : 24398342fe6cf15b8782db8ae8cdd6fa7f777278

@@ -183,6 +183,7 @@ def run_test(test_params, test_constants):
     server_get_verdict           = server_verdict(server_side_computation,client_send_HMAC)
     print("Done")
     print("Validated: " + str(server_get_verdict))
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if server_get_verdict else 'ERROR'} ---")
 
 def generate_test_params():
     #Generates some test parameters.
