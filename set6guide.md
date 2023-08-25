@@ -121,6 +121,7 @@ Let ***r*** = (***g***^*k mod* ***p***) *mod* ***q***. If ***r*** = 0, select a 
 Let ***s*** = (***k***^(-1) * (**H**(***m***) + ***xr***)) *mod* ***q***. As with before, if the result is 0, reselect ***k*** and attempt again.
 
 The signature is (***r***, ***s***).
+
 #### Verification:
 
 A verifier perofrms the following steps to verify that a signature (r, s)

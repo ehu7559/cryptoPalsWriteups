@@ -1,5 +1,5 @@
 # cryptoPalsWriteups
-A currently expanding set of Python programs and guides to the Matasano Cryptopals Challenges. Implemented in Python, made with love, stress, and unbridled ambition.
+A living/expanding set of Python solutions and guides to the Matasano Cryptopals Challenges. Implemented in Python. Made with love, stress, and unbridled ambition.
 
 ## DISCLAIMER:
 This repository contains source code for implementations of various cryptographic protocols, some of which are, at the time of writing, still standard. The implementations are based on a combination of course study, mathematical texts, and reference to well-known open standards. The code in this repository is known to contain multiple vulnerabilities and lacks the safeguards required for truly secure cryptography. Under no circumstances should this be used for actual security. The author of this repo takes no responsibility for those who fail to heed this warning. Use well-reputed cryptographic libraries/implementations. Don't trust some rando's implementation, and don't use your own.
@@ -17,7 +17,7 @@ For the viewer's pleasure, I recommend having the following open side-by-side wh
 
 ### For a given Challenge (Set A, Challenge B)
 Open the following (replacing A and B with the appropriate numbers)
-```
+```text
 - set[A]guide.md (the file containing the writeup)
 - s[A]c[B].py (the file containing the code for the challenge)
 - https://cryptopals.com/sets/[A]/challenges/[B]
@@ -42,35 +42,36 @@ The following challenges are primarily concerned with implementation of
 protocols that are used in later exercises, and are thus of particular interest
 to students of cryptosystems.
 
-```
+```text
 Challenge 7:    AES-128 ECB (Advanced Encryption Standard, 128-bit, Electronic Code Book mode)
 Challenge 10:   AES-128 CBC (Advanced Encryption Standard, 128-bit, Cipher Block Chain mode)
 Challenge 18:   AES-128 CTR (Advanced Encryption Standard, 128-bit, Counter mode)
 Challenge 21:   MT19937 PRNG (Mersenne-Twister 19937 Psuedo-Random Number Generator)
 Challenge 28:   SHA-1 (Secure Hash Algorithm 1)
 Challenge 33:   Diffie Hellman Key Exchange
-Challenge 39:   RSA
+Challenge 39:   RSA (Rivest, Shamir, and Adleman's algorithm)
+Challenge 43:   DSA (Digital Signature Algorithm)
 ```
 
 ## Completion Status:
-```
+```text
 Set 1:  1   2   3   4   5   6   7   8
 Set 2:  9   10  11  12  13  14  15  16
 Set 3:  17  18  19  20  21  22  23  24
 Set 4:  25  26  27  28  29      31  32
 Set 5:  33  34      36  37      39  40
-Set 6:  41  42
+Set 6:  41  42  43
 
 Current Priorities:
- - Refactoring and cleaning up Challenges 1 - 34 [In progress]
- - Challenges 38 - 40 [Under development]
+ - Refactoring and cleaning up Challenges 1 - 43 [Continuous]
+ - Challenge 44
 ```
 
 ## Thanks and Recognition:
 ```text
 My dearest thanks to the following:
  - My professors for teaching me the material that enabled me to understand
-    these challenges.
+   these challenges.
  - My friends for listening to me ramble about cryptology late into the night.
  - My managers/mentors for encouraging me to keep pursuing this passion of mine.
 ```
