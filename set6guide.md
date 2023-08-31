@@ -89,12 +89,22 @@ The NIST800-57 standard specifies ***L*** = 2048  or ***L***=3072 for keys being
 
 Let ***q*** be an ***N***-bit prime.
 
-Let ***p*** be an ***L***-bit prime such that ***p*** = 1 *mod* ***q***.
+Let ***p*** be an ***L***-bit prime such that ***p*** = 1 *mod **q***.
 
 Let ***h*** be a random integer from range {2, ..., ***p*** - 2}.
 ***h*** is often set to 2.
 
-Let ***g*** = ***h***^(***p*** - 1 / ***q***) mod ***p***. If ***g*** = 1, re-select ***h*** and attempt again.
+Those familiar with either number theory or basic group theory will recognize
+that ***h*** is a generator of the group of integers mod ***p*** under
+multiplication. Thus, ***h***^(***p*** - 1) = 1 *mod **p***
+
+Let ***g*** = ***h***^((***p*** - 1) / ***q***) *mod **p***.
+If ***g*** = 1, re-select ***h*** and attempt again.
+
+The computation of ***g*** here ensures that ***g*** is a generator of the
+subgroup of order |***q***| in group of integers mod ***p*** under
+multiplication. In essence, ***g***^***q*** = 1 *mod **p***. 
+
 
 The shared parameters are ***(p, q, g)***.
 
@@ -122,17 +132,22 @@ Let ***s*** = (***k***^(-1) * (**H**(***m***) + ***xr***)) *mod* ***q***. As wit
 
 The signature is (***r***, ***s***).
 
+***k*** is kept secret. While it is used in the computation of ***s***, it is
+made infeasible to compute by the incorporation of the private key ***x***. The
+infeasibility of computing ***k*** from ***r*** and the shared parameters is
+known via the discrete log problem. As of yet, no algorithm exists to
+efficiently compute ***k*** from ***r***.
+
 #### Verification:
 
-A verifier perofrms the following steps to verify that a signature (r, s)
-- Assert ***r*** is a natural in **Z_*p*** and ***s*** is a natural in **Z_*q***.
-- Compute ***w*** where ***w*** is the inverse of ***s*** *mod* ***q***.
-- Compute ***u_1*** where ***
+A verifier performs the following steps to verify that a signature (r, s)  
+- Assert ***r*** is a natural in **Z_*p*** and ***s*** is a natural in **Z_*q***.  
+- Compute ***w*** = ***s^-1*** *mod **q***  
+- Compute ***u_1*** = ***H(m) w*** *mod **q***  
+- Compute ***u_2*** = ***rw*** *mod **q***
 
-***g*** = ***h***^(***p*** - 1 / ***q***) mod ***p***
-implies ***g*^*p*** = ***h***^(***p*** - 1 / ***q***) mod ***p***
 
-This further implies that ***g*** is a generator of the integers mod ***p***.
-(In math terms, **Z_*p*** = **<*g*>**)
-
-The 
+If the signature is valid (which requires knowledge of both k and x to compute efficiently)
+***w*** = ***k***(***H*** + ***xr***)^(-1) *mod **q***.  
+***u_1*** = ***Hk***
+***u_2*** = ***rk***(***H*** + ***xr***)^(-1) *mod **q***.

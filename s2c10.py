@@ -34,10 +34,7 @@ def decrypt_AES_CBC_128(data: bytes, aes_key: bytes, iv: bytes) -> bytes:
 #Main
 if __name__ == "__main__":
     with open("challenge-data/10.txt") as f:
-        ciphertext = bytearray()
-        for l in f.readlines():
-            ciphertext.extend(b64decode(l.strip()))
-        ciphertext = bytes(ciphertext) #Casting it for my own satisfaction/comfort
+        ciphertext = b64decode("".join([l.strip() for l in f.readlines()]))
         KEY = bytes("YELLOW SUBMARINE","utf-8")
         IV = bytes([0 for _ in range(16)])
         plain_bytes = decrypt_AES_CBC_128(ciphertext, KEY, IV)

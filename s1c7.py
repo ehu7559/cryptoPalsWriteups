@@ -100,7 +100,6 @@ def inv_mix_columns(block: bytes) -> bytes:
 def add_round_key(block: bytes, round_key: bytes) -> bytes:
     assert(len(block) == 16 and len(round_key) == 16)
     return bytes(map(lambda x, y : x ^ y, block, round_key))
-    #return bytes([(block[i] ^ round_key[i]) for i in range(16)])
 
 #Invert add round key
 def inv_add_round_key(block: bytes, round_key: bytes) -> bytes:
@@ -207,7 +206,7 @@ def trim_padding(block: bytes) -> bytes:
         block = block[:-1]
     return bytes(block)
 
-#Main Encryption Function for ECB128
+#Main Encryption Functions for ECB128
 def encrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
     output = bytearray()
     padded = False
@@ -219,9 +218,30 @@ def encrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
         data = data[16:] #Remove block
     return bytes(output)
 
-#Main Decryption Functions
+def encrypt_AES_ECB_128_fast(data: bytes, aes_key: bytes):
+    '''A sped-up implementation of encryption.
+        Reduction in function call depth
+        Removal of redundancy in round key calculation at cost of constant space.
+        '''
+    output = bytearray()
+    padded = False
+    round_keys = get_round_keys(aes_key)
+    while not padded:
+        if len(data) < 16:
+            data = pad_block(data)
+            padded = True
+        new_block = data[:16] #Grab the next block in plaintext form
+        data = data[16:] #Trim the data
+        new_block = add_round_key(new_block, round_keys[0])
+        for i in range(1,10):
+            new_block = encrypt_round(new_block, round_keys[i])
+        output.extend(encrypt_final_round(new_block, round_keys[10]))
+    return bytes(output)
+
+#Main Decryption Functions for ECB128
 def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
     output = bytearray()
+    if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
     while len(data) > 0:
         new_block = decrypt_block_128(data[:16], aes_key)
         data = data[16:]
@@ -229,7 +249,32 @@ def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
             new_block = trim_padding(new_block)
         output.extend(new_block)
     return bytes(output)
-    
+
+def decrypt_AES_ECB_128_fast(data: bytes, aes_key: bytes):
+    '''A sped-up implementation of decryption.
+        Reduction in function call depth
+        Removal of redundancy in round key calculation at cost of constant space.
+        '''
+    output = bytearray()
+    if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
+    round_keys = get_round_keys(aes_key)
+    while len(data):
+        new_block = data[:16]
+        data = data[16:]
+        
+        new_block = add_round_key(new_block, round_keys[10])
+        
+        #9 inverted rounds of Rijndael
+        for i in range(9,0,-1): new_block = decrypt_round(new_block, round_keys[i]) 
+        
+        new_block = decrypt_final_round(new_block, round_keys[0])
+
+        #Trim if last block
+        if len(data) == 0: new_block = trim_padding(new_block)
+
+        output.extend(new_block)
+    return bytes(output)
+
 #Main 
 if __name__ == "__main__":
     with open("challenge-data/7.txt", "r") as f:
@@ -237,5 +282,5 @@ if __name__ == "__main__":
         from base64 import b64decode
         ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
         KEY = bytes("YELLOW SUBMARINE","utf-8")
-        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
+        plain_bytes = decrypt_AES_ECB_128_fast(ciphertext, KEY)
         print(plain_bytes.decode("ascii"))

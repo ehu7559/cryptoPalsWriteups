@@ -4,6 +4,8 @@
 from s4c28 import SHA1 #SHA-1 is the default hash function
 from random import randint
 
+#Implementation based on the Wikipedia entry for "Digital Signature Algorithm"
+#At time of writing (August 25, 2023)
 class DSA:
 
     def gen_params(p, q, g=None):
