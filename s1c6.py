@@ -1,3 +1,5 @@
+#Break repeating-key XOR
+
 #CONSTANTS AND IMPORTS
 from base64 import b64decode
 from s1c3 import guess_single_byte_xor_key
@@ -67,25 +69,12 @@ def guess_key_length(data: bytes) -> int:
 #Striping mechanism
 #Used to isolate characters encrypted with the same index of the key.
 def stripe(data: bytes, num_blocks: int) -> list[bytes]:
-    output = []
-    
-    #Initialize
-    for i in range(num_blocks):
-        output.append(bytearray())
-    
-    #Stripe out data
-    for i in range(len(data)):
-        output[i%num_blocks].append(data[i])
-    
-    return output
+    return [bytes(data[i::num_blocks]) for i in range(num_blocks)]
 
 #Key-guessing function
 def guess_key(data: bytes, length: int) -> bytes:
     blocks = stripe(data, length)
-    kb = bytearray()
-    for bl in blocks:
-        kb.append(guess_single_byte_xor_key(bl))
-    return bytes(kb)
+    return bytes([guess_single_byte_xor_key(block) for block in blocks])
 
 #All-in-one Cracking Function
 def crack(data: bytes) -> str:

@@ -1,3 +1,5 @@
+#Challenge 5: Implement repeating-key XOR
+
 #Main functions
 def encrypt(data: bytes, key: bytes) -> bytes:
     return bytes([int((data[i]) ^ (key[i % len(key)])) for i in range(len(data))])

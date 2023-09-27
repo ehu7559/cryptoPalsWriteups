@@ -1,7 +1,7 @@
 #IMPORTS
 from base64 import b64decode
 from s1c2 import xor
-from s1c3 import guess_single_byte_xor_key, is_printable_ascii_byte
+from s1c3 import guess_single_byte_xor_key, defang_str_bytes
 from random import randint
 from s3c18 import encrypt_AES_CTR
 
@@ -23,10 +23,6 @@ def split_ciphertexts(ciphertexts: list[bytes]) -> list[bytes]:
 
 def gen_pad_guess(ciphertexts: list[bytes]):
     return bytes([guess_single_byte_xor_key(buf) for buf in split_ciphertexts(ciphertexts)])
-
-def defang_str_bytes(buf : bytes) -> str:
-    '''Replaces "unprintable" ascii bytes (see Challenge 3) with an asterisk.'''
-    return "".join(chr(c) if is_printable_ascii_byte(c) else "*" for c in buf)
 
 #Challenge Code
 if __name__ == "__main__":

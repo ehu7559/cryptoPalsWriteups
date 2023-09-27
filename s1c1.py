@@ -1,4 +1,5 @@
-from base64 import b64encode #Imports the b64 encoding
+#Challenge 1: Convert hex to base64
+from base64 import b64encode
 
 #Hexadecimal --> Base64 function
 def hex_to_base64(hex_string: str) -> bytes:

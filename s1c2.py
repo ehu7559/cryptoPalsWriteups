@@ -1,4 +1,4 @@
-#Challenge 2
+#Challenge 2: Fixed XOR
 def xor(a, b):
     '''Generalized xor function that works on ints, hex strings, and bytes/bytearray objects. \nReturns the same type.'''
     if type(a) != type(b):
@@ -24,5 +24,7 @@ def xor(a, b):
 
 '''the kid don't play'''
 if __name__ == "__main__":
-    print(bytes.fromhex(xor("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965")).decode("ascii"))
-    print("--- CHALLENGE STATUS: COMPLETE ---")
+    flag = xor("1c0111001f010100061a024b53535009181c", "686974207468652062756c6c277320657965")
+    success = flag == "746865206b696420646f6e277420706c6179"
+    print(f"FLAG: {bytes.fromhex(flag).decode()}")
+    print(f"--- CHALLENGE STATUS: {'COMPLETE' if success else 'FAILURE'} ---")

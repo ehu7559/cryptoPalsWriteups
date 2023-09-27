@@ -4,20 +4,18 @@
 from random import randint
 from time import process_time_ns, sleep
 
-GLOBAL_TIME = 0
+
 #HMAC-SHA1 implementation
 #TODO: I should do this but it isn't necessarily the point of the challenge.
 
 #Insecure Compare Function
 def insecure_comparison(a: bytes, b: bytes):
-    global GLOBAL_TIME
     if len(a) != len(b):
         return False
     for i in range(len(a)):
         if a[i] != b[i]:
             return False
         sleep(0.05)
-        GLOBAL_TIME += 5
     return True
 
 
@@ -47,9 +45,8 @@ def artificial_timing_attack(oracle):
     return bytes(attack_buffer)
 
 def get_median_time(oracle, data, set_size):
-    global GLOBAL_TIME
     before = process_time_ns()
-    for i in range(set_size):
+    for _ in range(set_size):
         oracle(data)
     after = process_time_ns()
     return after - before
