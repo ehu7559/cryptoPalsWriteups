@@ -30,7 +30,7 @@ def attack_padding_oracle(ciphertext : int, pub_key, oracle):
         numerator = (numerator << 1) + (-1 if oracle(ciphertext) else 1)
         denominator = denominator << 1
 
-        #Extra-precise big num calculation (This algorithm loses precision as ciphertext increases)
+        #Extra-precise big num calculation (Using floats loses precision as ciphertext increases)
         guess = (numerator * n) // (denominator)
         precision_adjustor = int(2 * ((numerator * n) % denominator)//denominator) #Rounds correctly :)
         guess += precision_adjustor

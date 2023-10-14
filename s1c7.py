@@ -42,20 +42,17 @@ ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])
 #Sub bytes
 def sub_bytes(block: bytes) -> bytes:
     assert(len(block) == 16)
-    return bytes(map(lambda x : SB_TABLE[x], block))
-    #return bytes([(SB_TABLE[block[i]]) for i in range(16)])
+    return bytes([(SB_TABLE[block[i]]) for i in range(16)])
 
 #Inverse sub bytes
 def inv_sub_bytes(block: bytes) -> bytes:
     assert(len(block) == 16)
-    return bytes(map(lambda x: INV_SB_TABLE[x], block))
-    #return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
+    return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
 
 #Shift rows
 def shift_rows(block: bytes) -> bytes:
     assert(len(block) == 16)
-    return bytes(map(lambda x : block[x], SR_TABLE))
-    #return bytes([(block[SR_TABLE[i]]) for i in range(16)])
+    return bytes([(block[SR_TABLE[i]]) for i in range(16)])
 
 #Inverse shift rows
 def inv_shift_rows(block: bytes) -> bytes:
@@ -188,36 +185,20 @@ def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
     return decrypt_final_round(output,round_keys[0])
 
 def trim_padding(block: bytes) -> bytes:
-    if len(block) == 0:
-        raise Exception("Trying to trim an empty AES ciphertext!")
-    if len(block) % 16 > 0:
-        raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
+    if len(block) == 0: raise Exception("Trying to trim an empty AES ciphertext!")
+    if len(block) % 16 > 0: raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
     padding_length = block[-1]
     if padding_length == 0 or padding_length > 16:
         raise Exception(f"Expected Padding Length in interval [1,16], found {padding_length} instead!")
-    for i in range(padding_length):
+    for _ in range(padding_length):
         if block[-1] != padding_length:
             raise Exception("Padding Not Compliant with PKCS#7")
         block = block[:-1]
     return bytes(block)
 
 #Main Encryption Functions for ECB128
-def encrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
-    output = bytearray()
-    padded = False
-    while not padded: #20APR2023: Applying a map() here would require passing the entire text as an argument and is suboptimal. This approach keeps the overhead constant.
-        if len(data) < 16:
-            data = pad_block(data)
-            padded = True
-        output.extend(encrypt_block_128(bytes(data[:16]), aes_key))
-        data = data[16:] #Remove block
-    return bytes(output)
 
-def encrypt_AES_ECB_128_fast(data: bytes, aes_key: bytes):
-    '''A sped-up implementation of encryption.
-        Reduction in function call depth
-        Removal of redundancy in round key calculation at cost of constant space.
-        '''
+def encrypt_AES_ECB_128(data: bytes, aes_key: bytes):
     output = bytearray()
     padded = False
     round_keys = get_round_keys(aes_key)
@@ -228,45 +209,21 @@ def encrypt_AES_ECB_128_fast(data: bytes, aes_key: bytes):
         new_block = data[:16] #Grab the next block in plaintext form
         data = data[16:] #Trim the data
         new_block = add_round_key(new_block, round_keys[0])
-        for i in range(1,10):
-            new_block = encrypt_round(new_block, round_keys[i])
+        for i in range(1,10): new_block = encrypt_round(new_block, round_keys[i])
         output.extend(encrypt_final_round(new_block, round_keys[10]))
     return bytes(output)
 
-#Main Decryption Functions for ECB128
-def decrypt_AES_ECB_128(data: bytes, aes_key: bytes) -> bytes:
-    output = bytearray()
-    if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
-    while len(data) > 0:
-        new_block = decrypt_block_128(data[:16], aes_key)
-        data = data[16:]
-        if len(data) == 0:
-            new_block = trim_padding(new_block)
-        output.extend(new_block)
-    return bytes(output)
-
-def decrypt_AES_ECB_128_fast(data: bytes, aes_key: bytes):
-    '''A sped-up implementation of decryption.
-        Reduction in function call depth
-        Removal of redundancy in round key calculation at cost of constant space.
-        '''
+def decrypt_AES_ECB_128(data: bytes, aes_key: bytes):
     output = bytearray()
     if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
     round_keys = get_round_keys(aes_key)
     while len(data):
         new_block = data[:16]
         data = data[16:]
-        
         new_block = add_round_key(new_block, round_keys[10])
-        
-        #9 inverted rounds of Rijndael
         for i in range(9,0,-1): new_block = decrypt_round(new_block, round_keys[i]) 
-        
         new_block = decrypt_final_round(new_block, round_keys[0])
-
-        #Trim if last block
         if len(data) == 0: new_block = trim_padding(new_block)
-
         output.extend(new_block)
     return bytes(output)
 
@@ -277,5 +234,5 @@ if __name__ == "__main__":
         from base64 import b64decode
         ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
         KEY = bytes("YELLOW SUBMARINE","utf-8")
-        plain_bytes = decrypt_AES_ECB_128_fast(ciphertext, KEY)
+        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
         print(plain_bytes.decode("ascii"))

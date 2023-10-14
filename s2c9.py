@@ -5,7 +5,7 @@
 def pad(data: bytes) -> bytes:
     '''Pad the last block.'''
     output = bytearray(data)
-    gap = 16 - (len(data)%16)
+    gap = 16 - (len(data) % 16)
     output.extend(bytes([gap for _ in range(gap)]))
     return output
 

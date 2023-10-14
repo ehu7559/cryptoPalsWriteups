@@ -17,6 +17,9 @@ def decrypt_AES_CBC_no_trim(data, key, iv):
     output = bytearray()
     while len(data) > 0:
         plain_block = decrypt_block_128(data[:16], key)
+        #^Keeping this here as this challenge does not affect performance enough
+        #to justify a more complicated rewriting for speed.
+        #(decrypt_block_128 is deprecated.)
         plain_block = (bytes([iv[i] ^ plain_block[i] for i in range(16)]))
         iv = data[:16]
         data = data[16:]

@@ -19,6 +19,11 @@ def is_valid_CBC_padding(data, key, iv):
         iv, data = data[:16], data[16:]
     assert(len(data) == 16)
     data = decrypt_block_128(data, key)
+    #^I used the deprecated funciton from challenge 7 here
+    #as we are decrypting a single block and thus there is no
+    #benefit to pre-computing the round-keys, and in fact
+    #this is faster as it does not require decrypting the
+    #entire text.
     data = bytes([data[i] ^ iv[i] for i in range(16)])
     return is_valid_pad(data)
 
