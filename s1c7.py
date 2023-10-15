@@ -36,196 +36,195 @@ INV_SR_TABLE = bytes([0, 13, 10, 7, 4, 1, 14, 11, 8, 5, 2, 15, 12, 9, 6, 3])
 ROUND_CONSTANTS = bytes([0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80,0x1B,0x36])
 
 #FUNCTIONS FOR AES
-#Changelog 20APR2023: used the map() function for length sensitivity.
-#   I'm not sure if it's actually any faster and I'm not in the mood to check.
+class AES_primitives:
+    #Sub bytes
+    def SB(block: bytes) -> bytes:
+        '''Sub Bytes primitive for AES'''
+        assert(len(block) == 16)
+        return bytes([(SB_TABLE[block[i]]) for i in range(16)])
 
-#Sub bytes
-def sub_bytes(block: bytes) -> bytes:
-    assert(len(block) == 16)
-    return bytes([(SB_TABLE[block[i]]) for i in range(16)])
+    #Inverse sub bytes
+    def inv_SB(block: bytes) -> bytes:
+        '''Inverse Sub Bytes primitive for AES'''
+        assert(len(block) == 16)
+        return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
 
-#Inverse sub bytes
-def inv_sub_bytes(block: bytes) -> bytes:
-    assert(len(block) == 16)
-    return bytes([(INV_SB_TABLE[block[i]]) for i in range(16)])
+    #Shift rows
+    def SR(block: bytes) -> bytes:
+        '''Shift Rows primitive for AES'''
+        assert(len(block) == 16)
+        return bytes([(block[SR_TABLE[i]]) for i in range(16)])
 
-#Shift rows
-def shift_rows(block: bytes) -> bytes:
-    assert(len(block) == 16)
-    return bytes([(block[SR_TABLE[i]]) for i in range(16)])
+    #Inverse shift rows
+    def inv_SR(block: bytes) -> bytes:
+        '''Inverse Shift Rows primitive for AES'''
+        assert(len(block) == 16)
+        return bytes([(block[INV_SR_TABLE[i]]) for i in range(16)])
+        
+    #HELPER METHOD TO MULTIPLY FOR MC
+    def multiply(b, a):
+        if b == 1: return a
+        tmp = (a<<1) & 0xff
+        if b == 2: return tmp if a < 128 else tmp^0x1b
+        if b == 3: return tmp^a if a < 128 else (tmp^0x1b)^a
 
-#Inverse shift rows
-def inv_shift_rows(block: bytes) -> bytes:
-    assert(len(block) == 16)
-    return bytes([(block[INV_SR_TABLE[i]]) for i in range(16)])
-    
-#HELPER METHOD TO MULTIPLY FOR MIX_COLUMNS
-def multiply(b, a):
-    if b == 1:
-        return a
-    tmp = (a<<1) & 0xff
-    if b == 2:
-        return tmp if a < 128 else tmp^0x1b
-    if b == 3:
-        return tmp^a if a < 128 else (tmp^0x1b)^a
+    #Mix Columns
+    def MC(block: bytes) -> bytes:
+        '''Mix Columns primitive for AES'''
+        #initialize constants
+        output = bytearray(16)
+        mar = [2, 1, 1, 3, 3, 2, 1, 1, 1, 3, 2, 1, 1, 1, 3, 2]
+        #mix the columns
+        for i in range(16):
+            row, col = i % 4, i // 4
+            folder = bytearray([(AES_primitives.multiply(mar[j * 4 + row], block[col * 4 + j])) for j in range(4)])
+            output[i] = folder[0] ^ folder[1] ^ folder[2] ^ folder[3]
+        return bytes(output)
 
-#Mix Columns
-def mix_columns(block: bytes) -> bytes:
-    #initialize constants
-    output = bytearray(16)
-    mar = [2, 1, 1, 3, 3, 2, 1, 1, 1, 3, 2, 1, 1, 1, 3, 2]
+    #Inverse mix columns
+    def inv_MC(block: bytes) -> bytes:
+        '''Inverse Mix Columns primitive for AES'''
+        return AES_primitives.MC(AES_primitives.MC(AES_primitives.MC(block)))
 
-    #mix the columns
-    for i in range(16):
-        row = i % 4
-        col = i // 4
-        folder = bytearray([(multiply(mar[j * 4 + row], block[col * 4 + j])) for j in range(4)])
-        output[i] = folder[0] ^ folder[1] ^ folder[2] ^ folder[3]
-    return bytes(output)
+    #Add Round Key
+    def ARK(block: bytes, round_key: bytes) -> bytes:
+        '''Add Round Key primitive for AES'''
+        assert(len(block) == 16 and len(round_key) == 16)
+        return bytes(map(lambda x, y : x ^ y, block, round_key))
 
-#Inverse mix columns
-def inv_mix_columns(block: bytes) -> bytes:
-    '''Inverse of MixColumns, takes advantage of math'''
-    return mix_columns(mix_columns(mix_columns(block)))
+    #Invert add round key
+    def inv_ARK(block: bytes, round_key: bytes) -> bytes:
+        '''Inverse Add Round Key primitive for AES'''
+        return AES_primitives.ARK(block, AES_primitives.inv_MC(round_key))
 
-#Add Round Key
-def add_round_key(block: bytes, round_key: bytes) -> bytes:
-    assert(len(block) == 16 and len(round_key) == 16)
-    return bytes(map(lambda x, y : x ^ y, block, round_key))
+    #Padding function
+    def pad_block(data: bytes) -> bytes:
+        '''Adds PKCS #7 Padding for AES.\n
+        Best practice is to pass it the last block, but it can handle being passed
+        data of arbitrary length'''
+        pad_len = 16 - (len(data) % 16)
+        data = bytearray(data)
+        data.extend(bytearray([(pad_len) for i in range(pad_len)]))
+        return bytes(data)
 
-#Invert add round key
-def inv_add_round_key(block: bytes, round_key: bytes) -> bytes:
-    return add_round_key(block, inv_mix_columns(round_key))
+    def trim_padding(block: bytes) -> bytes:
+        '''Trims PKCS #7 Padding for AES.\n
+        Best practice is to pass it the last block, but it can handle being passed
+        data of arbitrary length'''
+        if len(block) == 0: raise Exception("Trying to trim an empty AES ciphertext!")
+        if len(block) % 16 > 0: raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
+        padding_length = block[-1]
+        if padding_length == 0 or padding_length > 16: raise Exception(f"Expected Padding Length in interval [1,16], found {padding_length} instead!")
+        for _ in range(padding_length):
+            if block[-1] != padding_length: raise Exception("Padding Not Compliant with PKCS#7")
+            block = block[:-1]
+        return bytes(block)
 
-#PKCS7 Padding as per RFC 5652, given length of data to encrypt.
-def get_pad(length: int) -> bytes:
-    pad_length = 16 - (length % 16)
-    return bytes([(pad_length) for i in range(pad_length)])
+    #Round Key Extension Function
+    def run_key_schedule(keybytes: bytes) -> list[bytes]:
+        #initialize key schedule column
+        key_columns = [(keybytes[i * 4: (i + 1) * 4]) for i in range(4)]
 
-#More useful padding function
-def pad_block(data: bytes) -> bytes:
-    data = bytearray(data)
-    data.extend(get_pad(len(data)))
-    return bytes(data)
+        #Generate rows for keys
+        for i in range(4, 4 * (ROUNDS[BLOCK_SIZE_BITS]) + 4):
+            #Load the base value for the column
+            new_column = bytearray(key_columns[i-4])
+            prev_column = bytearray(key_columns[i-1])
 
-#Round Key Extension Function
-def run_key_schedule(keybytes: bytes) -> list[bytes]:
-    #initialize key schedule column
-    key_columns = [(keybytes[i * 4: (i + 1) * 4]) for i in range(4)]
+            #Compute new column
+            if i % 4 == 0:
+                #Compute T(W(i-1)) 
+                shifted_column = bytearray([prev_column[(i + 1) % 4] for i in range(4)])
+                subbed_column = bytearray([(SB_TABLE[shifted_column[i]]) for i in range(4)])
+                t_column = bytearray([subbed_column[0] ^ ROUND_CONSTANTS[(i-4)//4], subbed_column[1], subbed_column[2], subbed_column[3]])
+                prev_column = bytearray(t_column)
 
-    #Generate rows for keys)
-    for i in range(4, 4 * (ROUNDS[BLOCK_SIZE_BITS]) + 4):
-        #Load the base value for the column
-        new_column = bytearray(key_columns[i-4])
-        prev_column = bytearray(key_columns[i-1])
+            #Append 
+            key_columns.append(bytes([(new_column[j] ^ prev_column[j]) for j in range(4)]))  
+        return key_columns
 
-        #Compute new column as per Lawrence book
-        if i % 4 == 0:
-            #Compute T(W(i-1)) 
-            shifted_column = bytearray([prev_column[(i + 1) % 4] for i in range(4)])
-            subbed_column = bytearray([(SB_TABLE[shifted_column[i]]) for i in range(4)])
-            t_column = bytearray([subbed_column[0] ^ ROUND_CONSTANTS[(i-4)//4], subbed_column[1], subbed_column[2], subbed_column[3]])
-            prev_column = bytearray(t_column)
+    def get_round_keys(initial_key: bytes) -> list[bytes]:
+        #Generate the Rijndael Key Schedule and then chunkify it.
+        key_table = AES_primitives.run_key_schedule(initial_key)
+        round_key_list = []
+        for i in range(ROUNDS[BLOCK_SIZE_BITS] + 1):
+            arkey = bytearray()
+            for j in range(4):
+                arkey.extend(key_table[4*i + j])
+            round_key_list.append(bytes(arkey))
+        return round_key_list
 
-        #Append 
-        key_columns.append(bytes([(new_column[j] ^ prev_column[j]) for j in range(4)]))  
-    return key_columns
+    #Rounds functions. Saves some code.
+    def encrypt_round(block: bytes, round_key: bytes) -> bytes:
+        return AES_primitives.ARK(AES_primitives.MC(AES_primitives.SR(AES_primitives.SB(block))),round_key)
 
-def get_round_keys(initial_key: bytes) -> list[bytes]:
-    #Generate the Rijndael Key Schedule and then chunkify it.
-    key_table = run_key_schedule(initial_key)
-    round_key_list = []
-    for i in range(ROUNDS[BLOCK_SIZE_BITS] + 1):
-        arkey = bytearray()
-        for j in range(4):
-            arkey.extend(key_table[4*i + j])
-        round_key_list.append(bytes(arkey))
-    return round_key_list
+    def decrypt_round(block: bytes, round_key: bytes) -> bytes:
+        return AES_primitives.inv_ARK(AES_primitives.inv_MC(AES_primitives.inv_SR(AES_primitives.inv_SB(block))),round_key)
 
-#Rounds functions. Saves some code.
-def encrypt_round(block: bytes, round_key: bytes) -> bytes:
-    return add_round_key(mix_columns(shift_rows(sub_bytes(block))),round_key)
+    def encrypt_final_round(block: bytes, round_key: bytes) -> bytes:
+        return AES_primitives.ARK(AES_primitives.SR(AES_primitives.SB(block)),round_key)
 
-def decrypt_round(block: bytes, round_key: bytes) -> bytes:
-    return inv_add_round_key(inv_mix_columns(inv_shift_rows(inv_sub_bytes(block))),round_key)
+    def decrypt_final_round(block: bytes, round_key: bytes) -> bytes:
+        return AES_primitives.ARK(AES_primitives.inv_SR(AES_primitives.inv_SB(block)),round_key)
 
-def encrypt_final_round(block: bytes, round_key: bytes) -> bytes:
-    return add_round_key(shift_rows(sub_bytes(block)),round_key)
+    #Block Encryption Function (Can be used for any mode such as ECB, CBC, or CTR)
+    def encrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
+        #Get the round keys
+        round_keys = AES_primitives.get_round_keys(aes_key)
+        
+        output = AES_primitives.ARK(block, round_keys[0])
+        
+        #Rounds of Rijndael
+        for i in range(1,10): output = AES_primitives.encrypt_round(output, round_keys[i])
+        
+        #Final round (with canonical missing MC operation)
+        return AES_primitives.encrypt_final_round(output, round_keys[10])
 
-def decrypt_final_round(block: bytes, round_key: bytes) -> bytes:
-    return add_round_key(inv_shift_rows(inv_sub_bytes(block)),round_key)
+    def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
 
-#Block Encryption Function (Can be used for any mode such as ECB, CBC, or CTR)
-def encrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
-    #Get the round keys
-    round_keys = get_round_keys(aes_key)
-    
-    #Do process as specified by Lawrence
-    output = add_round_key(block, round_keys[0])
-    
-    #Rounds of Rijndael
-    for i in range(1,10):
-        output = encrypt_round(output, round_keys[i])
-    
-    #Final round (with canonical missing mix_columns operation)
-    return encrypt_final_round(output, round_keys[10])
+        #Get the round keys
+        round_keys = AES_primitives.get_round_keys(aes_key)
 
-def decrypt_block_128(block: bytes, aes_key: bytes) -> bytes:
-
-    #Get the round keys
-    round_keys = get_round_keys(aes_key)
-    #Do process as specified by Lawrence
-    output = add_round_key(block, round_keys[10])
-    
-    #Rounds of Rijndael
-    for i in range(9,0,-1): #Produces 9 rounds of AES with reversed key order.
-        output = decrypt_round(output, round_keys[i])
-    
-    #Final round (with canonical missing inv_mix_columns operation)
-    return decrypt_final_round(output,round_keys[0])
-
-def trim_padding(block: bytes) -> bytes:
-    if len(block) == 0: raise Exception("Trying to trim an empty AES ciphertext!")
-    if len(block) % 16 > 0: raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
-    padding_length = block[-1]
-    if padding_length == 0 or padding_length > 16:
-        raise Exception(f"Expected Padding Length in interval [1,16], found {padding_length} instead!")
-    for _ in range(padding_length):
-        if block[-1] != padding_length:
-            raise Exception("Padding Not Compliant with PKCS#7")
-        block = block[:-1]
-    return bytes(block)
+        #Initial Add-Round-Key operation
+        output = AES_primitives.ARK(block, round_keys[10])
+        
+        #Rounds of Rijndael
+        #Produces 9 rounds of AES with reversed key order.
+        for i in range(9,0,-1): output = AES_primitives.decrypt_round(output, round_keys[i])
+        
+        #Final round (with canonical missing inv_MC operation)
+        return AES_primitives.decrypt_final_round(output,round_keys[0])
 
 #Main Encryption Functions for ECB128
+class AES_ECB_128:
+    def encrypt(data: bytes, aes_key: bytes):
+        output = bytearray()
+        padded = False
+        round_keys = AES_primitives.get_round_keys(aes_key)
+        while not padded:
+            if len(data) < 16:
+                data = AES_primitives.pad_block(data)
+                padded = True
+            new_block = data[:16] #Grab the next block in plaintext form
+            data = data[16:] #Trim the data
+            new_block = AES_primitives.ARK(new_block, round_keys[0])
+            for i in range(1,10): new_block = AES_primitives.encrypt_round(new_block, round_keys[i])
+            output.extend(AES_primitives.encrypt_final_round(new_block, round_keys[10]))
+        return bytes(output)
 
-def encrypt_AES_ECB_128(data: bytes, aes_key: bytes):
-    output = bytearray()
-    padded = False
-    round_keys = get_round_keys(aes_key)
-    while not padded:
-        if len(data) < 16:
-            data = pad_block(data)
-            padded = True
-        new_block = data[:16] #Grab the next block in plaintext form
-        data = data[16:] #Trim the data
-        new_block = add_round_key(new_block, round_keys[0])
-        for i in range(1,10): new_block = encrypt_round(new_block, round_keys[i])
-        output.extend(encrypt_final_round(new_block, round_keys[10]))
-    return bytes(output)
-
-def decrypt_AES_ECB_128(data: bytes, aes_key: bytes):
-    output = bytearray()
-    if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
-    round_keys = get_round_keys(aes_key)
-    while len(data):
-        new_block = data[:16]
-        data = data[16:]
-        new_block = add_round_key(new_block, round_keys[10])
-        for i in range(9,0,-1): new_block = decrypt_round(new_block, round_keys[i]) 
-        new_block = decrypt_final_round(new_block, round_keys[0])
-        if len(data) == 0: new_block = trim_padding(new_block)
-        output.extend(new_block)
-    return bytes(output)
+    def decrypt(data: bytes, aes_key: bytes):
+        output = bytearray()
+        if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
+        round_keys = AES_primitives.get_round_keys(aes_key)
+        while len(data):
+            new_block = data[:16]
+            data = data[16:]
+            new_block = AES_primitives.ARK(new_block, round_keys[10])
+            for i in range(9,0,-1): new_block = AES_primitives.decrypt_round(new_block, round_keys[i]) 
+            new_block = AES_primitives.decrypt_final_round(new_block, round_keys[0])
+            if len(data) == 0: new_block = AES_primitives.trim_padding(new_block)
+            output.extend(new_block)
+        return bytes(output)
 
 #Main 
 if __name__ == "__main__":
@@ -234,5 +233,5 @@ if __name__ == "__main__":
         from base64 import b64decode
         ciphertext = b64decode("".join([x.strip() for x in f.readlines()]))
         KEY = bytes("YELLOW SUBMARINE","utf-8")
-        plain_bytes = decrypt_AES_ECB_128(ciphertext, KEY)
+        plain_bytes = AES_ECB_128.decrypt(ciphertext, KEY)
         print(plain_bytes.decode("ascii"))

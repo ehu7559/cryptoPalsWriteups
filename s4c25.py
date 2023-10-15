@@ -2,15 +2,15 @@
 
 #Imports
 from random import randint
-from s3c18 import encrypt_AES_CTR
-from s1c7 import decrypt_AES_ECB_128
+from s3c18 import AES_CTR as CTR
+from s1c7 import AES_ECB_128 as ECB
 
 #Ciphertext Generator
 def generate_challenge(chall_text : bytes):
     nonce = randint(0, 2**64 - 1)
     key = bytes([randint(0,255) for i in range(16)])
-    challenge_text = encrypt_AES_CTR(decrypt_AES_ECB_128(chall_text, bytes("YELLOW SUBMARINE","ascii")), key, nonce)
-    return (challenge_text, (lambda x: encrypt_AES_CTR(x, key, nonce)))
+    challenge_text = CTR.encrypt(ECB.decrypt(chall_text, bytes("YELLOW SUBMARINE","ascii")), key, nonce)
+    return (challenge_text, (lambda x: CTR.encrypt(x, key, nonce)))
 
 def edit_plain(base, edit, offset):
     return bytes([(edit[i - offset] if i in range(offset, offset + len(edit)) else base[i])for i in range(len(base))])

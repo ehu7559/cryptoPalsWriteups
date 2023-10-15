@@ -1,7 +1,7 @@
 #Challenge 34: Implement a MITM key-fixing attack on Diffie-Hellman with parameter injection
 
 #Imports:
-from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
+from s2c10 import AES_CBC_128 as CBC
 from s4c28 import SHA1
 from s5c33 import DHParty
 from random import randint
@@ -20,12 +20,12 @@ def decode_int(buf : bytes):
 def secret_message(message, secret_num):
     helper_iv = bytes([randint(0, 255) for i in range(16)])    
     helper_key = bytes.fromhex(SHA1.hash(encode_int(secret_num)))[0:16]
-    return (encrypt_AES_CBC_128(message, helper_key, helper_iv), helper_iv)
+    return (CBC.encrypt(message, helper_key, helper_iv), helper_iv)
 
 def reveal_message(secret_msg, secret_num):
     ciphertext, init_vector = secret_msg
     helper_key = bytes.fromhex(SHA1.hash(encode_int(secret_num)))[0:16]
-    return decrypt_AES_CBC_128(ciphertext, helper_key, init_vector)
+    return CBC.decrypt(ciphertext, helper_key, init_vector)
 
 #Challenge Code:
 if __name__ == "__main__":

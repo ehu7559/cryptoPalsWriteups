@@ -3,7 +3,7 @@
 #Import modules
 from random import randint
 from base64 import b64decode
-from s1c7   import encrypt_AES_ECB_128 
+from s1c7   import AES_ECB_128 as ECB 
 from s2c12  import attack_ECB_oracle
 
 #Generate Class 14 ECB Oracle
@@ -14,7 +14,7 @@ def gen_oracle_14(secret_text: bytes):
     prefix_len = randint(0,255)
     prefix_data = bytes([randint(0,255) for _ in range(prefix_len)])
     #Generate oracle
-    return (lambda atk : encrypt_AES_ECB_128((b''.join([prefix_data, atk, secret_data])), secret_key))
+    return (lambda atk : ECB.encrypt((b''.join([prefix_data, atk, secret_data])), secret_key))
     
 def cipher_blocks(ciphertext: bytes) -> list:
     return [bytes(ciphertext[i * 16 : (i + 1) * 16]) for i in range(len(ciphertext)//16)]

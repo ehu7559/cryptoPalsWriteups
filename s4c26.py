@@ -1,19 +1,19 @@
 #Challenge 26: 
 
 from random import randint
-from s3c18 import encrypt_AES_CTR
+from s3c18 import AES_CTR as CTR
 
 
 def get_token(username, key, nonce):
     token_string = "comment1=cooking MCs;userdata=" + username + ";comment2= like a pound of bacon"
-    return encrypt_AES_CTR(bytes([ord(c) for c in token_string]), key, nonce)
+    return CTR.encrypt(bytes([ord(c) for c in token_string]), key, nonce)
 
 def get_oracle(key, nonce):
     return lambda x : get_token(x, key, nonce)
 
 def check_win(token, key, nonce):
-    print(encrypt_AES_CTR(token, key, nonce).decode("ascii"))
-    return "admin=true" in (encrypt_AES_CTR(token, key, nonce)).decode("ascii").split(";")
+    print(CTR.encrypt(token, key, nonce).decode("ascii"))
+    return "admin=true" in (CTR.encrypt(token, key, nonce)).decode("ascii").split(";")
 
 def forge_token(oracle):
     injection = " admin true"

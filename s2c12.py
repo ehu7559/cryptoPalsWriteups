@@ -1,6 +1,6 @@
 from random import randint
 from base64 import b64decode
-from s1c7 import encrypt_AES_ECB_128
+from s1c7 import AES_ECB_128 as ECB
 from s1c8 import probablyECB
 
 
@@ -10,7 +10,7 @@ def generate_oracle(secret_txt: bytes):
     #Generate constant key and secret-text
     secret_key = bytes([(randint(0,255)) for _ in range(16)])
     secret_txt = bytes(secret_txt)
-    return (lambda atk : encrypt_AES_ECB_128(b''.join([atk,secret_txt]),secret_key))
+    return (lambda atk : ECB.encrypt(b''.join([atk,secret_txt]),secret_key))
 
 def is_oracle_ECB(target) -> bool:
     return probablyECB(target(bytes("A" * 256, "ascii")))

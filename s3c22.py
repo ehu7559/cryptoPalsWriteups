@@ -10,7 +10,7 @@ def crack_MT19937_seed(start: int, output_words: list, increment = 1, max_depth 
     n = len(output_words) #Precompute and save for speed.
     if max_depth <= 0:
         max_depth = 2**32 - start - 1
-    for i in range(max_depth):
+    for _ in range(max_depth):
         #Generate as many words as is necessary to produce that output
         print(f"Checking Seed: {output}", end="\r")
         crack_gen = MT19937_stream(output)                

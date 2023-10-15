@@ -3,12 +3,12 @@ from base64 import b64decode
 from s1c2 import xor
 from s1c3 import guess_single_byte_xor_key, defang_str_bytes
 from random import randint
-from s3c18 import encrypt_AES_CTR
+from s3c18 import AES_CTR as CTR
 
 def gen_crypt_oracle():
     key = bytes([randint(0, 255) for _ in range(16)])
     nonce = randint(0, 0xffffffffffffffff)
-    return lambda x : (encrypt_AES_CTR(x, key, nonce))
+    return lambda x : (CTR.encrypt(x, key, nonce))
 
 def split_ciphertexts(ciphertexts: list[bytes]) -> list[bytes]:
     max_len = max([len(c) for c in ciphertexts])

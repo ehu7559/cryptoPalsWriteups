@@ -1,5 +1,5 @@
 #Cryptopals Challenge 16
-from s2c10 import encrypt_AES_CBC_128, decrypt_AES_CBC_128
+from s2c10 import AES_CBC_128 as CBC
 from random import randint
 
 def join_bufs(bufs: list) -> bytes:
@@ -12,10 +12,10 @@ def join_bufs(bufs: list) -> bytes:
 def oracle_16_a(aes_key: bytes, init_vector: bytes):
     oracle_pre = "comment1=cooking%20MCs;userdata=".encode("utf-8")
     oracle_suf = ";comment2=%%20like%%20a%20pound%%20of%%20bacon".encode("utf-8")
-    return lambda x : encrypt_AES_CBC_128(join_bufs([oracle_pre, x, oracle_suf]), aes_key, init_vector)
+    return lambda x : CBC.encrypt(join_bufs([oracle_pre, x, oracle_suf]), aes_key, init_vector)
 
 def oracle_16_b(aes_key: bytes, init_vector: bytes): 
-    return lambda x : check_win(decrypt_AES_CBC_128(x, aes_key, init_vector))
+    return lambda x : check_win(CBC.decrypt(x, aes_key, init_vector))
 
 def check_win(plain_text: bytes) -> bool:
     target_substring = ";admin=true;" #This inefficient checking is to accomodate the bytes type.

@@ -1,5 +1,5 @@
 #Cryptopals Challenge 13
-from s1c7 import encrypt_AES_ECB_128, decrypt_AES_ECB_128
+from s1c7 import AES_ECB_128 as ECB
 from random import randint
 
 #Parsing Routine
@@ -16,10 +16,10 @@ def parse_cookie(c: str) -> str:
 
 #Encryption Oracle
 def profile_oracle(aes_key: bytes):
-    return lambda string : encrypt_AES_ECB_128((parse_cookie("email="+string + "&uid=5&role=user")).encode("utf-8"), aes_key)
+    return lambda string : ECB.encrypt((parse_cookie("email="+string + "&uid=5&role=user")).encode("utf-8"), aes_key)
 #Decryption Oracle
 def decrypt_oracle(aes_key: bytes):
-    return lambda x : decrypt_AES_ECB_128(x, aes_key)
+    return lambda x : ECB.decrypt(x, aes_key)
 
 def get_oracles() -> tuple:
     #Generate random key

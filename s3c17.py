@@ -3,7 +3,7 @@
 #Imports
 from base64 import b64decode
 from s2c9 import trim_padding
-from s2c10 import encrypt_AES_CBC_128
+from s2c10 import AES_CBC_128 as CBC
 from s2c14 import cipher_blocks
 from s2c15 import is_valid_CBC_padding
 from s2c16 import join_bufs
@@ -64,13 +64,13 @@ def choose_text() -> bytes:
 
 def get_challenge() -> tuple:
     #Generate key
-    chall_key = bytes([randint(0,255) for i in range(16)])
-    chall_iv = bytes([randint(0,255) for i in range(16)])
+    chall_key = bytes([randint(0,255) for _ in range(16)])
+    chall_iv = bytes([randint(0,255) for _ in range(16)])
     chall_txt = choose_text()
 
     print("TARGET: " + chall_txt.decode('ascii'))
     #Encrypt text
-    ciphertext = encrypt_AES_CBC_128(chall_txt, chall_key, chall_iv)
+    ciphertext = CBC.encrypt(chall_txt, chall_key, chall_iv)
 
     #Create Oracle
     chall_oracle = get_padding_oracle(chall_key)
