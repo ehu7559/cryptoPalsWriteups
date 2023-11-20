@@ -1,6 +1,6 @@
 def probablyECB(data: bytes) -> bool:
     '''Determines whether or not a given plaintext is likely to be ECB. Just looks for any repeated blocks.'''
-    if (len(data) % 16):
+    if (len(data) & 0xF):
         return False #Not being composed of 16-byte blocks indicates it probably isn't even an AES ciphertext
 
     blocks = set()

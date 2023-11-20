@@ -7,13 +7,13 @@ def MT19937_bytestream(seed):
     byte_stack = bytearray()
     while True:
         x = next(generator)
-        byte_stack.append(x % 256)
+        byte_stack.append(x & 0xFF)
         x = x >> 8
-        byte_stack.append(x % 256)
+        byte_stack.append(x & 0xFF)
         x = x >> 8
-        byte_stack.append(x % 256)
+        byte_stack.append(x & 0xFF)
         x = x >> 8
-        byte_stack.append(x % 256)
+        byte_stack.append(x & 0xFF)
         yield byte_stack.pop()
         yield byte_stack.pop()
         yield byte_stack.pop()

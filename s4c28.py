@@ -127,7 +127,7 @@ def encode_uint_big_endian(num, length):
     output = bytearray()
     curr = int(num)
     for i in range(length):
-        output.insert(0, curr % 256)
+        output.insert(0, curr & 0xFF)
         curr = curr >> 8
     return bytes(output)
 
@@ -147,7 +147,7 @@ if __name__ == "__main__":
     print("This is an implementation challenge. There is no expected output.")
     print("--- CHALLENGE STATUS: COMPLETE ---")
 
-    print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
+    #print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
 '''
 REFERENCE RESULTS
 8.txt : 24398342fe6cf15b8782db8ae8cdd6fa7f777278

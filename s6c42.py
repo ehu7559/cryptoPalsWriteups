@@ -11,7 +11,7 @@ def encode_uint_big_endian(num : int, length : int) -> bytes:
     output = bytearray(length)
     ptr = -1
     while num:
-        output[ptr] = num % 256
+        output[ptr] = num & 0xFF
         ptr -= 1
         num = num >> 8
     return bytes(output)

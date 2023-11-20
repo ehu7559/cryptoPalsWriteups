@@ -13,7 +13,7 @@ def ham_dist_byte(a: int, b: int) -> int:
     n = a ^ b
     output = 0
     for i in range(8):
-        output += n % 2
+        output += n & 0x1
         n = n >> 1
     return output
 

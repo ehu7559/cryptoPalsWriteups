@@ -10,7 +10,7 @@ def encode_int(num):
     '''Has the property of return an empty bytes object for 0'''
     output = bytearray()
     while num > 0:
-        output.insert(0, num % 256)
+        output.insert(0, num & 0xFF)
         num = num >> 8
     return bytes(output)
 

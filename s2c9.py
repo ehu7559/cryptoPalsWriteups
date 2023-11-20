@@ -5,7 +5,7 @@
 def pad(data: bytes) -> bytes:
     '''Pad the last block.'''
     output = bytearray(data)
-    gap = 16 - (len(data) % 16)
+    gap = 16 - (len(data) & 0xF)
     output.extend(bytes([gap for _ in range(gap)]))
     return output
 
@@ -13,7 +13,7 @@ def pad(data: bytes) -> bytes:
 def trim_padding(block: bytes) -> bytes:
     if len(block) == 0:
         raise Exception("Trying to trim an empty AES ciphertext!")
-    if len(block) % 16 > 0:
+    if len(block) & 0xF:
         raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
     padding_length = block[-1]
     if padding_length == 0 or padding_length > 16:

@@ -73,7 +73,7 @@ def parse_int_big_endian(buf):
 def encode_int_big_endian(num):
     acc = []
     while num:
-        acc.insert(0, num % 256)
+        acc.insert(0, num & 0xFF)
         num = num >> 8 #Shift byte
     return bytes(acc)
 

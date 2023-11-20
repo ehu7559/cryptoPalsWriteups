@@ -10,7 +10,7 @@ def get_rsa_parity_oracle(priv_key):
 def encode_bigint(num : int):
     buf = []
     while num:
-        buf.append(num % 256)
+        buf.append(num & 0xFF)
         num = num >> 8
     buf.reverse()
     return bytes(buf)

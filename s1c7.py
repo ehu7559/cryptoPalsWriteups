@@ -76,7 +76,7 @@ class AES_primitives:
         mar = [2, 1, 1, 3, 3, 2, 1, 1, 1, 3, 2, 1, 1, 1, 3, 2]
         #mix the columns
         for i in range(16):
-            row, col = i % 4, i // 4
+            row, col = i & 0x3, i >> 2
             folder = bytearray([(AES_primitives.multiply(mar[j * 4 + row], block[col * 4 + j])) for j in range(4)])
             output[i] = folder[0] ^ folder[1] ^ folder[2] ^ folder[3]
         return bytes(output)
@@ -102,7 +102,7 @@ class AES_primitives:
         '''Adds PKCS #7 Padding for AES.\n
         Best practice is to pass it the last block, but it can handle being passed
         data of arbitrary length'''
-        pad_len = 16 - (len(data) % 16)
+        pad_len = 16 - (len(data) & 0xF)
         data = bytearray(data)
         data.extend(bytearray([(pad_len) for i in range(pad_len)]))
         return bytes(data)
@@ -112,7 +112,7 @@ class AES_primitives:
         Best practice is to pass it the last block, but it can handle being passed
         data of arbitrary length'''
         if len(block) == 0: raise Exception("Trying to trim an empty AES ciphertext!")
-        if len(block) % 16 > 0: raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
+        if len(block) & 0xF: raise Exception(f"Expected AES ciphertext with length multiple of 16\nGot ciphertext with length {len(block)} instead!")
         padding_length = block[-1]
         if padding_length == 0 or padding_length > 16: raise Exception(f"Expected Padding Length in interval [1,16], found {padding_length} instead!")
         for _ in range(padding_length):
@@ -132,9 +132,9 @@ class AES_primitives:
             prev_column = bytearray(key_columns[i-1])
 
             #Compute new column
-            if i % 4 == 0:
+            if not (i & 0x3):
                 #Compute T(W(i-1)) 
-                shifted_column = bytearray([prev_column[(i + 1) % 4] for i in range(4)])
+                shifted_column = bytearray([prev_column[(i + 1) & 0x3] for i in range(4)])
                 subbed_column = bytearray([(SB_TABLE[shifted_column[i]]) for i in range(4)])
                 t_column = bytearray([subbed_column[0] ^ ROUND_CONSTANTS[(i-4)//4], subbed_column[1], subbed_column[2], subbed_column[3]])
                 prev_column = bytearray(t_column)
@@ -214,7 +214,7 @@ class AES_ECB_128:
 
     def decrypt(data: bytes, aes_key: bytes):
         output = bytearray()
-        if (len(data) % 16): raise Exception("Ciphertext length is not a multiple of 16 bytes")
+        if (len(data) & 0xF): raise Exception("Ciphertext length is not a multiple of 16 bytes")
         round_keys = AES_primitives.get_round_keys(aes_key)
         while len(data):
             new_block = data[:16]

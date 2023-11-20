@@ -51,7 +51,7 @@ def pseudo_oracle(oracle):
     oracle_prefix_len = get_oracle_prefix_len(oracle)
     
     #Generate new lambda function by adding more padding and splicing.
-    mask_pad = bytes(16 - (oracle_prefix_len % 16))
+    mask_pad = bytes(16 - (oracle_prefix_len & 0xF))
 
     #Generate middle oracle.
     return (lambda x : (oracle(b''.join([mask_pad, x]))[oracle_prefix_len + len(mask_pad):]))

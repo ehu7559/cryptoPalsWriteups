@@ -31,7 +31,7 @@ def attack_block(oracle, block: bytes) -> bytes:
             zeroing_iv[j] = output[j]  ^ pad_length
         #Search through byte possibilities
         while not oracle(block, zeroing_iv):
-            zeroing_iv[i] = (zeroing_iv[i] + 1) % 256 #increment with mod.
+            zeroing_iv[i] = (zeroing_iv[i] + 1) & 0xFF #increment with mod.
 
         #Add it to the output
         output[i] =  pad_length ^ zeroing_iv[i]
