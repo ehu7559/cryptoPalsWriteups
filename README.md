@@ -60,7 +60,7 @@ Set 2:  9   10  11  12  13  14  15  16
 Set 3:  17  18  19  20  21  22  23  24
 Set 4:  25  26  27  28  29      31  32
 Set 5:  33  34      36  37      39  40
-Set 6:  41  42  43  44
+Set 6:  41  42  43  44      46
 
 Current Priorities:
  - Refactoring and cleaning up Challenges 1 - 44 [Continuous]

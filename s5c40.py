@@ -8,21 +8,17 @@ def int_root(n : int, r : int, strict=False) -> int:
     '''Computes rth root of n. Does not handle complex/Gaussian integers
     It's not that I don't like the built-ins. It's that casting from floating point to integer is not accurate enough.'''
     #Can't handle non-natural roots.
-    if r < 1:
-        raise Exception("Invalid value for root power")
+    if r < 1: raise Exception("Invalid value for root power")
     #Quick catch case for speed.
-    if n == 0:
-        return 0
+    if n == 0: return 0
     #Handling negatives
     if n < 0:
-        if r % 2 == 0:
-            raise Exception("Imaginary Number")
+        if r % 2 == 0: raise Exception("Imaginary Number")
         return -1 * int_root(abs(n), r)
     
     #Find bounding power of 2
     curr = 1
-    while exp(curr, r) <= n:
-        curr = curr << 1 
+    while exp(curr, r) <= n: curr = curr << 1 
     
     #Compute using binary search
     acc = 0
@@ -30,12 +26,9 @@ def int_root(n : int, r : int, strict=False) -> int:
         acc = acc if exp((acc + curr), r) > n else (acc + curr)
         curr = curr >> 1 #Decrement the curr
     
-    #Check for validity
-    if exp(acc, r) == n:
-        return acc
-    
-    if strict:
-        raise Exception(f"The root {r} of {n} is not an integer.")
+    #Check for validity and return
+    if exp(acc, r) == n: return acc
+    if strict: raise Exception(f"The root {r} of {n} is not an integer.")
     return acc
 
 #Haha funny lambda function definition

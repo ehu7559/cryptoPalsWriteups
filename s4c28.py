@@ -139,7 +139,8 @@ def decode_uint_big_endian(data):
     return output
 
 def leftrotate(num, shift, length=32):
-    return (num * (2 ** shift) + (num // (2**(length - shift)))) % (2**length)
+    shift = shift % length
+    return (num * (1 << shift) + (num // (1 << (length - shift)))) % (1 << length)
 
 #Challenge Code
 if __name__ == "__main__":

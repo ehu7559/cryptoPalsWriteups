@@ -52,14 +52,14 @@ class DSA:
         return v==r
 
 def priv_key_from_known_k(params, message : bytes, signature, k):
-    p, q, g = params
+    _, q, _ = params
     r, s = signature
     r_inv = pow(r, -1, q)
     H_m = int((SHA1.hash(message)),base=16)
     return (r_inv * ((s * k) - H_m)) % q
 
 def priv_key_from_known_k_with_hash(params, hash_str, signature, k):
-    p, q, g = params
+    _, q, _ = params
     r, s = signature
     r_inv = pow(r, -1, q)
     H_m = int(hash_str,base=16)
