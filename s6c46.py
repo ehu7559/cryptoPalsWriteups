@@ -1,5 +1,4 @@
 #Challenge 46: RSA parity oracle
-
 from base64 import b64decode
 from s1c3 import defang_str_bytes
 from s5c39 import compute_rsa_key
@@ -23,28 +22,28 @@ def attack_padding_oracle(ciphertext : int, pub_key, oracle):
     c_iter = n
     display_width = len(str(n))//2
     display_bytes = None
+
+    #Attack Loop
     while c_iter:
         #Multiply
-        
         ciphertext = (ciphertext << e) % n
         numerator = (numerator << 1) + (-1 if oracle(ciphertext) else 1)
         denominator = denominator << 1
 
         #Extra-precise big num calculation (Using floats loses precision as ciphertext increases)
-        guess = (numerator * n) // (denominator)
-        precision_adjustor = int(2 * ((numerator * n) % denominator)//denominator) #Rounds correctly :)
+        product = numerator * n
+        modulus = product % denominator
+        guess = product // denominator
+        precision_adjustor = int((2 * modulus)//denominator) #Rounds correctly :)
         guess += precision_adjustor
 
         #Convert to hex
         display_bytes= encode_bigint(guess)
         display_string = defang_str_bytes(display_bytes).replace("\n", "*").replace("\t", "*")
-        #display_string = safe_decode_string_from_bytes(display_bytes).replace("\n", "*").replace("\t", "*")
         display_string += " " * (display_width - len(display_string))
 
-	#Print for fun, with return end character
+	    #Print for fun, with return end character
         print(display_string, end="\r")
-
-        
         c_iter = c_iter >> 1
     
     return defang_str_bytes(display_bytes)
@@ -69,7 +68,6 @@ if __name__ == "__main__":
 
     chall_oracle = get_rsa_parity_oracle(priv_key)
     print("BEGINNING RSA PARITY ORACLE ATTACK...\n")
-    #print(chall_text.hex())
     chall_flag = attack_padding_oracle(ciphertext, pub_key, chall_oracle)
     print("\nFINISHED\n")
     print(f"FLG: {chall_flag}")

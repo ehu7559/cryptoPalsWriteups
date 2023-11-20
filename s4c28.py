@@ -140,14 +140,14 @@ def decode_uint_big_endian(data):
 
 def leftrotate(num, shift, length=32):
     shift = shift % length
-    return (num * (1 << shift) + (num // (1 << (length - shift)))) % (1 << length)
+    return ((num << shift) | (num >> (length - shift))) & ((1 << length) - 1)
 
 #Challenge Code
 if __name__ == "__main__":
     print("This is an implementation challenge. There is no expected output.")
     print("--- CHALLENGE STATUS: COMPLETE ---")
 
-    #print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
+    print("challenge-data/8.txt : " + SHA1.hash_file("challenge-data/8.txt"))
 '''
 REFERENCE RESULTS
 8.txt : 24398342fe6cf15b8782db8ae8cdd6fa7f777278

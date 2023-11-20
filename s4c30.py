@@ -1,20 +1,27 @@
 #Challenge 30: Break an MD4 keyed MAC using length extension
 
 #MD4 digest class
-from s4c28 import encode_uint_big_endian
+from s4c28 import leftrotate
+
+def encode_uint_little_endian(num : int, length : int) -> bytes:
+    output = bytearray()
+    for _ in range(length):
+        output.append(num % 256)
+        num = num >> 8
+    return bytes(output)
 
 class MD4:
     
     def __init__(self):
-        self.words = (0x01234567, 0x89abcdef, 0xfedcba98, 0x76543210)
+        self.words = (0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476)
         self.length = 0
         self.buffer = bytearray()
 
     def F(x, y, z):
-        return (x & y) | (~x & z)
+        return ((x & y) | ((~x) & z))
 
     def G(x, y, z):
-        return (x & y) | (x & z) | (y & z)
+        return ((x & y) | (x & z) | (y & z))
     
     def H(x, y, z):
         return x ^ y ^ z
@@ -32,34 +39,70 @@ class MD4:
 
         #Grab new chunk and hash it.
         new_chunk = bytes(self.buffer[0:64])
-        chunk_hash = self.hash_chunk(new_chunk)
-        
-        # Update hash state
-        new_chunk
+        self.buffer = self.buffer[64:]
+        self.hash_chunk(new_chunk)
 
         #Exit.
         return
         
     def hash_chunk(self, chunk):
-        #TODO: Finish implementing MD4
+        print(f"hashing chunk {chunk.hex()}")
         #Copy block i in to X
         x = bytearray(chunk)
         #Grab words from hash registers
         A, B, C, D = self.words
-
+        AA, BB, CC, DD = self.words
+        
         #ROUND 1:
-        #Let [abcd k s] denote the operation:
-        #       a = (a + F(b c d) + X[k] <<< s)
-        #Do the following 16 operations
-        '''
-        [ABCD  0  3]  [DABC  1  7]  [CDAB  2 11]  [BCDA  3 19]
-        [ABCD  4  3]  [DABC  5  7]  [CDAB  6 11]  [BCDA  7 19]
-        [ABCD  8  3]  [DABC  9  7]  [CDAB 10 11]  [BCDA 11 19]
-        [ABCD 12  3]  [DABC 13  7]  [CDAB 14 11]  [BCDA 15 19]
-        '''
-        A = (A + MD4.F(B, C, D) + x[0] << 3)
-        D = (D + MD4.F(A, B, C) + x[1] << 3)
-        pass
+        for i in range(16):
+            match (i % 4):
+                case 0: A = MD4.fhelper(A, B, C, D, x[i], 3)
+                case 1: D = MD4.fhelper(D, A, B, C, x[i], 7)
+                case 2: C = MD4.fhelper(C, D, A, B, x[i], 11)
+                case 3: B = MD4.fhelper(B, C, D, A, x[i], 19)
+                case _: raise Exception("LMAO Math Broke")
+        
+        #ROUND 2:
+        for i in range(16):
+            match (i % 4):
+                case 0: A = MD4.ghelper(A, B, C, D, x[(i // 4)], 3)
+                case 1: D = MD4.ghelper(D, A, B, C, x[(i // 4) + 4], 5)
+                case 2: C = MD4.ghelper(C, D, A, B, x[(i // 4) + 8], 9)
+                case 3: B = MD4.ghelper(B, C, D, A, x[(i // 4) + 12], 13)
+                case _: raise Exception("LMAO Math Broke")
+
+        #ROUND 3:
+        r3indices = [0,8,4,12,2,10,6,14,1,9,5,13,3,11,7,15]
+        for i in range(16):
+            match (i % 4):
+                case 0: A = MD4.hhelper(A, B, C, D, x[r3indices[i]], 3)
+                case 1: D = MD4.hhelper(D, A, B, C, x[r3indices[i]], 9)
+                case 2: C = MD4.hhelper(C, D, A, B, x[r3indices[i]], 11)
+                case 3: B = MD4.hhelper(B, C, D, A, x[r3indices[i]], 15)
+                case _: raise Exception("LMAO Math Broke")
+        
+        #UPDATE WORDS
+        A = (A + AA) & 0xFFFFFFFF
+        B = (B + BB) & 0xFFFFFFFF
+        C = (C + CC) & 0xFFFFFFFF
+        D = (D + DD) & 0xFFFFFFFF
+        self.words = (A, B, C, D)
+        return
+
+    def fhelper(a, b, c, d, xval , leftrotation):
+        f = MD4.F(b, c, d)
+        a = (a + f + xval) & 0xFFFFFFFF
+        return leftrotate(a, leftrotation, length=32)
+    
+    def ghelper(a, b, c, d, xval, leftrotation):
+        g = MD4.G(b, c, d)
+        a = (a + g + xval + 0x5A827999) & 0xFFFFFFFF
+        return leftrotate(a, leftrotation, length=32)
+    
+    def hhelper(a, b, c, d, xval, leftrotation):
+        h = MD4.H(b, c, d)
+        a = (a + h + xval + 0x6ED9EBA1) & 0xFFFFFFFF
+        return leftrotate(a, leftrotation, length=32)
 
     def finalize(self):
         self.buffer = MD4.pad_chunk(self.buffer, self.length * 8)
@@ -68,15 +111,16 @@ class MD4:
 
     def pad_chunk(data, num_bits):
         output = bytearray(data)
-        while len(output) % 64 != 56:
-            output.append(0)
-        output.extend(encode_uint_big_endian(num_bits, 8))
+        output.append(0x80)
+        while len(output) % 64 != 56: output.append(0)
+        output.extend(encode_uint_little_endian(num_bits, 8))
         return output
 
     def get_hash(self):
         output = bytearray()
-        for i in range(4):
-            output.extend(self.words[i])
+        A, B, C, D = self.words
+        for x in [A, B, C, D]:
+            output.extend(encode_uint_little_endian(x, 4))
         return bytes(output)
 
     def get_hash_str(self):
@@ -89,6 +133,7 @@ class MD4:
     def hash(data: bytes):
         digest = MD4()
         digest.ingest(data)
+        digest.finalize()
         return digest.get_hash_str()
 
     def keyed_MAC(key, data):
@@ -144,5 +189,6 @@ def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max
 
 #Run Challenge code
 if __name__ == "__main__":
-    
-    print("--- CHALLENGE STATUS: TODO ---")
+    print("This is an implementation challenge. There is no expected output.")
+    print(f"\n{MD4.hash('The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.'.encode())}\n")
+    print("--- CHALLENGE STATUS: IN PROGRESS ---")

@@ -44,7 +44,7 @@ def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max
 if __name__ == "__main__":
     #Generate Key
     oracle_key_size = randint(16, 256)
-    oracle_key = bytes(randint(0,255) for i in range(oracle_key_size))
+    oracle_key = bytes(randint(0,255) for _ in range(oracle_key_size))
 
     print(f"Oracle Key Size: {oracle_key_size}")
     #Generate Oracle
