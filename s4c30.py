@@ -2,11 +2,21 @@
 
 #MD4 digest class
 from s4c28 import leftrotate
+from random import randint
+
+
+def parse_uint_little_endian(buf : bytes) -> int:
+    output = 0
+    buf = bytearray(buf)
+    while buf:
+        output = output << 8
+        output += (buf.pop() & 0xFF)
+    return output
 
 def encode_uint_little_endian(num : int, length : int) -> bytes:
     output = bytearray()
     for _ in range(length):
-        output.append(num % 256)
+        output.append(num & 0xFF)
         num = num >> 8
     return bytes(output)
 
@@ -46,9 +56,10 @@ class MD4:
         return
         
     def hash_chunk(self, chunk):
-        print(f"hashing chunk {chunk.hex()}")
-        #Copy block i in to X
-        x = bytearray(chunk)
+        
+        #Word-ify the chunks
+        x = [parse_uint_little_endian(chunk[4 * i : 4 * (i + 1)]) for i in range(16)]
+
         #Grab words from hash registers
         A, B, C, D = self.words
         AA, BB, CC, DD = self.words
@@ -127,8 +138,13 @@ class MD4:
         return self.get_hash().hex()
 
     def from_hash_str(hash_string: str):
-        #### TODO: NEED TO IMPLEMENT FROM_HASH_STR
-        return MD4()
+        assert len(hash_string) == 32
+        hash_bytes = bytes.fromhex(hash_string)
+        words = [parse_uint_little_endian(hash_bytes[4 * i : 4 * (i + 1)]) for i in range(4)]
+        output = MD4()
+        output.words = words
+        assert(len(output.words) == 4)
+        return output
 
     def hash(data: bytes):
         digest = MD4()
@@ -148,47 +164,53 @@ class MD4:
 
     def set_length(self, length: int):
         self.length = length
-    
+
 #Oracle
 def get_oracle(key):
     return lambda m, h : MD4.validate_keyed_MAC(key, m, h)
 
-#Attack function in same style
-def attack(oracle, message : bytes, hash_string : str, message_tail : bytes, max_depth = 65535):
-    #Attack Loop for each key length possibility  (in bytes)
-    for key_length in range(max_depth):
-        #Generate digest object
-        digest = MD4.from_hash_str(hash_string)
-        
-        #Generate Payload
-        payload = bytearray(key_length) #0s in place of key
-        payload.extend(message) #Append message to the placeholder key
+def testmd4():
+    '''runs test cases defined in RFC 1320'''
+    test0 = checkmd4("","31d6cfe0d16ae931b73c59d7e0c089c0")
+    test1 = checkmd4("a","bde52cb31de33e46245e05fbdbd6fb24")
+    test2 = checkmd4("abc","a448017aaf21d8525fc10ae87aa6729d")
+    test3 = checkmd4("message digest", "d9130a8164549fe818874806e1c7014b")
+    test4 = checkmd4("abcdefghijklmnopqrstuvwxyz", "d79e1c308aa5bbcdeea8ed63df412da9")
+    test5 = checkmd4("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", "043f8582f241db351ce627e153e7f0e4")
+    test6 = checkmd4("12345678901234567890123456789012345678901234567890123456789012345678901234567890", "e33b4ddc9c38f2199c3e7b164fcc0536")
+    return all([test0,test1,test2,test3,test4,test5,test6])
 
-        #Compute and encode the pair's length
-        pair_length_bytes = len(payload)
-        
-        digested = MD4.pad_chunk(payload , pair_length_bytes * 8)
-        digest.set_length(len(digested))
+def checkmd4(string : str, reference:str):
+    stringhash = MD4.hash(string.encode())
+    return stringhash == reference
 
-        #Craft forged message (Remove key prefix add tail)
-        forged_message = bytearray(digested[key_length:]) #Forged = message + glue
-        forged_message.extend(message_tail)
+def testmd4_fromhashstr(hashstring):
+    assert len(hashstring) == 32
+    fromhash = MD4.from_hash_str(hashstring)
+    print(fromhash.get_hash_str())
 
-        #Ingest the message tail and finalize it.
-        digest.ingest(message_tail)
-        digest.finalize()
-
-        #Get hash
-        new_hash = digest.get_hash_str()
-        
-        if oracle(forged_message, new_hash):
-            return (bytes(forged_message), new_hash)
-
-    #Return none if not possible.
-    return None 
-
+def attack_with_known_saltlength(hashstring : str, message : bytes, payload : bytes, saltlen:int):
+    
+    digest = MD4.from_hash_str(hashstring)
+    print(digest.get_hash_str())
+    origlen = len(message) + saltlen
+    message = bytearray(message)
+    message = MD4.pad_chunk(message, origlen * 8)[saltlen:]
+    digest.set_length(len(message) + saltlen)
+    message.extend(payload)
+    digest.ingest(payload)
+    digest.finalize()
+    print(digest.get_hash_str())
+    print(MD4.hash(message))
+    
 #Run Challenge code
 if __name__ == "__main__":
-    print("This is an implementation challenge. There is no expected output.")
-    print(f"\n{MD4.hash('The saddest aspect of life right now is that science gathers knowledge faster than society gathers wisdom.'.encode())}\n")
-    print("--- CHALLENGE STATUS: IN PROGRESS ---")
+    print(f"MD4 Test (RFC1320): {'SATISFACTORY' if testmd4() else 'FAILURE'}")
+
+    #Select Message
+    chall_message = "This is a challenge message. Nothing up my sleeves at all.".encode()
+    chall_payload = "pwned".encode()
+    chall_start_hash = MD4.hash(chall_message)
+    print(chall_start_hash)
+    attack_with_known_saltlength(chall_start_hash, chall_message, chall_payload, 0)
+    #Select
